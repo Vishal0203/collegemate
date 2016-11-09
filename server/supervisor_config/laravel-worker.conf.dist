@@ -1,0 +1,9 @@
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php <application_root>/artisan queue:work database --sleep=3 --tries=3 --daemon
+autostart=true
+autorestart=true
+user=Vishal
+numprocs=8
+redirect_stderr=true
+stdout_logfile=<application_root>/storage/logs/collegemate_worker.log

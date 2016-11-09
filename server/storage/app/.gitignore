@@ -1,0 +1,4 @@
+avatars/*
+!avatars/default*.jpg
+/notification_files
+!.gitignore

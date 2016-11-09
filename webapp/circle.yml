@@ -1,0 +1,14 @@
+machine:
+  timezone:
+    Asia/Kolkata
+
+  node:
+    version: 6.1.0
+
+dependencies:
+  override:
+    - npm install --only=dev
+
+test:
+  override:
+    - ./node_modules/.bin/eslint ./client

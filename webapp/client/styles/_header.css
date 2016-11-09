@@ -1,0 +1,28 @@
+.header {
+    width: 100%;
+    display: inline-block;
+    background-color: #e1e1e1 !important;
+}
+
+.header-title {
+    color: #616161;
+    margin-top: 47px;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.header-or {
+    color: #616161;
+    margin-top: 2px;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.header-button {
+    margin-top: 10px;
+}
+
+.header-button > button > div > div > span {
+    text-transform: initial !important;
+    font-weight: 300 !important;
+}

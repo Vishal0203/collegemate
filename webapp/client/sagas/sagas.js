@@ -1,0 +1,54 @@
+import {takeEvery, takeLatest} from 'redux-saga';
+import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements';
+import {USER_LOGIN_REQUEST} from '../actions/users';
+import {fork, put, call} from 'redux-saga/effects';
+import {createAnnouncementResponse, fetchAnnouncementRequest, fetchAnnouncementResponse} from '../actions/announcements/index';
+import {userLoginResponse} from '../actions/users/index';
+import {HttpHelper} from './apis';
+
+function *createAnnouncement(params) {
+  const data = {
+    category_guid: params.formData.notificationCategory,
+    notification_head: params.formData.notificationHeader,
+    notification_body: params.formData.notificationBody
+  };
+
+  const response = yield call(
+    HttpHelper, `institute/${params.formData.instituteGuid}/notification`, 'POST', data, null
+  );
+
+  yield put(createAnnouncementResponse(response.data.notification));
+}
+
+function *userAuthentication() {
+  const data = {
+    email: 'todevs.test@todevs.com',
+    password: 'password'
+  };
+
+  const response = yield call(HttpHelper, 'login', 'POST', data, null);
+  yield put(userLoginResponse(response.data));
+}
+
+function *fetchAnnouncements(params) {
+  const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
+  yield put(fetchAnnouncementResponse(response.data));
+}
+
+function *userAuthenticationRequest() {
+  yield *takeLatest(USER_LOGIN_REQUEST, userAuthentication);
+}
+
+function *watchCreateAnnouncement() {
+  yield *takeEvery(CREATE_ANNOUNCEMENT_REQUEST, createAnnouncement);
+}
+
+function *watchAnnouncementFetch() {
+  yield *takeLatest(FETCH_ANNOUNCEMENTS_REQUEST, fetchAnnouncements);
+}
+
+export default function *rootSaga() {
+  yield fork(userAuthenticationRequest);
+  yield fork(watchCreateAnnouncement);
+  yield fork(watchAnnouncementFetch);
+}

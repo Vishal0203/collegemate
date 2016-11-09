@@ -1,0 +1,27 @@
+.navbar {
+    background-color: #39435B !important;
+}
+
+.fixed-top {
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+}
+
+.tab-container {
+    width: 62%;
+}
+
+.tabs {
+    line-height: 56px;
+    width: inherit;
+}
+
+.tabs > div {
+    background-color: transparent !important;
+}
+
+.tab > div {
+    text-transform: capitalize;
+    font-weight: 400;
+}

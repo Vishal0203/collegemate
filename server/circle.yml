@@ -1,0 +1,25 @@
+machine:
+  timezone:
+    Asia/Kolkata
+
+  php:
+    version: 5.6.22
+
+  environment:
+      PATH: "${PATH}:${HOME}/.composer/vendor/bin"
+      APP_ENV: "circle"
+      DB_HOST: "127.0.0.1"
+
+dependencies:
+  pre:
+    - cp .env.circle .env
+    - mysql -e 'create database collegemate_test;'
+  post:
+    - php artisan key:generate
+    - php artisan migrate
+
+test:
+  override:
+    - composer global require pragmarx/laravelcs
+    - vendor/bin/phpunit
+    - phpcs --standard=PSR2 app/
