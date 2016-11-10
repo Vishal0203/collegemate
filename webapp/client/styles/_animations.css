@@ -1,9 +1,9 @@
 @import "lib/animate.css";
 
 .headerForm-enter {
-    animation: 0.5s zoomIn ease;
+    animation: 0.6s zoomInUp ease;
 }
 
 .headerForm-leave {
-    animation: 0.5s zoomOut ease;
+    animation: 0.5s zoomOutUp ease;
 }

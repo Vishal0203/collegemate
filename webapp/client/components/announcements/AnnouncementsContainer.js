@@ -7,18 +7,18 @@ import Header from '../Header';
 import Loader from 'halogen/BeatLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
-import letterAvatarColors, {numberOfColors} from '../../styles/theme/letterAvatarColors';
+import letterAvatarColors from '../../styles/theme/letterAvatarColors';
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
     super(props);
     this.colorMap = {};
-    this.letterAvatarColors = [...letterAvatarColors]
+    this.letterAvatarColors = [...letterAvatarColors];
   }
 
   getAvatarColor(category) {
     if (!(category in this.colorMap)) {
-      const index = Math.floor(Math.random() * numberOfColors);
+      const index = Math.floor(Math.random() * this.letterAvatarColors.length);
       this.colorMap[category] = this.letterAvatarColors[index];
       this.letterAvatarColors.splice(index, 1)
     }
@@ -34,7 +34,7 @@ class AnnouncementsContainer extends Component {
       let url = `institute/${institute_guid}/category_notifications`;
       if (this.props.announcements.nextPageUrl) {
         url = this.props.announcements.nextPageUrl;
-        this.props.actions.fetchAnnouncementRequest(url, null)
+        this.props.actions.fetchAnnouncementRequest(url, {skip: this.props.announcements.skip})
       } else {
         this.props.actions.fetchAnnouncementRequest(url, {category_guid: categories})
       }

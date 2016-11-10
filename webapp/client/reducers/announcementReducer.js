@@ -4,13 +4,14 @@ import {
   CREATE_ANNOUNCEMENT_TOGGLE,
   FETCH_ANNOUNCEMENTS_REQUEST,
   FETCH_ANNOUNCEMENTS_RESPONSE
-} from '../actions/announcements';
+} from '../actions/announcements/index';
 
 const initialState = {
   toggleForm: false,
   loadingMore: false,
   nextPageUrl: null,
   hasMore: true,
+  skip: 0,
   items: {
     data: []
   }
@@ -23,10 +24,11 @@ export default function announcementReducer(state = initialState, action) {
       return {...state, loadingMore: true}
     }
     case CREATE_ANNOUNCEMENT_RESPONSE: {
-      console.log(action.notification);
+      const skip = state.skip + 1;
       return {
         ...state,
         toggleForm: !state.toggleForm,
+        skip,
         items: {...state.items, data: [action.notification, ...state.items.data]},
         loadingMore: false
       };
@@ -34,6 +36,7 @@ export default function announcementReducer(state = initialState, action) {
     case FETCH_ANNOUNCEMENTS_RESPONSE: {
       return {
         ...state,
+        skip: state.skip,
         items: {...action.response, data: [...state.items.data, ...action.response.data]},
         loadingMore: false,
         hasMore: !!action.response.next_page_url,

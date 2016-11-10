@@ -7,11 +7,13 @@ import {userLoginResponse} from '../actions/users/index';
 import {HttpHelper} from './apis';
 
 function *createAnnouncement(params) {
-  const data = {
-    category_guid: params.formData.notificationCategory,
-    notification_head: params.formData.notificationHeader,
-    notification_body: params.formData.notificationBody
-  };
+  let data = new FormData();
+  data.append('category_guid', params.formData.notificationCategory);
+  data.append('notification_head', params.formData.notificationHeader);
+  data.append('notification_body', params.formData.notificationBody,);
+  for (let i = 0; i < params.formData.notificationAttachments.length; i++) {
+    data.append('notification_files[]', params.formData.notificationAttachments[i]);
+  }
 
   const response = yield call(
     HttpHelper, `institute/${params.formData.instituteGuid}/notification`, 'POST', data, null

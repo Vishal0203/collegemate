@@ -5,6 +5,7 @@ import * as userActions from '../actions/users';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Navbar from './Navbar';
 import muiTheme from '../styles/theme/collegemate.theme';
+import tz from 'moment-timezone';
 
 class Main extends React.Component {
   constructor(props) {

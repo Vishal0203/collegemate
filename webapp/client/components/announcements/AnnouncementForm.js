@@ -43,7 +43,8 @@ class AnnouncementForm extends React.Component {
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
       notificationHeader: this.refs.notificationHeader.getValue(),
       notificationBody: this.refs.notificationBody.getValue(),
-      notificationCategory: this.refs.notificationCategory.props.value
+      notificationCategory: this.refs.notificationCategory.props.value,
+      notificationAttachments: this.refs.notificationAttachments.files
     };
 
     this.parentProps.actions.createAnnouncementRequest(formData);
@@ -51,6 +52,21 @@ class AnnouncementForm extends React.Component {
 
   handleChange(event, index, value) {
     this.setState({value});
+  }
+
+  onFileSelect(e) {
+    console.log(e.target.files);
+    if (e.target.files.length == 0) {
+      this.refs.chosenFiles.innerHTML = '<i style="color: #c6c6c6">No file Chosen</i>';
+      return
+    }
+
+    this.refs.chosenFiles.innerHTML = '';
+    let text = '';
+    for (let i = 0; i < e.target.files.length ; i++ ) {
+      text += `${e.target.files[i].name}${i+1 == e.target.files.length? '': ', '}`;
+    }
+    this.refs.chosenFiles.innerHTML += `<i>${text}</i>`;
   }
 
   render() {
@@ -73,12 +89,13 @@ class AnnouncementForm extends React.Component {
                                                          value={category.category_guid}
                                                          primaryText={category.category_type}/>)}
             </SelectField>
+
             <br/>
             <br/>
-            <RaisedButton secondary={true} label="Attach Files (optional)"
-                          labelPosition="before">
-              <input type="file" multiple style={this.styles.chooseButton}/>
+            <RaisedButton secondary={true} containerElement="label" label="Attach Files (optional)" labelPosition="before">
+              <input ref="notificationAttachments" type="file" multiple style={this.styles.chooseButton} onChange={(e) => this.onFileSelect(e)}/>
             </RaisedButton>
+            <label style={{paddingLeft:10, fontSize: 12}} ref="chosenFiles"><i style={{color: '#c6c6c6'}}>No file Chosen</i></label>
           </Col>
         </CardText>
         <CardActions style={{textAlign: 'right'}}>
