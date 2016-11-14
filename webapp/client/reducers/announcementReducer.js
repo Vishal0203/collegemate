@@ -3,7 +3,9 @@ import {
   CREATE_ANNOUNCEMENT_RESPONSE,
   CREATE_ANNOUNCEMENT_TOGGLE,
   FETCH_ANNOUNCEMENTS_REQUEST,
-  FETCH_ANNOUNCEMENTS_RESPONSE
+  FETCH_ANNOUNCEMENTS_RESPONSE,
+  ON_FILTER_ADD,
+  ON_FILTER_REMOVE
 } from '../actions/announcements/index';
 
 const initialState = {
@@ -45,6 +47,10 @@ export default function announcementReducer(state = initialState, action) {
     }
     case CREATE_ANNOUNCEMENT_TOGGLE: {
       return {...state, toggleForm: !state.toggleForm};
+    }
+    case ON_FILTER_REMOVE:
+    case ON_FILTER_ADD: {
+      return initialState
     }
     default: {
       return state

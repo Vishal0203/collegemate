@@ -2,11 +2,16 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Announcement from './Announcement'
-import * as announcementActions  from '../../actions/announcements';
+import * as announcementActions  from '../../actions/announcements/index';
+import {addFilter, removeFilter} from '../../actions/users/index';
 import Header from '../Header';
 import Loader from 'halogen/BeatLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
+import Chip from 'material-ui/Chip';
+import Divider from 'material-ui/Divider';
+import Avatar from 'material-ui/Avatar';
+import StickyDiv from 'react-stickydiv';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
 
 class AnnouncementsContainer extends Component {
@@ -14,6 +19,29 @@ class AnnouncementsContainer extends Component {
     super(props);
     this.colorMap = {};
     this.letterAvatarColors = [...letterAvatarColors];
+  }
+
+  get styles() {
+    return {
+      chipLabel: {
+        lineHeight: '28px',
+        textTransform: 'capitalize',
+        color: '#757575',
+        fontSize: 13
+      },
+      wrapper: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        marginBottom: 20
+      },
+      selectedFilterLabel: {
+        marginTop: 8,
+        paddingLeft: 5,
+        fontFamily: 'Roboto, sans-serif',
+        fontSize: 'smaller',
+        color: '#9E9E9E'
+      }
+    }
   }
 
   getAvatarColor(category) {
@@ -26,8 +54,8 @@ class AnnouncementsContainer extends Component {
   }
 
   loadMore() {
-    if(Object.keys(this.props.auth_user.user).length != 0) {
-      const categories = this.props.auth_user.user.default_institute.categories.map(function (a) {
+    if (Object.keys(this.props.auth_user.user).length != 0) {
+      const categories = this.props.auth_user.selectedInstitute.filters.map(function (a) {
         return a.category_guid
       }).join(',');
       const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
@@ -41,10 +69,48 @@ class AnnouncementsContainer extends Component {
     }
   }
 
+  handleFilterDelete(category) {
+    this.props.actions.removeFilter(category);
+    this.props.actions.onFilterRemove()
+  }
+
+  handleFilterSelect(category) {
+    this.props.actions.addFilter(category);
+    this.props.actions.onFilterAdd()
+  }
+
   renderAnnouncements() {
     return this.props.announcements.items.data.map((announcement, i) =>
-      <Announcement key={i} announcement={announcement} avatarColor={this.getAvatarColor(announcement.category.category_type)} />
+      <Announcement key={i} parentProps={this.props} announcement={announcement} avatarColor={this.getAvatarColor(announcement.category.category_type)} />
     )
+  }
+
+  renderFilterChips() {
+    if (Object.keys(this.props.auth_user.user).length != 0) {
+      const institute = this.props.auth_user.selectedInstitute;
+      if (Object.keys(this.props.auth_user.user).length != 0) {
+        return institute.categories.map((category, i) =>
+          <Chip key={i} className="chip" onTouchTap={() => this.handleFilterSelect(category)}
+                labelStyle={this.styles.chipLabel}>
+            {category.category_type}
+          </Chip>
+        );
+      }
+    }
+  }
+
+  renderSelectedFilters() {
+    if (Object.keys(this.props.auth_user.user).length != 0) {
+      const institute = this.props.auth_user.selectedInstitute;
+      return (
+        institute.filters.map((category, i) =>
+          <Chip key={i} className="chip" onRequestDelete={() => this.handleFilterDelete(category)}
+                labelStyle={this.styles.chipLabel}>
+            {category.category_type}
+          </Chip>
+        )
+      )
+    }
   }
 
   render() {
@@ -62,7 +128,7 @@ class AnnouncementsContainer extends Component {
                 type="Announcement"
                 parentProps={this.props}
                 hasButton={true}
-                buttonLabel="Make an Announcement" />
+                buttonLabel="Make an Announcement"/>
         <div style={{marginTop: '20px'}}>
           <Grid>
             <div className="wrap">
@@ -75,6 +141,20 @@ class AnnouncementsContainer extends Component {
                   </InfiniteScroll>
                 </Col>
                 <Col xs={4}>
+                  <StickyDiv offsetTop={65}>
+                    <div className="right-content">
+                      <label>Currently Showing</label>
+                      <Divider style={{marginTop: 2, marginBottom: 2}}/>
+                      <div style={this.styles.wrapper}>
+                        {this.renderSelectedFilters()}
+                      </div>
+                      <label>Filters</label>
+                      <Divider style={{marginTop: 2, marginBottom: 2}}/>
+                      <div style={this.styles.wrapper}>
+                        {this.renderFilterChips()}
+                      </div>
+                    </div>
+                  </StickyDiv>
                 </Col>
               </Row>
             </div>
@@ -93,7 +173,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(announcementActions, dispatch)
+    actions: bindActionCreators({...announcementActions, addFilter, removeFilter}, dispatch)
   };
 }
 
