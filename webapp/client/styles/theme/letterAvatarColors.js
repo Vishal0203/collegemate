@@ -17,5 +17,4 @@ const letterAvatarColors = [
   green600
 ];
 
-export const numberOfColors = letterAvatarColors.length;
 export default letterAvatarColors;

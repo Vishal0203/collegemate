@@ -16,3 +16,17 @@ body {
 .main-content {
     padding-top: 56px;
 }
+
+.time-container {
+    display: inline-block;
+    right: 20px;
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(0, 0, 0, 0.541176);
+    cursor: pointer;
+    position: absolute;
+}
+
+.time-container:first-letter {
+    text-transform: uppercase;
+}

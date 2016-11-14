@@ -60,7 +60,7 @@ class Header extends Component {
         {actionButton}
         <ReactCSSTransitionGroup
           transitionName='headerForm'
-          transitionEnterTimeout={500}
+          transitionEnterTimeout={600}
           transitionLeaveTimeout={500}>
           {form}
         </ReactCSSTransitionGroup>

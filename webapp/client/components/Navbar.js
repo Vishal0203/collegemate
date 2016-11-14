@@ -61,11 +61,11 @@ export default class Navbar extends React.Component {
           <ToolbarGroup>
             <Link to="/" style={{textDecoration: 'none'}}>
               <ToolbarTitle style={this.styles.title} text="College"/>
-              <ToolbarTitle style={{color: 'white', fontWeight: 400}} text="Mate"/>
+              <ToolbarTitle style={{color: 'white', fontWeight: 400, paddingLeft: 1}} text="Mate"/>
             </Link>
           </ToolbarGroup>
           <ToolbarGroup className="tab-container">
-            <Tabs className="tabs">
+            <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }}>
               <Tab data-route="/" onActive={handleActive} className="tab" label="Announcements"/>
               <Tab data-route="/interactions" onActive={handleActive} className="tab"
                    label="Interaction"/>
@@ -78,7 +78,7 @@ export default class Navbar extends React.Component {
             <IconMenu desktop={true}
                       iconButtonElement={
                         <IconButton>
-                          <Avatar src="https://www.prodiplive.in/images/profile_user.jpg"
+                          <Avatar src="http://www.technofyed.com/uploads/avatars/avatar_22405.jpg?dateline=1465157255"
                                   style={{alignSelf: 'center'}}
                                   size={35}/>
                         </IconButton>

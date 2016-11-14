@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use App\NotificationFiles;
 use App\Institute;
 use App\NotificationData;
+use Input;
 use Storage;
 use App\Category;
 use Faker;
-use Input;
+use URL;
 
 class NotificationController extends Controller
 {
@@ -106,11 +107,13 @@ class NotificationController extends Controller
 
     public function categoryNotifications($institute_guid, Request $request)
     {
+        $page = $request->get('page', 1);
+        $skip = ($page - 1) * 10 + $request->get('skip', 0);
         $category_guid = $request['category_guid'];
         $category_ids = Category::whereIn('category_guid', explode(',', $category_guid))
             ->pluck('id');
 
-        $notifications =
+        $data =
             NotificationData::whereIn('category_id', $category_ids->toArray())->with([
                 'publisher' => function ($query) use ($institute_guid) {
                     $query->with(['userProfile', 'institutes' => function ($institutes) use ($institute_guid) {
@@ -120,9 +123,14 @@ class NotificationController extends Controller
                 },
                 'notificationFiles',
                 'category'
-            ])->orderBy('created_at', 'DESC')->paginate(10);
+            ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
 
-        $notifications->appends(Input::except('page'));
-        return response()->json($notifications, 200);
+        $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
+        $nextPage = $page + 1;
+        $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
+        $next_page_url = ($nextPage - 1) * 10 < $total ?
+            $request->url() . "?" . http_build_query($query_params) : null;
+
+        return response()->json(compact('total', 'next_page_url', 'data'), 200);
     }
 }
