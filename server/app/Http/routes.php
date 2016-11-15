@@ -34,6 +34,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
 
     Route::group(['prefix' => 'institute/{institute_guid}'], function () {
         Route::get('file/{short_code}', 'FilesController@getFile');
+        Route::get('files/download', 'FilesController@downloadAll');
         Route::get('staff/categories', 'StaffController@getCategoriesForNotifier');
         Route::resource(
             'staff',
