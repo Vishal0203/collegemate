@@ -92,7 +92,7 @@ class AnnouncementForm extends React.Component {
 
             <br/>
             <br/>
-            <RaisedButton secondary={true} containerElement="label" label="Attach Files (optional)" labelPosition="before">
+            <RaisedButton className="attach-btn" secondary={true} containerElement="label" label="Attach Files (optional)">
               <input ref="notificationAttachments" type="file" multiple style={this.styles.chooseButton} onChange={(e) => this.onFileSelect(e)}/>
             </RaisedButton>
             <label style={{paddingLeft:10, fontSize: 12}} ref="chosenFiles"><i style={{color: '#c6c6c6'}}>No file Chosen</i></label>

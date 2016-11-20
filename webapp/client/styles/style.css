@@ -23,10 +23,45 @@ body {
     font-size: 12px;
     font-weight: 300;
     color: rgba(0, 0, 0, 0.541176);
-    cursor: pointer;
     position: absolute;
 }
 
 .time-container:first-letter {
     text-transform: uppercase;
+}
+
+.attachment-btn {
+    height: 25px !important;
+    line-height: 25px !important;
+}
+
+.attachment-btn > div > span {
+    text-transform: capitalize !important;
+    font-size: smaller !important;
+}
+
+.attach-btn > label > div > div > span {
+    text-transform: capitalize !important;
+}
+
+.right-content {
+    margin-top: 20px;
+}
+
+.right-content > label {
+    font-family: Roboto, sans-serif;
+    font-size: medium;
+    color: #5c5c5c;
+}
+
+.chip {
+    margin: 4px !important;
+    border-radius: 4px !important;
+    height: 28px;
+}
+
+.chip > svg {
+    margin: 5px 4px 0 -6px !important;
+    height: 18px !important;
+    width: 18px !important;
 }

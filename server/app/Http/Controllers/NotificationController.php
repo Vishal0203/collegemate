@@ -11,7 +11,6 @@ use Input;
 use Storage;
 use App\Category;
 use Faker;
-use URL;
 
 class NotificationController extends Controller
 {
