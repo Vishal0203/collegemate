@@ -46,6 +46,7 @@ body {
 
 .right-content {
     margin-top: 20px;
+    margin-left: 20px;
 }
 
 .right-content > label {
@@ -56,8 +57,10 @@ body {
 
 .chip {
     margin: 4px !important;
-    border-radius: 4px !important;
+    border-radius: 3px !important;
     height: 28px;
+    border: thin solid rgba(57, 67, 91, 0.15) !important;
+    background-color: rgba(225, 225, 225, 0.45) !important;
 }
 
 .chip > svg {

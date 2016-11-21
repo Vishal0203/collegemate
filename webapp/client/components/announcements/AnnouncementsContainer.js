@@ -10,7 +10,6 @@ import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
 import Chip from 'material-ui/Chip';
 import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
 import StickyDiv from 'react-stickydiv';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
 
@@ -102,14 +101,21 @@ class AnnouncementsContainer extends Component {
   renderSelectedFilters() {
     if (Object.keys(this.props.auth_user.user).length != 0) {
       const institute = this.props.auth_user.selectedInstitute;
-      return (
-        institute.filters.map((category, i) =>
-          <Chip key={i} className="chip" onRequestDelete={() => this.handleFilterDelete(category)}
-                labelStyle={this.styles.chipLabel}>
-            {category.category_type}
-          </Chip>
+      if (institute.filters.length == institute.categories.length) {
+        return (
+          <label style={this.styles.selectedFilterLabel}>All Categories</label>
         )
-      )
+      }
+      else {
+        return (
+          institute.filters.map((category, i) =>
+            <Chip key={i} className="chip" onRequestDelete={() => this.handleFilterDelete(category)}
+                  labelStyle={this.styles.chipLabel}>
+              {category.category_type}
+            </Chip>
+          )
+        )
+      }
     }
   }
 
