@@ -1,0 +1,15 @@
+.rte-container {
+    min-height: 200px;;
+    font-family: "Roboto", sans-serif;
+}
+
+.rte-editor {
+    font-size: 14px;
+}
+
+.rte-editor blockquote {
+    font-size: 14px;
+    font-weight: 400;
+    font-style: normal !important;
+    font-family: "Roboto", sans-serif !important;
+}

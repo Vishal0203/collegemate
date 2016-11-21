@@ -87,7 +87,21 @@ export default class Navbar extends React.Component {
     }
   }
 
+  getTabIndex(pathname) {
+    switch (pathname) {
+      case '/': {
+        return 0
+      }
+      case '/interactions': {
+        return 1
+      }
+    }
+  }
+
   render() {
+    const {currentLocation} = this.props;
+    const tabIndex = this.getTabIndex(currentLocation);
+
     return (
       <Paper className="fixed-top">
         <Toolbar className="navbar">
@@ -98,11 +112,12 @@ export default class Navbar extends React.Component {
             </Link>
           </ToolbarGroup>
           <ToolbarGroup className="tab-container">
-            <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }}>
+            <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} initialSelectedIndex={tabIndex}>
               <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements"/>
               <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
-                   label="Interaction"/>
-              <Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>
+                   label="Interactions"/>
+              {/* To be enabled in next release */}
+              {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
             </Tabs>
           </ToolbarGroup>
 

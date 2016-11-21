@@ -1,11 +1,13 @@
 import {takeEvery, takeLatest} from 'redux-saga';
 import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements';
 import {USER_LOGIN_REQUEST} from '../actions/users';
+import {TAGS_FETCH} from '../actions/interactions/index';
 import {fork, put, call} from 'redux-saga/effects';
 import {createAnnouncementResponse, fetchAnnouncementResponse} from '../actions/announcements/index';
 import {userLoginResponse} from '../actions/users/index';
 import {HttpHelper} from './apis';
 import {toggleSnackbar} from '../actions/snackbar/index'
+import {fetchTagsResponse} from '../actions/interactions/index'
 
 function *createAnnouncement(params) {
   let data = new FormData();
@@ -38,6 +40,15 @@ function *fetchAnnouncements(params) {
   yield put(fetchAnnouncementResponse(response.data));
 }
 
+function *fetchTags(params) {
+  const response = yield call(HttpHelper, 'tags', 'GET', null, params.url_params);
+  yield put(fetchTagsResponse(response.data.tags))
+}
+
+/*
+  Saga watchers beneath this
+*/
+
 function *userAuthenticationRequest() {
   yield *takeLatest(USER_LOGIN_REQUEST, userAuthentication);
 }
@@ -50,8 +61,15 @@ function *watchAnnouncementFetch() {
   yield *takeLatest(FETCH_ANNOUNCEMENTS_REQUEST, fetchAnnouncements);
 }
 
+function *watchTagsRequest() {
+  yield *takeLatest(TAGS_FETCH, fetchTags)
+}
+
 export default function *rootSaga() {
-  yield fork(userAuthenticationRequest);
-  yield fork(watchCreateAnnouncement);
-  yield fork(watchAnnouncementFetch);
+  yield [
+    fork(userAuthenticationRequest),
+    fork(watchCreateAnnouncement),
+    fork(watchAnnouncementFetch),
+    fork(watchTagsRequest)
+  ]
 }

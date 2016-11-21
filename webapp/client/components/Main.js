@@ -19,7 +19,7 @@ class Main extends React.Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div>
-          <Navbar parentProps={this.props}/>
+          <Navbar currentLocation={this.props.location.pathname} parentProps={this.props}/>
           { React.cloneElement(this.props.children, this.props) }
           <Snackbar
               open={this.props.snackbar.open}

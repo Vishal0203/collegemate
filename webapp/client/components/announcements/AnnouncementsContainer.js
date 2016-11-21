@@ -134,7 +134,7 @@ class AnnouncementsContainer extends Component {
                 type="Announcement"
                 parentProps={this.props}
                 hasButton={true}
-                buttonLabel="Make an Announcement"/>
+                buttonLabel="Make an announcement"/>
         <div style={{marginTop: '20px'}}>
           <Grid>
             <div className="wrap">

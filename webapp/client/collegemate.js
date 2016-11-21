@@ -6,11 +6,12 @@ import Main from './components/Main';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import Career from './components/careers/Career';
+import InteractionsContainer from './components/interactions/InteractionsContainer';
 import configureStore from './store/configureStore';
 import {Provider} from 'react-redux';
 import rootSaga from './sagas/sagas';
 import {syncHistoryWithStore} from 'react-router-redux';
-import css from './styles/style.css';
+import './styles/style.css';
 
 injectTapEventPlugin();
 
@@ -24,6 +25,7 @@ const router = (
     <Router history={history}>
       <Route path='/' component={Main}>
         <IndexRoute component={AnnouncementsContainer}/>
+        <Route path='/interactions' component={InteractionsContainer}/>
         <Route path='/career' component={Career}/>
       </Route>
     </Router>
