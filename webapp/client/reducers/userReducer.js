@@ -37,9 +37,17 @@ export default function userReducer(state = {user: {}, selectedInstitute: {filte
     case REMOVE_FILTER: {
       const {filters} = state.selectedInstitute;
       const index = filters.indexOf(action.filter);
+      let newFiltersSet = [...filters.slice(0, index), ...filters.slice(index + 1)];
+      if (newFiltersSet.length == 0) {
+        console.log('reached');
+        newFiltersSet = [...state.selectedInstitute.categories]
+      }
       return {
         ...state,
-        selectedInstitute: {...state.selectedInstitute, filters: [...filters.slice(0, index), ...filters.slice(index+1)]}
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          filters: newFiltersSet
+        }
       }
     }
     default: {
