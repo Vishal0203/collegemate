@@ -27,6 +27,16 @@ export default function announcementReducer(state = initialState, action) {
     }
     case CREATE_ANNOUNCEMENT_RESPONSE: {
       const skip = state.skip + 1;
+      const match = action.filters.filter(function (filter) {
+        return filter.category_guid === action.notification.category.category_guid
+      });
+      if(match.length == 0) {
+        return {
+          ...state,
+          toggleForm: !state.toggleForm,
+          loadingMore: false
+        };
+      }
       return {
         ...state,
         toggleForm: !state.toggleForm,

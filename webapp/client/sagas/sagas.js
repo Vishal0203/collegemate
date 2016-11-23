@@ -5,6 +5,7 @@ import {fork, put, call} from 'redux-saga/effects';
 import {createAnnouncementResponse, fetchAnnouncementResponse} from '../actions/announcements/index';
 import {userLoginResponse} from '../actions/users/index';
 import {HttpHelper} from './apis';
+import {toggleSnackbar} from '../actions/snackbar/index'
 
 function *createAnnouncement(params) {
   let data = new FormData();
@@ -18,8 +19,8 @@ function *createAnnouncement(params) {
   const response = yield call(
     HttpHelper, `institute/${params.formData.instituteGuid}/notification`, 'POST', data, null
   );
-
-  yield put(createAnnouncementResponse(response.data.notification));
+  yield put(createAnnouncementResponse(response.data.notification, params.filters));
+  yield put(toggleSnackbar(`Announcement posted in ${response.data.notification.category.category_type}`));
 }
 
 function *userAuthentication() {

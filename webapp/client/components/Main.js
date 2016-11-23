@@ -3,8 +3,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/users';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Snackbar from 'material-ui/Snackbar';
 import Navbar from './Navbar';
 import muiTheme from '../styles/theme/collegemate.theme';
+import {toggleSnackbar} from '../actions/snackbar'
 import tz from 'moment-timezone';
 
 class Main extends React.Component {
@@ -19,6 +21,12 @@ class Main extends React.Component {
         <div>
           <Navbar parentProps={this.props}/>
           { React.cloneElement(this.props.children, this.props) }
+          <Snackbar
+              open={this.props.snackbar.open}
+              message={this.props.snackbar.text}
+              autoHideDuration={4000}
+              onRequestClose={() => this.props.actions.toggleSnackbar()}
+          />
         </div>
       </MuiThemeProvider>
     );
@@ -27,13 +35,14 @@ class Main extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    auth_user: state.auth_user
+    auth_user: state.auth_user,
+    snackbar: state.snackbar
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(userActions, dispatch)
+    actions: bindActionCreators({...userActions, toggleSnackbar}, dispatch)
   };
 }
 
