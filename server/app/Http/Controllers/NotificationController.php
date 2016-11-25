@@ -111,20 +111,20 @@ class NotificationController extends Controller
         $category_guid = $request['category_guid'];
         $category_ids = Category::whereIn('category_guid', explode(',', $category_guid))
             ->pluck('id');
+        $notifications = NotificationData::whereIn('category_id', $category_ids->toArray());
 
-        $data =
-            NotificationData::whereIn('category_id', $category_ids->toArray())->with([
-                'publisher' => function ($query) use ($institute_guid) {
-                    $query->with(['userProfile', 'institutes' => function ($institutes) use ($institute_guid) {
-                        $institutes->where('inst_profile_guid', $institute_guid)
-                            ->select('id', 'designation')->get();
-                    }]);
-                },
-                'notificationFiles',
-                'category'
-            ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
+        $data = $notifications->with([
+            'publisher' => function ($query) use ($institute_guid) {
+                $query->with(['userProfile', 'institutes' => function ($institutes) use ($institute_guid) {
+                    $institutes->where('inst_profile_guid', $institute_guid)
+                        ->select('id', 'designation')->get();
+                }]);
+            },
+            'notificationFiles',
+            'category'
+        ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
 
-        $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
+        $total = $notifications->count();
         $nextPage = $page + 1;
         $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
         $next_page_url = ($nextPage - 1) * 10 < $total ?
