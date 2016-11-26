@@ -14,17 +14,19 @@ export function announcementFormToggle() {
   }
 }
 
-export function createAnnouncementRequest(formData) {
+export function createAnnouncementRequest(formData, filters) {
   return {
     type: CREATE_ANNOUNCEMENT_REQUEST,
-    formData
+    formData,
+    filters
   };
 }
 
-export function createAnnouncementResponse(notification) {
+export function createAnnouncementResponse(notification, filters) {
   return {
     type: CREATE_ANNOUNCEMENT_RESPONSE,
-    notification
+    notification,
+    filters
   }
 }
 
