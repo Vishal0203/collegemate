@@ -31,7 +31,7 @@ class PostController extends Controller
         $page = $request->get('page', 1);
         $skip = ($page - 1) * 10 + $request->get('skip', 0);
 
-        $posts = $posts_query->with(['user', 'tags'])
+        $posts = $posts_query->with(['user', 'tags'])->withCount(['upvotes', 'comments'])
             ->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
 
         foreach ($posts as $post) {
@@ -84,13 +84,17 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param string $institute_guid
-     * @param  int $id
+     * @param $post_guid
      * @return \Illuminate\Http\Response
+     * @internal param int $id
      */
-    public function show($institute_guid, $id)
+    public function show($institute_guid, $post_guid)
     {
-        $post = Post::where('post_guid', '=', $id)->first()->with('comments')->get();
-        return response()->json(compact('post'), 200);
+        $post = Post::where('post_guid', '=', $post_guid)
+            ->with(['comments' => function ($comment) {
+                $comment->withCount('upvotes');
+            }])->withCount(['comments', 'upvotes'])->get()->first();
+        return response()->json(compact('post'));
     }
 
     /**
