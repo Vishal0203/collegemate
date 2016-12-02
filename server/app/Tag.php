@@ -8,7 +8,7 @@ class Tag extends Model
 {
     protected $table = 'tags';
     protected $fillable = ['id','name','tag_guid','type'];
-    protected $hidden = ['id'];
+    protected $hidden = ['id', 'pivot', 'type'];
 
     public function posts()
     {

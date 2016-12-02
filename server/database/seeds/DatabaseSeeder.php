@@ -16,10 +16,10 @@ class DatabaseSeeder extends Seeder
 
 //        $this->call(UsersTableSeed::class);
 //        $this->call(InstituteTableSeed::class);
-        $this->call(UsersInstituteSeed::class);
+//        $this->call(UsersInstituteSeed::class);
 //        $this->call(CategorySeed::class);
 //        $this->call(NotificationDataSeeder::class);
-
+        $this->call(PostSeeder::class);
         Model::reguard();
     }
 }

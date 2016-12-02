@@ -8,9 +8,9 @@ class Post extends Model
 {
     protected $table = 'posts';
 
-    protected $fillable = ['post_guid', 'user_id', 'post_heading', 'post_description'];
+    protected $fillable = ['post_guid', 'user_id', 'post_heading', 'post_description', 'is_anonymous', 'institute_id'];
 
-    protected $hidden = ['id', 'user_id'];
+    protected $hidden = ['id', 'user_id', 'is_anonymous', 'institute_id'];
 
     public function user()
     {
@@ -35,5 +35,15 @@ class Post extends Model
     public function upvotes()
     {
         return $this->morphMany('App\Upvote', 'upvotable');
+    }
+
+    public function upvotesCount()
+    {
+        return $this->morphMany('App\Upvote', 'upvotable')->count();
+    }
+
+    public function commentsCount()
+    {
+        return $this->hasMany('App\Comment')->count();
     }
 }

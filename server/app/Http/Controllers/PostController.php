@@ -4,29 +4,56 @@ namespace App\Http\Controllers;
 
 use App\Institute;
 use App\Post;
+use App\Tag;
+use App\Upvote;
 use Illuminate\Http\Request;
 use Faker;
-use App\Http\Requests;
+use Input;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('belongs_to_institute');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @param string $institute_guid
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index($institute_guid)
+    public function index($institute_guid, Request $request)
     {
-        $posts = Institute::where('inst_profile_guid', '=', $institute_guid)->first()->posts();
-        return response()->json(compact('posts'));
+        $posts_query = Institute::where('inst_profile_guid', $institute_guid)->first()->posts();
+        $page = $request->get('page', 1);
+        $skip = ($page - 1) * 10 + $request->get('skip', 0);
+
+        $posts = $posts_query->with(['user', 'tags'])
+            ->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
+
+        foreach ($posts as $post) {
+            if ($post['is_anonymous']) {
+                unset($post['user']);
+            }
+        }
+
+        $total = $posts_query->count();
+        $nextPage = $page + 1;
+        $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
+        $next_page_url = ($nextPage - 1) * 10 < $total ?
+            $request->url() . "?" . http_build_query($query_params) : null;
+
+        return response()->json(compact('total', 'next_page_url', 'posts'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param string $institute_guid
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store($institute_guid, Request $request)
@@ -35,17 +62,21 @@ class PostController extends Controller
         $institute = Institute::where('inst_profile_guid', '=', $institute_guid)->first();
         $post = Post::create([
             'post_guid' => $internals->uuid,
-            'user_id' => \Auth::user()->id,
-            'visibility' => $request['visibility'],
+            'user_id' => \Auth::user()['id'],
             'is_anonymous' => $request['is_anonymous'],
             'post_heading' => $request['post_heading'],
             'post_description' => $request['post_description'],
             'institute_id' => $institute->id
         ]);
         foreach ($request['tags'] as $tag_guid) {
-            $tag = Tag::where('tag_guid', '=', $tag_guid)->first();
+            $tag = Tag::where('tag_guid', $tag_guid)->where('type', 'posts')->first();
             $post->tags()->attach($tag);
         }
+
+        if (!$post['is_anonymous']) {
+            $post->load('user');
+        }
+        $post->load('tags');
         return response()->json(compact('post'), 201);
     }
 
@@ -53,7 +84,7 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param string $institute_guid
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($institute_guid, $id)
@@ -65,7 +96,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -76,15 +107,15 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @param string $institute_guid
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $institute_guid, $id)
     {
         $post = Post::where('post_guid', '=', $id)->first();
-        $postUser=$post->user()->get();
+        $postUser = $post->user()->get();
         $user = \Auth::user();
         if ($user->id == $postUser->id) {
             $post->update([
@@ -101,24 +132,21 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param string $institute_guid
-     * @param  int  $id
+     * @param $institute_quid
+     * @param $post_guid
+     * @param Request $request
      * @return \Illuminate\Http\Response
+     * @internal param int $id
      */
-    public function destroy($institute_guid, $id)
+    public function destroy($institute_quid, $post_guid, Request $request)
     {
-        $post = Post::where('post_guid', '=', $id)->first();
-        $postUser=$post->user()->get();
+        $post = Post::where('post_guid', $post_guid)->first();
+        $postUser = $post->user()->get()->first();
         $user = \Auth::user();
 
-        $staffInstitute = Institute::where('inst_profile_guid', $institute_guid)
-            ->wherehas('users', function ($q) use ($user) {
-                $q->where('role', '!=', 'inst_student')->where('id', $user->id);
-            })->get();
-
-        if (!$staffInstitute->isEmpty() || $user->id == $postUser->id) {
+        if ($request->attributes->get('auth_user_role') != 'inst_student' || $user['id'] == $postUser['id']) {
             $post->tags()->detach();
-            $post->upvotes()->detach();
+            $post->upvotes()->delete();
             $post->comments()->delete();
             $post->delete();
             return response()->json(['success' => 'post removed successfully'], 201);
@@ -128,8 +156,22 @@ class PostController extends Controller
 
     public function upvote($institute_guid, $post_guid)
     {
-        Post::where('post_guid', '=', $post_guid)->upvotes()->create([
-            'user_id' => \Auth::user()->id
-        ]);
+        $post = Post::where('post_guid', $post_guid)->first();
+        $user = \Auth::user();
+
+        if ($post['user_id'] == $user['id']) {
+            return response()->json(['error' => 'You cannot upvote your own question']);
+        }
+
+        $upvote = Upvote::where('upvotable_id', $post['id'])->where('user_id', $user['id'])->first();
+        if ($upvote) {
+            $upvote->delete();
+        } else {
+            $post->upvotes()->create([
+                'user_id' => \Auth::user()['id']
+            ]);
+        }
+
+        return response()->json(['upvotes_count' => $post->upvotesCount()]);
     }
 }
