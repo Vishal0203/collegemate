@@ -128,7 +128,7 @@ class PostController extends Controller
                 'post_heading' => $request['post_heading'],
                 'post_description' => $request['post_description'],
             ]);
-            return response()->json(compact('job'), 202);
+            return response()->json(compact('post'), 202);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);
     }
