@@ -23,7 +23,8 @@ class BelongsToInstitute
      */
     public function handle($request, Closure $next)
     {
-        $institute_guid = $request->route('institute_guid');
+        $institute_guid = $request['institute_guid'] == null ?
+            $request->route('institute_guid') : $request['institute_guid'];
         $user = $this->auth->user();
 
         if ($user['todevs_superuser'] == 1 || $user['todevs_staff'] == 1) {

@@ -93,4 +93,12 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::get('subscriptions', 'SubscriptionsController@index');
         Route::get('unsubscribe', 'SubscriptionsController@unsubscribe');
     });
+    Route::group(['prefix' => 'post/{post_guid}'], function () {
+        Route::post('comment/{comment_guid}/upvote', 'CommentController@upvote');
+        Route::resource(
+            'comment',
+            'CommentController',
+            ['only' => ['index', 'store', 'update', 'destroy']]
+        );
+    });
 });

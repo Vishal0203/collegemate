@@ -28,4 +28,9 @@ class Comment extends Model
     {
         return $this->morphMany('App\Upvote', 'upvotable');
     }
+
+    public function upvotesCount()
+    {
+        return $this->morphMany('App\Upvote', 'upvotable')->count();
+    }
 }
