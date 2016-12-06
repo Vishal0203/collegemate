@@ -32,6 +32,12 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         ['only' => ['index', 'store', 'destroy']]
     );
 
+    Route::resource(
+        'tags',
+        'TagsController',
+        ['only' => ['index']]
+    );
+
     Route::group(['prefix' => 'institute/{institute_guid}'], function () {
         Route::get('file/{short_code}', 'FilesController@getFile');
         Route::get('files/download', 'FilesController@downloadAll');
@@ -93,6 +99,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::get('subscriptions', 'SubscriptionsController@index');
         Route::get('unsubscribe', 'SubscriptionsController@unsubscribe');
     });
+
     Route::group(['prefix' => 'post/{post_guid}'], function () {
         Route::post('comment/{comment_guid}/upvote', 'CommentController@upvote');
         Route::resource(
