@@ -6,7 +6,7 @@ import {
   FETCH_ANNOUNCEMENTS_RESPONSE,
   ON_FILTER_ADD,
   ON_FILTER_REMOVE
-} from '../actions/announcements/index';
+} from '../actions/announcements';
 
 const initialState = {
   toggleForm: false,

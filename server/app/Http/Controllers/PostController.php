@@ -40,7 +40,7 @@ class PostController extends Controller
             }
         }
 
-        $total = $posts_query->count();
+        $total = Institute::where('inst_profile_guid', $institute_guid)->first()->posts()->count();
         $nextPage = $page + 1;
         $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
         $next_page_url = ($nextPage - 1) * 10 < $total ?
@@ -77,6 +77,8 @@ class PostController extends Controller
             $post->load('user');
         }
         $post->load('tags');
+        $post['upvotes_count'] = $post->upvotesCount();
+        $post['comments_count'] = $post->commentsCount();
         return response()->json(compact('post'), 201);
     }
 
@@ -90,7 +92,7 @@ class PostController extends Controller
      */
     public function show($institute_guid, $post_guid)
     {
-        $post = Post::where('post_guid', '=', $post_guid)
+        $post = Post::where('post_guid', $post_guid)
             ->with(['comments' => function ($comment) {
                 $comment->withCount('upvotes');
             }])->withCount(['comments', 'upvotes'])->get()->first();
