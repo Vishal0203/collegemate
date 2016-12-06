@@ -1,6 +1,7 @@
 @import "_navbar.css";
 @import "_header.css";
 @import "_animations.css";
+@import "_interactions.css";
 
 body {
     margin: 0;
@@ -56,15 +57,15 @@ body {
 }
 
 .chip {
-    margin: 4px !important;
     border-radius: 3px !important;
-    height: 28px;
     border: thin solid rgba(57, 67, 91, 0.15) !important;
     background-color: rgba(225, 225, 225, 0.45) !important;
+    margin: 8px 8px 0 0 !important;
+    float: left;
 }
 
 .chip > svg {
     margin: 5px 4px 0 -6px !important;
-    height: 18px !important;
-    width: 18px !important;
+    height: 16px !important;
+    width: 16px !important;
 }
