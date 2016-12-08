@@ -39,7 +39,6 @@ export default function userReducer(state = {user: {}, selectedInstitute: {filte
       const index = filters.indexOf(action.filter);
       let newFiltersSet = [...filters.slice(0, index), ...filters.slice(index + 1)];
       if (newFiltersSet.length == 0) {
-        console.log('reached');
         newFiltersSet = [...state.selectedInstitute.categories]
       }
       return {

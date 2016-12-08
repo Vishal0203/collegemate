@@ -10,7 +10,7 @@ body {
 
 .wrap {
     box-sizing: border-box;
-    max-width: 84%;
+    max-width: 86%;
     margin: 0 auto;
 }
 
@@ -68,4 +68,8 @@ body {
     margin: 5px 4px 0 -6px !important;
     height: 16px !important;
     width: 16px !important;
+}
+
+.post-chip {
+    height: 25px !important;
 }

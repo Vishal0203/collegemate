@@ -6,10 +6,3 @@ export function toggleSnackbar(message = '') {
     message
   }
 }
-
-export function hideSnackbar() {
-  return {
-    type: HIDE_SNACKBAR
-  }
-}
-
