@@ -21,6 +21,8 @@ class Header extends Component {
       case 'Interaction':
         this.parentProps.actions.postFormToggle();
         break;
+      case 'InteractionSingle':
+        this.parentProps.actions.commentFormToggle();
     }
   }
 
@@ -64,7 +66,7 @@ class Header extends Component {
           form = (
             <Grid>
               <div key="interactionForm-0" className="wrap" style={{marginTop: '20px'}}>
-                <InteractionForm onCancelClick={() => this.toggleForm('Interaction')} parentProps={parentProps}/>
+                <InteractionForm onCancelClick={() => this.toggleForm('Interaction')} type="Interactions" parentProps={parentProps}/>
               </div>
             </Grid>
           )
@@ -79,8 +81,35 @@ class Header extends Component {
                 </Row>
               </Col>
             </div>
-          )
+          );
         }
+        break;
+      }
+      case 'InteractionSingle': {
+        if (hasButton && parentProps.interactions.toggleCommentForm) {
+          headerHeight = {height: '350px'};
+          actionButton = '';
+          form = (
+            <Grid>
+              <div key="interactionForm-0" className="wrap" style={{marginTop: '20px'}}>
+                <InteractionForm onCancelClick={() => this.toggleForm('InteractionSingle')} type="InteractionSingle" parentProps={parentProps}/>
+              </div>
+            </Grid>
+          )
+        } else {
+          form = '';
+          actionButton = (
+            <div key="interactionForm-1">
+              <Col xs={12}>
+                <Row center="xs" className="header-or">or</Row>
+                <Row center="xs">
+                  <RaisedButton label={buttonLabel} primary={true} className="header-button" onClick={() => this.toggleForm('InteractionSingle')}/>
+                </Row>
+              </Col>
+            </div>
+          );
+        }
+        break;
       }
     }
 

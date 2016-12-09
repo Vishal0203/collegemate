@@ -73,3 +73,23 @@ body {
 .post-chip {
     height: 25px !important;
 }
+
+.post-content p {
+    margin: 0;
+}
+
+.post-content pre {
+    background: rgba(237, 237, 237, 0.71);
+    border-radius: 1px;
+    padding: 8px;
+}
+
+.post-content code {
+    background: rgba(237, 237, 237, 0.71);
+    border-radius: 1px;
+}
+
+.card-divider {
+    width: 95%;
+    margin: 0.5em auto !important;
+}

@@ -100,7 +100,7 @@ export default function announcementReducer(state = initialState, action) {
       return {...state, toggleForm: !state.toggleForm};
     }
     case '@@router/LOCATION_CHANGE': {
-      if (action.payload.pathname == '/interactions') {
+      if (action.payload.pathname != '/') {
         return {
           ...initialState,
           categories: state.categories,

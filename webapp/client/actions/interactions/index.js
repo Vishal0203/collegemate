@@ -9,9 +9,42 @@ export const FETCH_POSTS_RESPONSE = 'FETCH_POSTS_RESPONSE';
 export const TAGS_FETCH = 'TAGS_FETCH';
 export const TAGS_RESPONSE = 'TAGS_RESPONSE';
 
+export const FETCH_SINGLE_POST_REQUEST = 'FETCH_SINGLE_POST_REQUEST';
+export const FETCH_SINGLE_POST_RESPONSE = 'FETCH_SINGLE_POST_RESPONSE';
+
+export const ADD_COMMENT_TOGGLE = 'ADD_COMMENT_TOGGLE';
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_RESPONSE = 'ADD_COMMENT_RESPONSE';
+
+export const TOGGLE_COMMENT_UPVOTE_REQUEST = 'TOGGLE_COMMENT_UPVOTE_REQUEST';
+export const TOGGLE_COMMENT_UPVOTE_RESPONSE = 'TOGGLE_COMMENT_UPVOTE_RESPONSE';
+
+export const DELETE_COMMENT_REQUEST = 'DELETE_COMMENT_REQUEST';
+export const DELETE_COMMENT_RESPONSE = 'DELETE_COMMENT_RESPONSE';
+
+export const TOGGLE_POST_UPVOTE_REQUEST = 'TOGGLE_POST_UPVOTE_REQUEST';
+export const TOGGLE_POST_UPVOTE_RESPONSE = 'TOGGLE_POST_UPVOTE_RESPONSE';
+
+export const TOGGLE_POST_UPDATE_FORM = 'TOGGLE_POST_UPDATE_FORM';
+
+export const UPDATE_POST_REQUEST = 'UPDATE_POST_REQUEST';
+export const UPDATE_POST_RESPONSE = 'UPDATE_POST_RESPONSE';
+
+export const DELETE_POST_REQUEST = 'DELETE_POST_REQUEST';
+export const DELETE_POST_RESPONSE = 'DELETE_POST_RESPONSE';
+
+export const EDIT_COMMENT_REQUEST = 'EDIT_COMMENT_REQUEST';
+export const EDIT_COMMENT_RESPONSE = 'EDIT_COMMENT_RESPONSE';
+
 export function postFormToggle() {
   return {
     type: CREATE_POST_TOGGLE
+  }
+}
+
+export function commentFormToggle() {
+  return {
+    type: ADD_COMMENT_TOGGLE
   }
 }
 
@@ -56,5 +89,137 @@ export function createPostResponse(post) {
   return {
     type: CREATE_POST_RESPONSE,
     post
+  }
+}
+
+export function fetchSinglePostRequest(url,url_params) {
+  return {
+    type: FETCH_SINGLE_POST_REQUEST,
+    url,
+    url_params
+  }
+}
+
+export function fetchSinglePostResponse(response) {
+  return {
+    type: FETCH_SINGLE_POST_RESPONSE,
+    response
+  }
+}
+
+export function togglePostUpvoteRequest(instituteGuid, postGuid) {
+  return {
+    type: TOGGLE_POST_UPVOTE_REQUEST,
+    instituteGuid,
+    postGuid
+  }
+}
+
+export function togglePostUpvoteResponse(response) {
+  return {
+    type: TOGGLE_POST_UPVOTE_RESPONSE,
+    response
+  }
+}
+
+export function togglePostUpdateForm() {
+  return {
+    type: TOGGLE_POST_UPDATE_FORM
+  }
+}
+
+export function updatePostRequest(instituteGuid, postGuid, formData) {
+  return {
+    type: UPDATE_POST_REQUEST,
+    instituteGuid,
+    postGuid,
+    formData
+  }
+}
+
+export function updatePostResponse(response) {
+  return {
+    type: UPDATE_POST_RESPONSE,
+    response
+  }
+}
+
+export function deletePostRequest(instituteGuid, postGuid) {
+  return {
+    type: DELETE_POST_REQUEST,
+    instituteGuid,
+    postGuid
+  }
+}
+
+export function deletePostResponse(response) {
+  return {
+    type: DELETE_POST_RESPONSE,
+    response
+  }
+}
+
+export function addCommentRequest(postGuid, formData) {
+  return {
+    type: ADD_COMMENT_REQUEST,
+    postGuid,
+    formData
+  }
+}
+export function addCommentResponse(response) {
+  return {
+    type: ADD_COMMENT_RESPONSE,
+    response
+  }
+}
+
+export function toggleCommentUpvoteRequest(postGuid, comment, formData) {
+  return {
+    type: TOGGLE_COMMENT_UPVOTE_REQUEST,
+    formData,
+    postGuid,
+    comment
+  }
+}
+
+export function toggleCommentUpvoteResponse(comment, response) {
+  return {
+    type: TOGGLE_COMMENT_UPVOTE_RESPONSE,
+    comment,
+    response
+  }
+}
+
+export function deleteCommentRequest(postGuid, comment, formData) {
+  return {
+    type: DELETE_COMMENT_REQUEST,
+    formData,
+    postGuid,
+    comment
+  }
+}
+
+export function deleteCommentResponse(comment, response) {
+  return {
+    type: DELETE_COMMENT_RESPONSE,
+    comment,
+    response
+  }
+}
+
+export function editCommentRequest(postGuid, comment, formData) {
+  return {
+    type: EDIT_COMMENT_REQUEST,
+    postGuid,
+    comment,
+    formData
+  }
+}
+
+export function editCommentResponse(comment, response) {
+  return {
+    type: EDIT_COMMENT_RESPONSE,
+    comment,
+    response
   }
 }

@@ -89,10 +89,19 @@ class PostController extends Controller
      */
     public function show($institute_guid, $post_guid)
     {
+        $user = \Auth::user();
         $post = Post::where('post_guid', $post_guid)
             ->with(['comments' => function ($comment) {
                 $comment->withCount('upvotes');
-            }])->withCount(['comments', 'upvotes'])->get()->first();
+                $comment->with('user');
+                $comment->orderBy('created_at', 'DESC');
+            }, 'tags', 'user'])->withCount(['comments', 'upvotes'])->get()->first();
+
+        $post->isEditable = ($post->user->user_guid == $user->user_guid);
+
+        if ($post['is_anonymous']) {
+            unset($post['user']);
+        }
         return response()->json(compact('post'));
     }
 
@@ -117,16 +126,25 @@ class PostController extends Controller
      */
     public function update(Request $request, $institute_guid, $id)
     {
+        //ToDo Need to add tags and send user
         $post = Post::where('post_guid', '=', $id)->first();
-        $postUser = $post->user()->get();
+        $postUser = $post->user()->first();
         $user = \Auth::user();
         if ($user->id == $postUser->id) {
+            $post->tags()->detach();
             $post->update([
-                'visibility' => $request['visibility'],
                 'is_anonymous' => $request['is_anonymous'],
                 'post_heading' => $request['post_heading'],
                 'post_description' => $request['post_description'],
             ]);
+            foreach ($request['tags'] as $tag_guid) {
+                $tag = Tag::where('tag_guid', $tag_guid)->where('type', 'posts')->first();
+                $post->tags()->attach($tag);
+            }
+            $post->load('tags', 'user');
+            if ($post['is_anonymous']) {
+                unset($post['user']);
+            }
             return response()->json(compact('post'), 202);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);
@@ -152,7 +170,7 @@ class PostController extends Controller
             $post->upvotes()->delete();
             $post->comments()->delete();
             $post->delete();
-            return response()->json(['success' => 'post removed successfully'], 201);
+            return response()->json(['success' => 'Post removed successfully'], 201);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);
     }

@@ -88,6 +88,7 @@ export default class Navbar extends React.Component {
   }
 
   getTabIndex(pathname) {
+
     switch (pathname) {
       case '/': {
         return 0

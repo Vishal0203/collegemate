@@ -49,7 +49,8 @@ class CommentController extends Controller
             'comment' => $request['comment'],
         ]);
 
-        $comment->load(['post','user']);
+        $comment->load(['user']);
+        $comment['upvotes_count'] = $comment->upvotesCount();
         return response()->json(compact('comment'), 201);
     }
 
@@ -67,9 +68,9 @@ class CommentController extends Controller
         if (!$comment) {
             return response()->json(['Error' => 'Comment not found.'], 400);
         }
-        $commentUser = $comment->user()->get();
+        $commentUser = $comment->user()->first();
         $user = \Auth::user();
-        if ($user->id == 1) {
+        if ($user->id == $commentUser->id) {
             $comment->update([
                 'comment' => $request['comment'],
             ]);
@@ -95,7 +96,7 @@ class CommentController extends Controller
         $user = \Auth::user();
         if ($request->attributes->get('auth_user_role') != 'inst_student' || $user['id'] == $commentUser['id']) {
             $comment->delete();
-            return response()->json(['success' => 'comment removed successfully'], 201);
+            return response()->json(['success' => 'Answer removed successfully'], 201);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);
     }
