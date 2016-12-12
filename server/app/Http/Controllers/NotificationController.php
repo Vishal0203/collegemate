@@ -11,6 +11,8 @@ use Input;
 use Storage;
 use App\Category;
 use Faker;
+use Event;
+use App\Events\NewAnnouncement;
 
 class NotificationController extends Controller
 {
@@ -84,6 +86,8 @@ class NotificationController extends Controller
                     ->select('id', 'designation')->get();
             }]);
         }, 'notificationFiles', 'category']);
+
+        Event::fire(new NewAnnouncement($notification, $institute_guid));
         return response()->json(compact('notification'), 200);
     }
 
@@ -124,7 +128,7 @@ class NotificationController extends Controller
             'category'
         ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
 
-        $total = $notifications->count();
+        $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
         $nextPage = $page + 1;
         $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
         $next_page_url = ($nextPage - 1) * 10 < $total ?

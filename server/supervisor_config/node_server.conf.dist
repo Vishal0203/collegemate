@@ -1,6 +1,6 @@
 [program:pubsub-server]
-directory=<application_root>/nodejs
-command=npm start
+directory=<application_root>
+command=node-supervisor pubsub-server.js
 autostart=true
 autorestart=true
 stderr_logfile=<application_root>/storage/logs/node_server_err.log

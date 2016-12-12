@@ -22,10 +22,10 @@ class Main extends React.Component {
           <Navbar currentLocation={this.props.location.pathname} parentProps={this.props}/>
           { React.cloneElement(this.props.children, this.props) }
           <Snackbar
-              open={this.props.snackbar.open}
-              message={this.props.snackbar.text}
-              autoHideDuration={4000}
-              onRequestClose={() => this.props.actions.toggleSnackbar()}
+            open={this.props.snackbar.open}
+            message={this.props.snackbar.text}
+            autoHideDuration={4000}
+            onRequestClose={() => this.props.actions.toggleSnackbar()}
           />
         </div>
       </MuiThemeProvider>
