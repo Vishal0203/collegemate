@@ -41,7 +41,7 @@
     "formsy-material-ui": "^0.5.2",
     "formsy-react": "^0.18.1",
     "halogen": "^0.2.0",
-    "material-ui": "^0.16.2",
+    "material-ui": "^0.16.5",
     "material-ui-chip-input": "^0.11.1",
     "moment": "^2.16.0",
     "moment-timezone": "^0.5.9",
@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
+    "babel-plugin-transform-es2015-classes": "^6.18.0",
     "eslint": "^3.4.0",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-react": "^6.2.0",

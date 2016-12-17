@@ -1,7 +1,6 @@
 export const USER_LOGIN_REQUEST = 'USER_LOGIN_REQUEST';
 export const USER_LOGIN_RESPONSE = 'USER_LOGIN_RESPONSE';
-export const ADD_FILTER = 'ADD_FILTER';
-export const REMOVE_FILTER = 'REMOVE_FILTER';
+export const SUBSCRIBE_CHANNEL = 'SUBSCRIBE_CHANNEL';
 
 export function userLogin() {
   return {
@@ -16,16 +15,11 @@ export function userLoginResponse(userData) {
   }
 }
 
-export function addFilter(filter) {
+export function subscribeChannel(subscriptionType, channelName, nextAction) {
   return {
-    type: ADD_FILTER,
-    filter
-  }
-}
-
-export function removeFilter(filter) {
-  return {
-    type: REMOVE_FILTER,
-    filter
+    type: SUBSCRIBE_CHANNEL,
+    subscriptionType,
+    channelName,
+    nextAction
   }
 }

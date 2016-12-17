@@ -18,7 +18,8 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        SERVER_HOST: JSON.stringify(process.env.SERVER_HOST)
+        SERVER_HOST: JSON.stringify(process.env.SERVER_HOST),
+        SOCKET_SERVER: JSON.stringify(process.env.SOCKET_SERVER)
       }
     })
   ],

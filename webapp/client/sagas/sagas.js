@@ -1,13 +1,14 @@
-import {takeEvery, takeLatest} from 'redux-saga';
-import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements';
-import {USER_LOGIN_REQUEST} from '../actions/users';
-import {TAGS_FETCH, CREATE_POST_REQUEST, FETCH_POSTS_REQUEST} from '../actions/interactions';
-import {fork, put, call} from 'redux-saga/effects';
-import {createAnnouncementResponse, fetchAnnouncementResponse} from '../actions/announcements';
-import {userLoginResponse} from '../actions/users/index';
+import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
+import {fork, put, call, take} from 'redux-saga/effects';
+import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
+import {USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL} from '../actions/users/index';
+import {TAGS_FETCH, CREATE_POST_REQUEST, FETCH_POSTS_REQUEST} from '../actions/interactions/index';
+import {announcementFormToggle, newAnnouncementAdded, fetchAnnouncementResponse, setAnnouncementCategories} from '../actions/announcements/index';
+import {userLoginResponse, subscribeChannel} from '../actions/users/index';
 import {HttpHelper} from './apis';
-import {toggleSnackbar} from '../actions/snackbar/index'
-import {fetchTagsResponse, createPostResponse, fetchPostsResponse} from '../actions/interactions'
+import {showSnackbar} from './utils'
+import {fetchTagsResponse, createPostResponse, fetchPostsResponse} from '../actions/interactions/index'
+import createWebSocketConnection from './SocketConnection';
 
 function *createAnnouncement(params) {
   let data = new FormData();
@@ -21,8 +22,10 @@ function *createAnnouncement(params) {
   const response = yield call(
     HttpHelper, `institute/${params.formData.instituteGuid}/notification`, 'POST', data, null
   );
-  yield put(createAnnouncementResponse(response.data.notification, params.filters));
-  yield put(toggleSnackbar(`Announcement posted in ${response.data.notification.category.category_type}`));
+
+  if (response.status == 200) {
+    yield put(announcementFormToggle())
+  }
 }
 
 function *userAuthentication() {
@@ -32,7 +35,14 @@ function *userAuthentication() {
   };
 
   const response = yield call(HttpHelper, 'login', 'POST', data, null);
+  const categories = response.data.user.default_institute.categories;
+  yield put(setAnnouncementCategories(categories));
   yield put(userLoginResponse(response.data));
+  for (let i in categories) {
+    const channelName = `category_${categories[i].category_guid}:new-announcement`;
+    // subscribing to a channel of announcement type
+    yield put(subscribeChannel('announcement', channelName, newAnnouncementAdded))
+  }
 }
 
 function *fetchAnnouncements(params) {
@@ -59,8 +69,8 @@ function *createPost(params) {
 }
 
 /*
-  Saga watchers beneath this
-*/
+ Saga watchers beneath this
+ */
 
 function *userAuthenticationRequest() {
   yield *takeLatest(USER_LOGIN_REQUEST, userAuthentication);
@@ -86,6 +96,40 @@ function *watchCreatePostRequest() {
   yield *takeLatest(CREATE_POST_REQUEST, createPost)
 }
 
+/*
+ Socket
+ */
+
+function createSocketChannel(socket, channelName) {
+  return eventChannel((emit) => {
+    const handleEvent = (event) => {
+      emit(event)
+    };
+
+    socket.on(channelName, handleEvent);
+    const unsubscribe = () => {
+      socket.off(channelName, handleEvent)
+    };
+
+    return unsubscribe
+  })
+}
+
+function *watchOnSocketEvents(params) {
+  const socket = yield call(createWebSocketConnection);
+  const socketChannel = yield call(createSocketChannel, socket, params.channelName);
+
+  while (true) {
+    const payload = yield take(socketChannel);
+    yield put(params.nextAction(payload));
+    yield call(showSnackbar, params.subscriptionType, payload)
+  }
+}
+
+function *watchChannelSubscription() {
+  yield *takeEvery(SUBSCRIBE_CHANNEL, watchOnSocketEvents)
+}
+
 export default function *rootSaga() {
   yield [
     fork(userAuthenticationRequest),
@@ -93,6 +137,7 @@ export default function *rootSaga() {
     fork(watchCreatePostRequest),
     fork(watchAnnouncementFetch),
     fork(watchPostsFetch),
-    fork(watchTagsRequest)
+    fork(watchTagsRequest),
+    fork(watchChannelSubscription)
   ]
 }

@@ -46,8 +46,7 @@ class AnnouncementForm extends React.Component {
       notificationCategory: this.refs.notificationCategory.props.value,
       notificationAttachments: this.refs.notificationAttachments.files
     };
-    const filters = this.parentProps.auth_user.selectedInstitute.filters;
-    this.parentProps.actions.createAnnouncementRequest(formData, filters);
+    this.parentProps.actions.createAnnouncementRequest(formData);
   }
 
   handleChange(event, index, value) {

@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Announcement from './Announcement'
 import * as announcementActions  from '../../actions/announcements/index';
-import {addFilter, removeFilter} from '../../actions/users/index';
 import Header from '../Header';
 import Loader from 'halogen/BeatLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
@@ -54,7 +53,7 @@ class AnnouncementsContainer extends Component {
 
   loadMore() {
     if (Object.keys(this.props.auth_user.user).length != 0) {
-      const categories = this.props.auth_user.selectedInstitute.filters.map(function (a) {
+      const categories = this.props.announcements.filters.map(function (a) {
         return a.category_guid
       }).join(',');
       const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
@@ -70,12 +69,10 @@ class AnnouncementsContainer extends Component {
 
   handleFilterDelete(category) {
     this.props.actions.removeFilter(category);
-    this.props.actions.onFilterRemove()
   }
 
   handleFilterSelect(category) {
     this.props.actions.addFilter(category);
-    this.props.actions.onFilterAdd()
   }
 
   renderAnnouncements() {
@@ -86,9 +83,9 @@ class AnnouncementsContainer extends Component {
 
   renderFilterChips() {
     if (Object.keys(this.props.auth_user.user).length != 0) {
-      const institute = this.props.auth_user.selectedInstitute;
+      const categories = this.props.announcements.categories;
       if (Object.keys(this.props.auth_user.user).length != 0) {
-        return institute.categories.map((category, i) =>
+        return categories.map((category, i) =>
           <Chip key={i} className="chip" onTouchTap={() => this.handleFilterSelect(category)}
                 labelStyle={this.styles.chipLabel}>
             {category.category_type}
@@ -100,15 +97,15 @@ class AnnouncementsContainer extends Component {
 
   renderSelectedFilters() {
     if (Object.keys(this.props.auth_user.user).length != 0) {
-      const institute = this.props.auth_user.selectedInstitute;
-      if (institute.filters.length == institute.categories.length) {
+      const {categories, filters} = this.props.announcements;
+      if (filters.length == categories.length) {
         return (
           <label style={this.styles.selectedFilterLabel}>All Categories</label>
         )
       }
       else {
         return (
-          institute.filters.map((category, i) =>
+          filters.map((category, i) =>
             <Chip key={i} className="chip" onRequestDelete={() => this.handleFilterDelete(category)}
                   labelStyle={this.styles.chipLabel}>
               {category.category_type}
@@ -179,7 +176,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...announcementActions, addFilter, removeFilter}, dispatch)
+    actions: bindActionCreators({...announcementActions}, dispatch)
   };
 }
 
