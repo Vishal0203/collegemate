@@ -61,6 +61,7 @@
     "redux": "^3.5.2",
     "redux-infinite-scroll": "^1.0.9",
     "redux-saga": "^0.11.1",
+    "socket.io-client": "^1.7.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.6.1",

@@ -19,7 +19,6 @@ const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 store.runSaga(rootSaga);
 
-
 const router = (
   <Provider store={store}>
     <Router history={history}>
@@ -36,4 +35,3 @@ ReactDOM.render(
   router,
   document.getElementById('root')
 );
-
