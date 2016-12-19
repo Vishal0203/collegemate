@@ -67,28 +67,16 @@ export default function announcementReducer(state = initialState, action) {
       const {categories, filters} = state;
       if (categories.length == filters.length) {
         return {
-          ...state,
-          filters: [action.filter],
-          loadingMore: false,
-          nextPageUrl: null,
-          hasMore: true,
-          skip: 0,
-          items: {
-            data: []
-          }
+          ...initialState,
+          categories,
+          filters: [action.filter]
         }
       }
       else if (categories.length != filters.length && filters.indexOf(action.filter) == -1) {
         return {
-          ...state,
-          filters: [action.filter, ...state.filters],
-          loadingMore: false,
-          nextPageUrl: null,
-          hasMore: true,
-          skip: 0,
-          items: {
-            data: []
-          }
+          ...initialState,
+          categories,
+          filters: [action.filter, ...state.filters]
         }
       }
       else {
@@ -96,22 +84,16 @@ export default function announcementReducer(state = initialState, action) {
       }
     }
     case REMOVE_FILTER: {
-      const {filters} = state;
+      const {categories, filters} = state;
       const index = filters.indexOf(action.filter);
       let newFiltersSet = [...filters.slice(0, index), ...filters.slice(index + 1)];
       if (newFiltersSet.length == 0) {
         newFiltersSet = [...state.categories]
       }
       return {
-        ...state,
-        filters: newFiltersSet,
-        loadingMore: false,
-        nextPageUrl: null,
-        hasMore: true,
-        skip: 0,
-        items: {
-          data: []
-        }
+        ...initialState,
+        categories,
+        filters: newFiltersSet
       }
     }
     case CREATE_ANNOUNCEMENT_TOGGLE: {
@@ -119,7 +101,11 @@ export default function announcementReducer(state = initialState, action) {
     }
     case '@@router/LOCATION_CHANGE': {
       if (action.payload.pathname == '/interactions') {
-        return initialState
+        return {
+          ...initialState,
+          categories: state.categories,
+          filters: state.filters
+        }
       }
     }
     default: {
