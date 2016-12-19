@@ -1,14 +1,17 @@
 import {
   CREATE_ANNOUNCEMENT_REQUEST,
-  CREATE_ANNOUNCEMENT_RESPONSE,
+  NEW_ANNOUNCEMENT_ADDED,
   CREATE_ANNOUNCEMENT_TOGGLE,
   FETCH_ANNOUNCEMENTS_REQUEST,
   FETCH_ANNOUNCEMENTS_RESPONSE,
-  ON_FILTER_ADD,
-  ON_FILTER_REMOVE
+  SET_ANNOUNCEMENT_CATEGORIES,
+  ADD_FILTER,
+  REMOVE_FILTER
 } from '../actions/announcements';
 
 const initialState = {
+  categories: [],
+  filters: [],
   toggleForm: false,
   loadingMore: false,
   nextPageUrl: null,
@@ -25,21 +28,19 @@ export default function announcementReducer(state = initialState, action) {
     case CREATE_ANNOUNCEMENT_REQUEST: {
       return {...state, loadingMore: true}
     }
-    case CREATE_ANNOUNCEMENT_RESPONSE: {
+    case NEW_ANNOUNCEMENT_ADDED: {
       const skip = state.skip + 1;
-      const match = action.filters.filter(function (filter) {
+      const match = state.filters.filter(function (filter) {
         return filter.category_guid === action.notification.category.category_guid
       });
       if(match.length == 0) {
         return {
           ...state,
-          toggleForm: !state.toggleForm,
           loadingMore: false
         };
       }
       return {
         ...state,
-        toggleForm: !state.toggleForm,
         skip,
         items: {...state.items, data: [action.notification, ...state.items.data]},
         loadingMore: false
@@ -55,12 +56,71 @@ export default function announcementReducer(state = initialState, action) {
         nextPageUrl: action.response.next_page_url
       };
     }
+    case SET_ANNOUNCEMENT_CATEGORIES: {
+      return {
+        ...state,
+        categories: action.categories,
+        filters: action.categories
+      }
+    }
+    case ADD_FILTER: {
+      const {categories, filters} = state;
+      if (categories.length == filters.length) {
+        return {
+          ...state,
+          filters: [action.filter],
+          loadingMore: false,
+          nextPageUrl: null,
+          hasMore: true,
+          skip: 0,
+          items: {
+            data: []
+          }
+        }
+      }
+      else if (categories.length != filters.length && filters.indexOf(action.filter) == -1) {
+        return {
+          ...state,
+          filters: [action.filter, ...state.filters],
+          loadingMore: false,
+          nextPageUrl: null,
+          hasMore: true,
+          skip: 0,
+          items: {
+            data: []
+          }
+        }
+      }
+      else {
+        return state;
+      }
+    }
+    case REMOVE_FILTER: {
+      const {filters} = state;
+      const index = filters.indexOf(action.filter);
+      let newFiltersSet = [...filters.slice(0, index), ...filters.slice(index + 1)];
+      if (newFiltersSet.length == 0) {
+        newFiltersSet = [...state.categories]
+      }
+      return {
+        ...state,
+        filters: newFiltersSet,
+        loadingMore: false,
+        nextPageUrl: null,
+        hasMore: true,
+        skip: 0,
+        items: {
+          data: []
+        }
+      }
+    }
     case CREATE_ANNOUNCEMENT_TOGGLE: {
       return {...state, toggleForm: !state.toggleForm};
     }
-    case ON_FILTER_REMOVE:
-    case ON_FILTER_ADD: {
-      return initialState
+    case '@@router/LOCATION_CHANGE': {
+      if (action.payload.pathname == '/interactions') {
+        return initialState
+      }
     }
     default: {
       return state

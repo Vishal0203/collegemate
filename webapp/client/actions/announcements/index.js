@@ -1,9 +1,10 @@
 export const CREATE_ANNOUNCEMENT_REQUEST = 'CREATE_ANNOUNCEMENT_REQUEST';
-export const CREATE_ANNOUNCEMENT_RESPONSE = 'CREATE_ANNOUNCEMENT_RESPONSE';
+export const NEW_ANNOUNCEMENT_ADDED = 'NEW_ANNOUNCEMENT_ADDED';
 export const CREATE_ANNOUNCEMENT_TOGGLE = 'CREATE_ANNOUNCEMENT_TOGGLE';
 
-export const ON_FILTER_ADD = 'ON_FILTER_ADD';
-export const ON_FILTER_REMOVE = 'ON_FILTER_REMOVE';
+export const ADD_FILTER = 'ADD_FILTER';
+export const REMOVE_FILTER = 'REMOVE_FILTER';
+export const SET_ANNOUNCEMENT_CATEGORIES = 'SET_ANNOUNCEMENT_CATEGORIES';
 
 export const FETCH_ANNOUNCEMENTS_REQUEST = 'FETCH_ANNOUNCEMENTS_REQUEST';
 export const FETCH_ANNOUNCEMENTS_RESPONSE = 'FETCH_ANNOUNCEMENTS_RESPONSE';
@@ -14,19 +15,17 @@ export function announcementFormToggle() {
   }
 }
 
-export function createAnnouncementRequest(formData, filters) {
+export function createAnnouncementRequest(formData) {
   return {
     type: CREATE_ANNOUNCEMENT_REQUEST,
-    formData,
-    filters
+    formData
   };
 }
 
-export function createAnnouncementResponse(notification, filters) {
+export function newAnnouncementAdded(notification) {
   return {
-    type: CREATE_ANNOUNCEMENT_RESPONSE,
-    notification,
-    filters
+    type: NEW_ANNOUNCEMENT_ADDED,
+    notification
   }
 }
 
@@ -45,14 +44,31 @@ export function fetchAnnouncementResponse(response) {
   }
 }
 
-export function onFilterAdd() {
+export function setAnnouncementCategories(categories) {
   return {
-    type: ON_FILTER_ADD
+    type: SET_ANNOUNCEMENT_CATEGORIES,
+    categories
   }
 }
 
-export function onFilterRemove() {
+export function addFilter(filter) {
   return {
-    type: ON_FILTER_REMOVE
+    type: ADD_FILTER,
+    filter
+  }
+}
+
+export function removeFilter(filter) {
+  return {
+    type: REMOVE_FILTER,
+    filter
+  }
+}
+
+export function socketTest(payload) {
+  console.log(payload);
+  return {
+    type: 'TEST_SOCKET',
+    payload
   }
 }

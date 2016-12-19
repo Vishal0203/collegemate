@@ -51,6 +51,11 @@ export default function interactionReducer(state = initialState, action) {
     case TAGS_RESPONSE: {
       return {...state, tags: [...action.tags]}
     }
+    case '@@router/LOCATION_CHANGE': {
+      if (action.payload.pathname == '/') {
+        return initialState
+      }
+    }
     default: {
       return state
     }
