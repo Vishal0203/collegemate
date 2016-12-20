@@ -1,7 +1,7 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {fork, put, call, take} from 'redux-saga/effects';
 import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
-import {USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL} from '../actions/users/index';
+import {USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL, UNSUBSCRIBE_CHANNEL} from '../actions/users/index';
 import {TAGS_FETCH, CREATE_POST_REQUEST, FETCH_POSTS_REQUEST} from '../actions/interactions/index';
 import {announcementFormToggle, newAnnouncementAdded, fetchAnnouncementResponse, setAnnouncementCategories} from '../actions/announcements/index';
 import {userLoginResponse, subscribeChannel} from '../actions/users/index';
@@ -9,6 +9,8 @@ import {HttpHelper} from './apis';
 import {showSnackbar} from './utils'
 import {fetchTagsResponse, createPostResponse, fetchPostsResponse} from '../actions/interactions/index'
 import createWebSocketConnection from './SocketConnection';
+
+let subscribedChannels = {};
 
 function *createAnnouncement(params) {
   let data = new FormData();
@@ -117,6 +119,7 @@ function createSocketChannel(socket, channelName) {
 function *watchOnSocketEvents(params) {
   const socket = yield call(createWebSocketConnection);
   const socketChannel = yield call(createSocketChannel, socket, params.channelName);
+  subscribedChannels[params.channelName] = socketChannel;
 
   while (true) {
     const payload = yield take(socketChannel);
@@ -129,6 +132,15 @@ function *watchChannelSubscription() {
   yield *takeEvery(SUBSCRIBE_CHANNEL, watchOnSocketEvents)
 }
 
+function *unsubscribeSocketChannel(params) {
+  subscribedChannels[params.channelName].close();
+  delete subscribedChannels[params.channelName]
+}
+
+function *watchChannelUnsubscribe() {
+  yield *takeEvery(UNSUBSCRIBE_CHANNEL, unsubscribeSocketChannel)
+}
+
 export default function *rootSaga() {
   yield [
     fork(userAuthenticationRequest),
@@ -137,6 +149,7 @@ export default function *rootSaga() {
     fork(watchAnnouncementFetch),
     fork(watchPostsFetch),
     fork(watchTagsRequest),
-    fork(watchChannelSubscription)
+    fork(watchChannelSubscription),
+    fork(watchChannelUnsubscribe)
   ]
 }
