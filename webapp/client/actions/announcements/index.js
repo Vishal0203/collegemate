@@ -64,11 +64,3 @@ export function removeFilter(filter) {
     filter
   }
 }
-
-export function socketTest(payload) {
-  console.log(payload);
-  return {
-    type: 'TEST_SOCKET',
-    payload
-  }
-}
