@@ -80,15 +80,8 @@ class NotificationController extends Controller
             $notification->notificationFiles()->saveMany($notification_files);
         }
 
-        $notification->load(['publisher' => function ($query) use ($institute_guid) {
-            $query->with(['userProfile', 'institutes' => function ($institutes) use ($institute_guid) {
-                $institutes->where('inst_profile_guid', $institute_guid)
-                    ->select('id', 'designation')->get();
-            }]);
-        }, 'notificationFiles', 'category']);
-
         Event::fire(new NewAnnouncement($notification, $institute_guid));
-        return response()->json(compact('notification'), 200);
+        return response()->json(['message' => 'Announcement published in ' . $category['category_type']], 200);
     }
 
     /**

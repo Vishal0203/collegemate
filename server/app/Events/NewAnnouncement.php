@@ -49,6 +49,9 @@ class NewAnnouncement extends Event implements ShouldBroadcast
                     ->select('id', 'designation')->get();
             }]);
         }, 'notificationFiles', 'category']);
-        return $this->notification->toArray();
+        return array_merge(
+            $this->notification->toArray(),
+            ['message' => 'Announcement published in ' . $this->notification['category']['category_type']]
+        );
     }
 }
