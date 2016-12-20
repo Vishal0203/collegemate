@@ -15,10 +15,9 @@ export function userLoginResponse(userData) {
   }
 }
 
-export function subscribeChannel(subscriptionType, channelName, nextAction) {
+export function subscribeChannel(channelName, nextAction) {
   return {
     type: SUBSCRIBE_CHANNEL,
-    subscriptionType,
     channelName,
     nextAction
   }

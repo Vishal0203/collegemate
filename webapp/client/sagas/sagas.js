@@ -40,8 +40,7 @@ function *userAuthentication() {
   yield put(userLoginResponse(response.data));
   for (let i in categories) {
     const channelName = `category_${categories[i].category_guid}:new-announcement`;
-    // subscribing to a channel of announcement type
-    yield put(subscribeChannel('announcement', channelName, newAnnouncementAdded))
+    yield put(subscribeChannel(channelName, newAnnouncementAdded))
   }
 }
 
@@ -122,7 +121,7 @@ function *watchOnSocketEvents(params) {
   while (true) {
     const payload = yield take(socketChannel);
     yield put(params.nextAction(payload));
-    yield call(showSnackbar, params.subscriptionType, payload)
+    yield call(showSnackbar, payload.message)
   }
 }
 
