@@ -148,7 +148,6 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider::class,
-        Clockwork\Support\Laravel\ClockworkServiceProvider::class
     ],
 
     /*
