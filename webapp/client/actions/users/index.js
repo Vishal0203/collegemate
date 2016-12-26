@@ -2,10 +2,18 @@ export const USER_LOGIN_REQUEST = 'USER_LOGIN_REQUEST';
 export const USER_LOGIN_RESPONSE = 'USER_LOGIN_RESPONSE';
 export const SUBSCRIBE_CHANNEL = 'SUBSCRIBE_CHANNEL';
 export const UNSUBSCRIBE_CHANNEL = 'UNSUBSCRIBE_CHANNEL';
+export const GOOGLE_AUTH = 'GOOGLE_AUTH';
 
 export function userLogin() {
   return {
     type: USER_LOGIN_REQUEST
+  }
+}
+
+export function oauthLogin(payload) {
+  return {
+    type: GOOGLE_AUTH,
+    payload
   }
 }
 

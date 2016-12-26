@@ -1,11 +1,11 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {fork, put, call, take} from 'redux-saga/effects';
 import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
-import {USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL, UNSUBSCRIBE_CHANNEL} from '../actions/users/index';
+import {GOOGLE_AUTH, USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL, UNSUBSCRIBE_CHANNEL} from '../actions/users/index';
 import {TAGS_FETCH, CREATE_POST_REQUEST, FETCH_POSTS_REQUEST} from '../actions/interactions/index';
 import {announcementFormToggle, newAnnouncementAdded, fetchAnnouncementResponse, setAnnouncementCategories} from '../actions/announcements/index';
 import {userLoginResponse, subscribeChannel} from '../actions/users/index';
-import {HttpHelper} from './apis';
+import {HttpHelper, GoogleSignIn} from './apis';
 import {showSnackbar} from './utils'
 import {fetchTagsResponse, createPostResponse, fetchPostsResponse} from '../actions/interactions/index'
 import createWebSocketConnection from './SocketConnection';
@@ -69,6 +69,19 @@ function *createPost(params) {
   yield put(createPostResponse(response.data.post));
 }
 
+function *googleLogin(params) {
+  const response = yield call(HttpHelper, 'google_token', 'POST', params.payload, null);
+  if (response.data.user.default_institute) {
+    const categories = response.data.user.default_institute.categories;
+    yield put(setAnnouncementCategories(categories));
+    for (let i in categories) {
+      const channelName = `category_${categories[i].category_guid}:new-announcement`;
+      yield put(subscribeChannel(channelName, newAnnouncementAdded))
+    }
+  }
+  yield put(userLoginResponse(response.data));
+}
+
 /*
  Saga watchers beneath this
  */
@@ -95,6 +108,10 @@ function *watchTagsRequest() {
 
 function *watchCreatePostRequest() {
   yield *takeLatest(CREATE_POST_REQUEST, createPost)
+}
+
+function *watchGoogleAuth() {
+  yield *takeLatest(GOOGLE_AUTH, googleLogin)
 }
 
 /*
@@ -143,6 +160,7 @@ function *watchChannelUnsubscribe() {
 
 export default function *rootSaga() {
   yield [
+    fork(watchGoogleAuth),
     fork(userAuthenticationRequest),
     fork(watchCreateAnnouncement),
     fork(watchCreatePostRequest),

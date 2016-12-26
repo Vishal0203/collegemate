@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Main from './components/Main';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import Career from './components/careers/Career';
 import InteractionsContainer from './components/interactions/InteractionsContainer';
@@ -22,6 +23,7 @@ store.runSaga(rootSaga);
 const router = (
   <Provider store={store}>
     <Router history={history}>
+      <Route path='/login' component={Auth}/>
       <Route path='/' component={Main}>
         <IndexRoute component={AnnouncementsContainer}/>
         <Route path='/interactions' component={InteractionsContainer}/>
