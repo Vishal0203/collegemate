@@ -3,6 +3,7 @@ import announcements from './announcementReducer';
 import auth_user from './userReducer';
 import snackbar from './snackbarReducer'
 import interactions from './interactionReducer'
+import misc from './miscReducer';
 import {routerReducer} from 'react-router-redux';
 
 const rootReducer = combineReducers({
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   interactions,
   auth_user,
   snackbar,
+  misc,
   routing: routerReducer
 });
 

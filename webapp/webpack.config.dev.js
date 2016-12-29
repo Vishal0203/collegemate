@@ -19,7 +19,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         SERVER_HOST: JSON.stringify(process.env.SERVER_HOST),
-        SOCKET_SERVER: JSON.stringify(process.env.SOCKET_SERVER)
+        SOCKET_SERVER: JSON.stringify(process.env.SOCKET_SERVER),
+        GOOGLE_CLIENT_ID: JSON.stringify(process.env.GOOGLE_CLIENT_ID)
       }
     })
   ],

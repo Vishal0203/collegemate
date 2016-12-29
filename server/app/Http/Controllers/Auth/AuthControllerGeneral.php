@@ -22,6 +22,63 @@ class AuthControllerGeneral extends Controller
         $this->middleware('guest', ['except' => ['getLogout', 'loggedInUserInfo']]);
     }
 
+    private function buildUserReturnable(User $user)
+    {
+        $user->load(['userProfile', 'institutes', 'defaultInstitute.categories' =>
+            function ($categories) use ($user) {
+                $categories->whereHas('subscribers', function ($subscribers) use ($user) {
+                    $subscribers->where('user_id', $user['id']);
+                });
+            },
+            'defaultInstitute.notifyingCategories' =>
+                function ($categories) use ($user) {
+                    $categories->whereHas('notifiers', function ($notifiers) use ($user) {
+                        $notifiers->where('user_id', $user['id']);
+                    });
+                }
+        ]);
+
+        return $user;
+    }
+
+    public function googleOauth(Request $request)
+    {
+        $id_token = $request->get('id_token');
+        $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+        $payload = $client->verifyIdToken($id_token);
+
+        $user = User::where('google_id', $payload['sub'])->get()->first();
+        if ($user) {
+            Auth::login($user, true);
+            $user = $this->buildUserReturnable($user);
+            return response()->json(compact('user'));
+        } else {
+            if ($payload) {
+                $internals = Faker\Factory::create('en_US');
+                $user = User::create([
+                    'user_guid' => $internals->uuid,
+                    'google_id' => $payload['sub'],
+                    'email' => $payload['email'],
+                    'first_name' => $payload['given_name'],
+                    'last_name' => $payload['family_name'],
+                    'is_verified' => $payload['email_verified']
+                ]);
+
+                UserProfile::create([
+                    'user_profile_guid' => $internals->uuid,
+                    'user_id' => $user['id'],
+                    'user_avatar' => $payload['picture']
+                ]);
+
+                Auth::login($user, true);
+                $user = $this->buildUserReturnable($user);
+                return response()->json(compact('user'));
+            } else {
+                return response()->json(['error' => 'Invalid auth token'], 400);
+            }
+        }
+    }
+
     public function postRegister(Request $request)
     {
         $validator = $this->validator($request->all());
@@ -44,21 +101,7 @@ class AuthControllerGeneral extends Controller
         $remember = $request->get('remember_me');
 
         if (Auth::attempt($credentials, $remember)) {
-            $user = Auth::user();
-            $user->load(['userProfile', 'institutes', 'defaultInstitute.categories' =>
-                function ($categories) use ($user) {
-                    $categories->whereHas('subscribers', function ($subscribers) use ($user) {
-                        $subscribers->where('user_id', $user['id']);
-                    });
-                },
-            'defaultInstitute.notifyingCategories' =>
-                function ($categories) use ($user) {
-                    $categories->whereHas('notifiers', function ($notifiers) use ($user) {
-                        $notifiers->where('user_id', $user['id']);
-                    });
-                }
-            ]);
-
+            $user = $this->buildUserReturnable(Auth::user());
             return response()->json(compact('user'));
         }
 

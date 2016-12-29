@@ -23,6 +23,7 @@ Route::get('avatar/{filename}', 'UserProfileController@getAvatar');
 Route::group(['prefix' => 'api/v1_0'], function () {
     Route::post('register', 'Auth\AuthControllerGeneral@postRegister');
     Route::post('login', 'Auth\AuthControllerGeneral@postLogin');
+    Route::post('google_token', 'Auth\AuthControllerGeneral@googleOauth');
     Route::get('logout', 'Auth\AuthControllerGeneral@getLogout');
     Route::post('update_profile', 'UserProfileController@updateProfile');
 
