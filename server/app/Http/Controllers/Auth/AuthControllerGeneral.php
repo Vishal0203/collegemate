@@ -41,6 +41,14 @@ class AuthControllerGeneral extends Controller
         return $user;
     }
 
+    private function buildBase64($url)
+    {
+        $image = file_get_contents($url);
+        if ($image !== false) {
+            return 'data:image/jpg;base64,'.base64_encode($image);
+        }
+    }
+
     public function googleOauth(Request $request)
     {
         $id_token = $request->get('id_token');
@@ -67,7 +75,7 @@ class AuthControllerGeneral extends Controller
                 UserProfile::create([
                     'user_profile_guid' => $internals->uuid,
                     'user_id' => $user['id'],
-                    'user_avatar' => $payload['picture']
+                    'user_avatar' => $this->buildBase64($payload['picture'])
                 ]);
 
                 Auth::login($user, true);
