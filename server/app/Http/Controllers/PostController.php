@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewPost;
 use App\Institute;
 use App\Post;
 use App\Tag;
 use App\Upvote;
+use Event;
 use Illuminate\Http\Request;
 use Faker;
 use Input;
@@ -73,13 +75,8 @@ class PostController extends Controller
             $post->tags()->attach($tag);
         }
 
-        if (!$post['is_anonymous']) {
-            $post->load('user');
-        }
-        $post->load('tags');
-        $post['upvotes_count'] = $post->upvotesCount();
-        $post['comments_count'] = $post->commentsCount();
-        return response()->json(compact('post'), 201);
+        Event::fire(new NewPost($post, $institute_guid));
+        return response()->json(['message' => 'Question was asked in your institute'], 200);
     }
 
     /**
