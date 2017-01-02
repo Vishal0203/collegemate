@@ -7,7 +7,7 @@ import {announcementFormToggle, newAnnouncementAdded, fetchAnnouncementResponse,
 import {userLoginResponse, subscribeChannel} from '../actions/users/index';
 import {HttpHelper, GoogleSignIn} from './apis';
 import {showSnackbar} from './utils'
-import {fetchTagsResponse, createPostResponse, fetchPostsResponse} from '../actions/interactions/index'
+import {fetchTagsResponse, createPostResponse, fetchPostsResponse, postFormToggle} from '../actions/interactions/index'
 import createWebSocketConnection from './SocketConnection';
 
 let subscribedChannels = {};
@@ -66,7 +66,9 @@ function *createPost(params) {
     HttpHelper, `institute/${params.instituteGuid}/post`, 'POST', params.formData, null
   );
 
-  yield put(createPostResponse(response.data.post));
+  if (response.status == 200) {
+    yield put(postFormToggle())
+  }
 }
 
 function *googleLogin(params) {
@@ -74,10 +76,14 @@ function *googleLogin(params) {
   if (response.data.user.default_institute) {
     const categories = response.data.user.default_institute.categories;
     yield put(setAnnouncementCategories(categories));
+    // subscribe to categories
     for (let i in categories) {
       const channelName = `category_${categories[i].category_guid}:new-announcement`;
       yield put(subscribeChannel(channelName, newAnnouncementAdded))
     }
+    // subscribe to posts
+    const institute_guid = response.data.user.default_institute.inst_profile_guid;
+    yield put(subscribeChannel(`posts_${institute_guid}:new-post`, createPostResponse))
   }
   yield put(userLoginResponse(response.data));
 }

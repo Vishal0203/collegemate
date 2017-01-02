@@ -29,7 +29,6 @@ export default function interactionReducer(state = initialState, action) {
       const skip = state.skip + 1;
       return {
         ...state,
-        toggleForm: !state.toggleForm,
         skip,
         items: {...state.items, posts: [action.post, ...state.items.posts]},
         loadingMore: false
