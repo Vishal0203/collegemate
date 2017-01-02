@@ -2,10 +2,21 @@ import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {fork, put, call, take} from 'redux-saga/effects';
 import {toggleSnackbar} from '../actions/snackbar/index';
 import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
-import {GOOGLE_AUTH, USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL, UNSUBSCRIBE_CHANNEL} from '../actions/users/index';
-import {announcementFormToggle, newAnnouncementAdded, fetchAnnouncementResponse, setAnnouncementCategories} from '../actions/announcements/index';
-import {userLoginResponse, subscribeChannel} from '../actions/users/index';
-import {HttpHelper, GoogleSignIn} from './apis';
+import {
+  GOOGLE_AUTH,
+  USER_LOGIN_REQUEST,
+  USER_LOGOUT_REQUEST,
+  SUBSCRIBE_CHANNEL,
+  UNSUBSCRIBE_CHANNEL
+} from '../actions/users/index';
+import {
+  announcementFormToggle,
+  newAnnouncementAdded,
+  fetchAnnouncementResponse,
+  setAnnouncementCategories
+} from '../actions/announcements/index';
+import {userLoginResponse, userLogoutResponse, subscribeChannel} from '../actions/users/index';
+import {HttpHelper} from './apis';
 import {showSnackbar} from './utils'
 import {
   TAGS_FETCH,
@@ -197,6 +208,15 @@ function *deletePost(params) {
   }
 }
 
+function *logoutUser() {
+  const response = yield call(HttpHelper, 'logout', 'GET', null, null)
+  if (response.status == 200) {
+    const GoogleAuth = window.gapi.auth2.getAuthInstance();
+    GoogleAuth.signOut();
+    yield put(userLogoutResponse());
+    browserHistory.push('/login');
+  }
+}
 
 /*
  Saga watchers beneath this
@@ -219,15 +239,19 @@ function *watchPostsFetch() {
 }
 
 function *watchTagsRequest() {
-  yield *takeLatest(TAGS_FETCH, fetchTags)
+  yield *takeLatest(TAGS_FETCH, fetchTags);
 }
 
 function *watchCreatePostRequest() {
-  yield *takeLatest(CREATE_POST_REQUEST, createPost)
+  yield *takeLatest(CREATE_POST_REQUEST, createPost);
 }
 
 function *watchGoogleAuth() {
-  yield *takeLatest(GOOGLE_AUTH, googleLogin)
+  yield *takeLatest(GOOGLE_AUTH, googleLogin);
+}
+
+function *watchUserLogout() {
+  yield *takeLatest(USER_LOGOUT_REQUEST, logoutUser);
 }
 
 function *watchSinglePostFetch() {
@@ -309,6 +333,7 @@ function *watchChannelUnsubscribe() {
 export default function *rootSaga() {
   yield [
     fork(watchGoogleAuth),
+    fork(watchUserLogout),
     fork(userAuthenticationRequest),
     fork(watchCreateAnnouncement),
     fork(watchCreatePostRequest),

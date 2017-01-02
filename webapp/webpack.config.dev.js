@@ -51,6 +51,13 @@ module.exports = {
         test: /\.css$/,
         loader: 'style!css?modules',
         include: /flexboxgrid/
+      },
+      // statics
+      {
+        test: /\.(jpe?g|gif|png|svg)$/,
+        loaders: [
+          'file?hash=sha512&digest=hex&name=[hash].[ext]'
+        ]
       }
     ]
   }
