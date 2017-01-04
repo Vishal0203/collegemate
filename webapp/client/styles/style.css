@@ -8,6 +8,39 @@ body {
     background: #fafafa;
 }
 
+.gsvg {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    background: url('images/google.svg') no-repeat center center;
+    position: absolute;
+}
+
+.auth-background {
+    position: absolute;
+    min-height:100%;
+    width: 100%;
+    height: auto;
+    top: 0;
+    left: 0;
+    background: #070200 url('images/background.jpg') no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    z-index: -1;
+}
+
+.bg-transparent {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.auth-content {
+    margin-top: 200px;
+    color: white;
+}
+
 .wrap {
     box-sizing: border-box;
     max-width: 86%;

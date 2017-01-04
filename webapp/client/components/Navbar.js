@@ -9,8 +9,12 @@ import IconButton from 'material-ui/IconButton/IconButton';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import {browserHistory} from 'react-router';
+import {userLogout} from '../actions/users/index'
+import {toggleSnackbar} from '../actions/snackbar/index';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
-export default class Navbar extends React.Component {
+class Navbar extends React.Component {
 
   constructor(props) {
     super(props);
@@ -56,9 +60,13 @@ export default class Navbar extends React.Component {
     browserHistory.push(tab.props['data-route']);
   }
 
+  logoutUser() {
+    this.props.actions.userLogout()
+  };
+
   renderUserNav() {
     const {parentProps} = this.props;
-    if(Object.keys(parentProps.auth_user.user).length != 0) {
+    if(Object.keys(this.props.auth_user.user).length != 0) {
       const username = `${parentProps.auth_user.user.first_name} ${parentProps.auth_user.user.last_name}`;
       const instituteName = parentProps.auth_user.selectedInstitute.institute_name;
 
@@ -80,7 +88,7 @@ export default class Navbar extends React.Component {
             <MenuItem primaryText="Settings"/>
             <MenuItem primaryText="Help"/>
             <Divider />
-            <MenuItem primaryText="Sign out"/>
+            <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
           </IconMenu>
         </ToolbarGroup>
       )
@@ -88,14 +96,14 @@ export default class Navbar extends React.Component {
   }
 
   getTabIndex(pathname) {
+    const INTERACTION_REGEX = /^\/interactions(\/.*)?/i;
 
-    switch (pathname) {
-      case '/': {
-        return 0
-      }
-      case '/interactions': {
-        return 1
-      }
+    if (pathname == '/') {
+      return 0
+    }
+
+    if (INTERACTION_REGEX.test(pathname)) {
+      return 1
     }
   }
 
@@ -129,3 +137,17 @@ export default class Navbar extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    auth_user: state.auth_user
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators({userLogout, toggleSnackbar}, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

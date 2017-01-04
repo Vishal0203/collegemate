@@ -40,3 +40,4 @@ src/client/public
 
 # dotenv
 /.env
+/dist
