@@ -1,14 +1,41 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {fork, put, call, take} from 'redux-saga/effects';
+import {toggleSnackbar} from '../actions/snackbar/index';
 import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
 import {GOOGLE_AUTH, USER_LOGIN_REQUEST, SUBSCRIBE_CHANNEL, UNSUBSCRIBE_CHANNEL} from '../actions/users/index';
-import {TAGS_FETCH, CREATE_POST_REQUEST, FETCH_POSTS_REQUEST} from '../actions/interactions/index';
 import {announcementFormToggle, newAnnouncementAdded, fetchAnnouncementResponse, setAnnouncementCategories} from '../actions/announcements/index';
 import {userLoginResponse, subscribeChannel} from '../actions/users/index';
 import {HttpHelper, GoogleSignIn} from './apis';
 import {showSnackbar} from './utils'
-import {fetchTagsResponse, createPostResponse, fetchPostsResponse, postFormToggle} from '../actions/interactions/index'
+import {
+  TAGS_FETCH,
+  CREATE_POST_REQUEST,
+  FETCH_POSTS_REQUEST,
+  FETCH_SINGLE_POST_REQUEST,
+  ADD_COMMENT_REQUEST,
+  TOGGLE_COMMENT_UPVOTE_REQUEST,
+  DELETE_COMMENT_REQUEST,
+  TOGGLE_POST_UPVOTE_REQUEST,
+  UPDATE_POST_REQUEST,
+  DELETE_POST_REQUEST,
+  EDIT_COMMENT_REQUEST
+} from '../actions/interactions';
+import {
+  fetchTagsResponse,
+  createPostResponse,
+  fetchPostsResponse,
+  postFormToggle,
+  fetchSinglePostResponse,
+  addCommentResponse,
+  toggleCommentUpvoteResponse,
+  deleteCommentResponse,
+  togglePostUpvoteResponse,
+  updatePostResponse,
+  deletePostResponse,
+  editCommentResponse
+} from '../actions/interactions';
 import createWebSocketConnection from './SocketConnection';
+import {browserHistory} from 'react-router';
 
 let subscribedChannels = {};
 
@@ -88,6 +115,89 @@ function *googleLogin(params) {
   yield put(userLoginResponse(response.data));
 }
 
+function *fetchSinglePostRequest(params) {
+  const response = yield call(
+    HttpHelper, params.url, 'GET', null, params.url_params
+  );
+  yield  put(fetchSinglePostResponse(response));
+}
+
+function *addComment(params) {
+  const response = yield call(
+    HttpHelper, `post/${params.postGuid}/comment`, 'POST', params.formData, null
+  );
+  yield put(addCommentResponse(response.data.comment));
+
+}
+
+function *toggleCommentUpvote(params) {
+  const response = yield call(
+    HttpHelper, `post/${params.postGuid}/comment/${params.comment.comment_guid}/upvote`, 'POST', params.formData, null
+  );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(toggleCommentUpvoteResponse(params.comment, response.data));
+}
+
+function *removeComment(params) {
+  const response = yield call(
+    HttpHelper, `post/${params.postGuid}/comment/${params.comment.comment_guid}`, 'DELETE', params.formData, null
+  );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(deleteCommentResponse(params.comment, response.data));
+  if (response.data.success) {
+    yield put(toggleSnackbar(response.data.success));
+  }
+}
+
+function *editComment(params) {
+  const response = yield call(
+    HttpHelper, `post/${params.postGuid}/comment/${params.comment.comment_guid}`, 'PUT', params.formData, null
+  );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(editCommentResponse(params.comment, response.data));
+}
+
+function *togglePostUpvote(params) {
+  const response = yield call(
+    HttpHelper, `institute/${params.instituteGuid}/post/${params.postGuid}/upvote`, 'POST', null, null
+  );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(togglePostUpvoteResponse(response.data));
+}
+
+function *editPost(params) {
+  const response = yield call(
+    HttpHelper, `institute/${params.instituteGuid}/post/${params.postGuid}`, 'PUT', params.formData, null
+  );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(updatePostResponse(response.data));
+}
+
+function *deletePost(params) {
+  const response = yield call(
+    HttpHelper, `institute/${params.instituteGuid}/post/${params.postGuid}`, 'DELETE', null, null
+  );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(deletePostResponse(response.data));
+  if (response.data.success) {
+    yield put(toggleSnackbar(response.data.success));
+    browserHistory.push('/interactions');
+  }
+}
+
+
 /*
  Saga watchers beneath this
  */
@@ -118,6 +228,38 @@ function *watchCreatePostRequest() {
 
 function *watchGoogleAuth() {
   yield *takeLatest(GOOGLE_AUTH, googleLogin)
+}
+
+function *watchSinglePostFetch() {
+  yield *takeLatest(FETCH_SINGLE_POST_REQUEST, fetchSinglePostRequest)
+}
+
+function *watchAddComment() {
+  yield *takeLatest(ADD_COMMENT_REQUEST, addComment);
+}
+
+function *watchToggleCommentUpvote() {
+  yield *takeLatest(TOGGLE_COMMENT_UPVOTE_REQUEST, toggleCommentUpvote);
+}
+
+function *watchRemoveComment() {
+  yield *takeLatest(DELETE_COMMENT_REQUEST, removeComment);
+}
+
+function *watchTogglePostUpvote() {
+  yield *takeLatest(TOGGLE_POST_UPVOTE_REQUEST, togglePostUpvote);
+}
+
+function *watchEditPost() {
+  yield *takeLatest(UPDATE_POST_REQUEST, editPost);
+}
+
+function *watchEditComment() {
+  yield *takeLatest(EDIT_COMMENT_REQUEST, editComment);
+}
+
+function *watchDeletePost() {
+  yield *takeLatest(DELETE_POST_REQUEST, deletePost);
 }
 
 /*
@@ -174,6 +316,14 @@ export default function *rootSaga() {
     fork(watchPostsFetch),
     fork(watchTagsRequest),
     fork(watchChannelSubscription),
-    fork(watchChannelUnsubscribe)
+    fork(watchChannelUnsubscribe),
+    fork(watchSinglePostFetch),
+    fork(watchAddComment),
+    fork(watchToggleCommentUpvote),
+    fork(watchRemoveComment),
+    fork(watchTogglePostUpvote),
+    fork(watchEditPost),
+    fork(watchEditComment),
+    fork(watchDeletePost),
   ]
 }

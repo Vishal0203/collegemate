@@ -1,4 +1,5 @@
 import React from 'react';
+import {browserHistory} from 'react-router';
 import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
 import moment from 'moment';
 import Chip from 'material-ui/Chip';
@@ -23,12 +24,17 @@ class InteractionPost extends React.Component {
       postTitle: {
         paddingBottom: '2px',
         fontWeight: 400,
-        fontSize: 16
+        fontSize: 16,
+        cursor: 'pointer'
       },
       postCountContainer: {
+        position: 'absolute',
         padding: '12px 16px 16px 27px',
         fontSize: 13,
-        height: '88%'
+        top: '12px',
+        right: 0,
+        bottom: 0,
+        left: 0
       },
       postCountNumbers: {
         fontSize: 18
@@ -77,6 +83,10 @@ class InteractionPost extends React.Component {
     })
   }
 
+  cardClick(post) {
+    browserHistory.push(`/interactions/${post.post_guid}`);
+  }
+
   renderChips(post) {
     return post.tags.map((tag, i) =>
       <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}</Chip>
@@ -92,7 +102,7 @@ class InteractionPost extends React.Component {
     return (
       <Card style={{marginTop: 15, marginBottom: 15}}>
         <Row>
-          <div style={{width: '20%', flexBasis: '20%'}}>
+          <div style={{width: '20%', flexBasis: '20%', position: 'relative'}}>
             <CardText style={this.styles.postCountContainer}>
             <Row center="xs" style={{height: '100%'}}>
               <div style={{width: '50%', margin: 'auto'}}>
@@ -108,6 +118,7 @@ class InteractionPost extends React.Component {
           </div>
           <div style={{width: '80%', flexBasis: '80%'}}>
             <CardHeader
+              onClick = {() => this.cardClick(post)}
               title={post.post_heading}
               subtitle={username}
               style={this.styles.postTitle}
@@ -118,7 +129,7 @@ class InteractionPost extends React.Component {
               </div>
               <Tooltip show={this.state.timeTooltip.show}
                        label={this.state.timeTooltip.label}
-                       style={{right: 40, top: 14, fontSize: 12, fontWeight: 400}}
+                       style={{right: 40, top: 14, fontSize: 12, fontWeight: 400, zIndex: 9999}}
                        horizontalPosition="left"
                        verticalPosition="bottom"
                        touch={true}

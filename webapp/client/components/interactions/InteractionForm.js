@@ -12,10 +12,19 @@ class InteractionForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
-    this.state = {
-      tags: [],
-      value: RichTextEditor.createEmptyValue()
-    };
+    if (props.type == 'PostUpdate') {
+      const post = props.parentProps.interactions.selectedPost;
+      this.state = {
+        tags: post.tags,
+        value: RichTextEditor.createValueFromString(post.post_description, 'html')
+      };
+    }
+    else {
+      this.state = {
+        tags: [],
+        value: RichTextEditor.createEmptyValue()
+      };
+    }
     this.onTextChange = this.onTextChange.bind(this);
   }
 
@@ -59,6 +68,46 @@ class InteractionForm extends React.Component {
     this.parentProps.actions.createPostRequest(instituteGuid, formData);
   }
 
+  handleCommentSubmit() {
+    const postGuid = this.parentProps.interactions.selectedPost.post_guid;
+    const formData = {
+      institute_guid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
+      comment: this.state.value.toString('html')
+    };
+    this.parentProps.actions.addCommentRequest(postGuid, formData)
+  }
+
+  handlePostUpdateSubmit() {
+    const tags = this.state.tags.map(function (a) {
+      return a.tag_guid
+    });
+    const postGuid = this.parentProps.interactions.selectedPost.post_guid;
+    const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
+    const formData = {
+      post_heading: this.refs.postHeading.getValue(),
+      post_description: this.state.value.toString('html'),
+      is_anonymous: this.refs.isAnonymous.state.switched,
+      tags
+    };
+    this.parentProps.actions.updatePostRequest(instituteGuid, postGuid, formData);
+  }
+
+  handleSubmit(type) {
+    switch (type) {
+      case 'Interactions' :
+        this.handlePostSubmit();
+        break;
+      case 'InteractionSingle':
+        this.handleCommentSubmit();
+        break;
+      case 'PostUpdate':
+        this.handlePostUpdateSubmit();
+        break;
+      default:
+        break;
+    }
+  }
+
   onTextChange(value) {
     this.setState({tag: this.state.tag, value});
   };
@@ -91,7 +140,7 @@ class InteractionForm extends React.Component {
   }
 
   render() {
-    const {onCancelClick} = this.props;
+    const {onCancelClick, type} = this.props;
 
     const toolbarConfig = {
       display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
@@ -112,56 +161,116 @@ class InteractionForm extends React.Component {
       ]
     };
 
-    return (
+    let title = null;
+    let confirmText = null;
+    switch (type) {
+      case 'Interactions': {
+        title = 'Ask a question';
+        confirmText = 'Post Question';
+        break;
+      }
+      case 'InteractionSingle': {
+        title = 'Answer a question';
+        confirmText = 'Answer';
+        break;
+      }
+      case 'PostUpdate': {
+        title = '';
+        confirmText = 'Update';
+        break;
+      }
+      default:
+        break;
+    }
+    let postHeader = null;
+    let tags = null;
+    let anonymousToggle = null;
+    if (type == 'Interactions' || type == 'PostUpdate') {
+      const defaultHeading = type == 'PostUpdate' ? this.parentProps.interactions.selectedPost.post_heading : '';
+      const toggleDefault = type == 'PostUpdate' ?
+        !this.parentProps.interactions.selectedPost.user :
+        false;
+      postHeader = (
+        <div>
+          <TextField ref="postHeading" hintText="What would you like to ask? Be specific." fullWidth={true}
+                     style={{paddingTop: '15px', fontWeight: 400}} defaultValue={defaultHeading}/>
+          <div style={{marginTop: '5px'}}></div>
+        </div>
+      );
+
+      tags = (
+        <ChipInput
+          value={this.state.tags}
+          onRequestAdd={(tag) => this.handleTagAdd(tag)}
+          onRequestDelete={(deletedTag) => this.handleTagDelete(deletedTag)}
+          dataSource={this.parentProps.interactions.tags}
+          dataSourceConfig={{text: 'name', value: 'tag_guid'}}
+          hintText="Add tags to your question for easy visibility (max 5 tags)."
+          openOnFocus={true}
+          fullWidth
+          underlineShow={false}
+          chipRenderer={({text, value, isFocused, isDisabled, handleClick, handleRequestDelete}, key) => (
+            <Chip
+              key={key}
+              className="chip"
+              labelStyle={this.styles.chipLabel}
+              onTouchTap={handleClick}
+              onRequestDelete={handleRequestDelete}
+            >
+              {text}
+            </Chip>
+          )}
+        />
+      );
+      anonymousToggle = (
+
+        <Toggle
+          ref="isAnonymous"
+          defaultToggled={toggleDefault}
+          label="Post Anonymously"
+          style={this.styles.toggleButton}
+
+        />
+      );
+    }
+
+    let cardContents = [
+      <CardTitle titleStyle={{fontSize: 20}} style={this.styles.postTitle}
+                 title={title} subtitle="All fields are required" key='title'/>,
+      <CardText style={this.styles.formDescription} key='content'>
+        <Col xs={12}>
+          {postHeader}
+          <RichTextEditor className="rte-container"
+                          editorClassName="rte-editor"
+                          toolbarConfig={toolbarConfig}
+                          value={this.state.value} onChange={this.onTextChange}/>
+
+          {anonymousToggle}
+
+          {tags}
+
+        </Col>
+      </CardText>,
+      <CardActions style={{textAlign: 'right'}} key='actions'>
+        <FlatButton label='Cancel' secondary={true} onClick={onCancelClick}/>
+        <FlatButton label={confirmText} primary={true} onClick={() => this.handleSubmit(type)}/>
+      </CardActions>
+    ];
+
+    let formContent = (
       <Card style={{marginTop: 15, marginBottom: 200}}>
-        <CardTitle titleStyle={{fontSize: 20}} style={this.styles.postTitle}
-                   title="Ask a question" subtitle="All fields are required"/>
-        <CardText style={this.styles.formDescription}>
-          <Col xs={12}>
-            <TextField ref="postHeading" hintText="What would you like to ask? Be specific." fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
-            <div style={{marginTop: '5px'}}></div>
-            <RichTextEditor className="rte-container"
-                            editorClassName="rte-editor"
-                            toolbarConfig={toolbarConfig}
-                            value={this.state.value} onChange={this.onTextChange}/>
-
-            <Toggle
-              ref="isAnonymous"
-              label="Post Anonymously"
-              style={this.styles.toggleButton}
-            />
-
-            <ChipInput
-              value={this.state.tags}
-              onRequestAdd={(tag) => this.handleTagAdd(tag)}
-              onRequestDelete={(deletedTag) => this.handleTagDelete(deletedTag)}
-              dataSource={this.parentProps.interactions.tags}
-              dataSourceConfig={{text: 'name', value: 'tag_guid'}}
-              hintText="Add tags to your question for easy visibility (max 5 tags)."
-              openOnFocus={true}
-              fullWidth
-              underlineShow={false}
-              chipRenderer={({text, value, isFocused, isDisabled, handleClick, handleRequestDelete}, key) => (
-                <Chip
-                  key={key}
-                  className="chip"
-                  labelStyle={this.styles.chipLabel}
-                  onTouchTap={handleClick}
-                  onRequestDelete={handleRequestDelete}
-                >
-                  {text}
-                </Chip>
-              )}
-            />
-
-          </Col>
-        </CardText>
-        <CardActions style={{textAlign: 'right'}}>
-          <FlatButton label="Cancel" secondary={true} onClick={onCancelClick}/>
-          <FlatButton label="Announce" primary={true} onClick={() => this.handlePostSubmit()}/>
-        </CardActions>
+        {cardContents}
       </Card>
+    );
+
+    if (type == 'PostUpdate') {
+      formContent = cardContents.slice(1)
+    }
+
+    return (
+      <div>
+        {formContent}
+      </div>
     );
   }
 }

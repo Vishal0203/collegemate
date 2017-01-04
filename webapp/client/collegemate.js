@@ -8,6 +8,7 @@ import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import Career from './components/careers/Career';
 import InteractionsContainer from './components/interactions/InteractionsContainer';
+import InteractionSingle from './components/interactions/InteractionSingle';
 import configureStore from './store/configureStore';
 import {Provider} from 'react-redux';
 import rootSaga from './sagas/sagas';
@@ -26,7 +27,10 @@ const router = (
       <Route path='/login' component={Auth}/>
       <Route path='/' component={Main}>
         <IndexRoute component={AnnouncementsContainer}/>
-        <Route path='/interactions' component={InteractionsContainer}/>
+        <Route path='/interactions'>
+          <IndexRoute component={InteractionsContainer}/>
+          <Route path='/interactions/:postGuid' component={InteractionSingle}/>
+        </Route>
         <Route path='/career' component={Career}/>
       </Route>
     </Router>

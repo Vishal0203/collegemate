@@ -1,0 +1,24 @@
+[program:redis]
+command=/usr/local/bin/redis-server /usr/local/etc/redis.conf
+autostart=true
+autorestart=true
+user=<os_user>
+stdout_logfile=/usr/local/var/log/redis_stdout.log
+stderr_logfile=/usr/local/var/log/redis_stderr.log
+
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php <application_root>/artisan queue:work database --sleep=3 --tries=3 --daemon
+autostart=true
+autorestart=true
+user=<os_user>
+numprocs=8
+redirect_stderr=true
+stdout_logfile=<application_root>/storage/logs/collegemate_worker.log
+
+[program:pubsub-server]
+directory=<application_root>
+command=node-supervisor pubsub-server.js
+autostart=true
+autorestart=true
+stderr_logfile=<application_root>/storage/logs/node_server_err.log
