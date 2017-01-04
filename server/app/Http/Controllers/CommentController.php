@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Events\PostUpdate;
 use Illuminate\Http\Request;
 
+use Event;
 use App\Http\Requests;
 use Faker;
 use App\Post;
@@ -49,8 +51,9 @@ class CommentController extends Controller
             'comment' => $request['comment'],
         ]);
 
-        $comment->load(['user']);
+        $comment->load(['user','user.userProfile']);
         $comment['upvotes_count'] = $comment->upvotesCount();
+        Event::fire(new PostUpdate($post));
         return response()->json(compact('comment'), 201);
     }
 
@@ -65,6 +68,7 @@ class CommentController extends Controller
     public function update(Request $request, $post_guid, $id)
     {
         $comment = Comment::where('comment_guid', '=', $id)->first();
+        $post = $comment->post()->first();
         if (!$comment) {
             return response()->json(['Error' => 'Comment not found.'], 400);
         }
@@ -74,6 +78,7 @@ class CommentController extends Controller
             $comment->update([
                 'comment' => $request['comment'],
             ]);
+            Event::fire(new PostUpdate($post));
             return response()->json(compact('comment'), 202);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);
@@ -92,10 +97,12 @@ class CommentController extends Controller
         if (!$comment) {
             return response()->json(['Error' => 'Comment not found.'], 400);
         }
+        $post = $comment->post()->first();
         $commentUser = $comment->user()->get()->first();
         $user = \Auth::user();
         if ($request->attributes->get('auth_user_role') != 'inst_student' || $user['id'] == $commentUser['id']) {
             $comment->delete();
+            Event::fire(new PostUpdate($post));
             return response()->json(['success' => 'Answer removed successfully'], 201);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);

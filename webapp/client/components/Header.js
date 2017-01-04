@@ -87,7 +87,7 @@ class Header extends Component {
       }
       case 'InteractionSingle': {
         if (hasButton && parentProps.interactions.toggleCommentForm) {
-          headerHeight = {height: '350px'};
+          headerHeight = {height: '250px'};
           actionButton = '';
           form = (
             <Grid>

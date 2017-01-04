@@ -92,10 +92,11 @@ export function createPostResponse(post) {
   }
 }
 
-export function fetchSinglePostRequest(url,url_params) {
+export function fetchSinglePostRequest(instituteGuid, postGuid,url_params) {
   return {
     type: FETCH_SINGLE_POST_REQUEST,
-    url,
+    instituteGuid,
+    postGuid,
     url_params
   }
 }

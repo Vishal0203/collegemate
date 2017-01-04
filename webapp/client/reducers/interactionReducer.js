@@ -77,7 +77,21 @@ export default function interactionReducer(state = initialState, action) {
       return {...state, postLoading: true}
     }
     case FETCH_SINGLE_POST_RESPONSE: {
-      return {...state, selectedPost:action.response.data.post, postLoading: false}
+      if (state.selectedPost)
+      {
+        return {
+          ...state,
+          selectedPost: {
+            ...action.response,
+            isEditable: state.selectedPost.isEditable
+          },
+          postLoading: false
+        }
+      }
+      if(action.response.error) {
+        return {...state, postLoading: false}
+      }
+      return {...state, selectedPost:action.response.post, postLoading: false}
     }
     case TOGGLE_POST_UPVOTE_RESPONSE: {
       if(action.response.error) {
