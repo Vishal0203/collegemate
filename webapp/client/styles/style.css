@@ -8,14 +8,6 @@ body {
     background: #fafafa;
 }
 
-.gsvg {
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    background: url('images/google.svg') no-repeat center center;
-    position: absolute;
-}
-
 .auth-background {
     position: absolute;
     min-height:100%;
@@ -23,12 +15,29 @@ body {
     height: auto;
     top: 0;
     left: 0;
-    background: #070200 url('images/background.jpg') no-repeat center center;
+    background: #39435B url("images/bluehats.jpg") no-repeat center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
     z-index: -1;
+}
+
+.auth-footer {
+    position: absolute;
+    bottom: 55px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+}
+
+.footer-icon {
+    font-size: 33px;
+}
+
+.footer-heading {
+    font-size: 14px;
 }
 
 .bg-transparent {
