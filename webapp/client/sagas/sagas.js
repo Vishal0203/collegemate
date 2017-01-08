@@ -1,5 +1,5 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
-import {fork, put, call, take} from 'redux-saga/effects';
+import {fork, put, call, take, select} from 'redux-saga/effects';
 import {toggleSnackbar} from '../actions/snackbar/index';
 import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
 import {
@@ -15,7 +15,7 @@ import {
   fetchAnnouncementResponse,
   setAnnouncementCategories
 } from '../actions/announcements/index';
-import {userLoginResponse, userLogoutResponse, subscribeChannel} from '../actions/users/index';
+import {userLoginResponse, userLogoutResponse, subscribeChannel, unsubscribeChannel} from '../actions/users/index';
 import {HttpHelper} from './apis';
 import {showSnackbar} from './utils'
 import {
@@ -127,16 +127,27 @@ function *googleLogin(params) {
 }
 
 function *fetchSinglePostRequest(params) {
+  const {postGuid, instituteGuid, url_params} = params;
+  const url = `institute/${instituteGuid}/post/${postGuid}`;
   const response = yield call(
-    HttpHelper, params.url, 'GET', null, params.url_params
+    HttpHelper, url, 'GET', null, url_params
   );
-  yield  put(fetchSinglePostResponse(response));
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
+  yield put(fetchSinglePostResponse(response.data));
+  if(!response.data.error) {
+    yield put(subscribeChannel(`post_${postGuid}:post-update`, fetchSinglePostResponse))
+  }
 }
 
 function *addComment(params) {
   const response = yield call(
     HttpHelper, `post/${params.postGuid}/comment`, 'POST', params.formData, null
   );
+  if (response.data.error) {
+    yield put(toggleSnackbar(response.data.error));
+  }
   yield put(addCommentResponse(response.data.comment));
 
 }
@@ -218,6 +229,17 @@ function *logoutUser() {
   }
 }
 
+export const getSelectedPost = (state) => state.interactions.selectedPost
+
+function *handleTabChange(params) {
+  if (!params.payload.pathname.match(/\/interactions\/.+/)) {
+    const post = yield select(getSelectedPost);
+    if(post) {
+      yield put(unsubscribeChannel(`post_${post.post_guid}:post-update`));
+    }
+  }
+}
+
 /*
  Saga watchers beneath this
  */
@@ -286,6 +308,10 @@ function *watchDeletePost() {
   yield *takeLatest(DELETE_POST_REQUEST, deletePost);
 }
 
+function *watchTabChange() {
+  yield *takeLatest('@@router/LOCATION_CHANGE', handleTabChange);
+}
+
 /*
  Socket
  */
@@ -350,5 +376,6 @@ export default function *rootSaga() {
     fork(watchEditPost),
     fork(watchEditComment),
     fork(watchDeletePost),
+    fork(watchTabChange),
   ]
 }

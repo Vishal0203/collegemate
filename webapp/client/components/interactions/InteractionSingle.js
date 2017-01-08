@@ -17,6 +17,7 @@ import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import Dialog from 'material-ui/Dialog';
 import PostUpdateDialog from './PostUpdateDialog';
+import Avatar from 'material-ui/Avatar';
 
 class InteractionSingle extends Component {
   constructor(props) {
@@ -56,7 +57,7 @@ class InteractionSingle extends Component {
       },
       postSubtitle: {
         textTransform: 'capitalize',
-        marginTop: 5,
+        marginTop: 3,
         color: 'rgba(0, 0, 0, 0.35)',
         fontWeight: 400,
         fontSize: 14
@@ -120,8 +121,7 @@ class InteractionSingle extends Component {
   fetchPost(postGuid) {
     if (Object.keys(this.props.auth_user.user).length != 0) {
       const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
-      const url = `institute/${institute_guid}/post/${postGuid}`;
-      this.props.actions.fetchSinglePostRequest(url, null);
+      this.props.actions.fetchSinglePostRequest(institute_guid, postGuid, null);
     }
   }
 
@@ -251,6 +251,9 @@ class InteractionSingle extends Component {
     if (post) {
       let votes = this.renderVotes(post.upvotes_count);
       const username = 'user' in post ? `${post.user.first_name} ${post.user.last_name}` : 'Anonymous';
+      const userIcon = 'user' in post ?
+        post.user.user_profile.user_avatar:
+        `${process.env.SERVER_HOST}/avatar/defaultUser.jpg`;
       const timezone = moment.tz.guess();
       const time = moment.tz(post.created_at, null).format();
       const answersCount = `${post.comments_count} Answers`;
@@ -275,12 +278,15 @@ class InteractionSingle extends Component {
         );
       }
       return (
-        <div>
+        <div style={{paddingBottom: 40}}>
           <Card>
             <Row>
               <CardHeader
                 title={post.post_heading}
                 subtitle={username}
+                avatar={
+                  <Avatar size={43} style={{marginRight: 10}} src={userIcon} />
+                }
                 style={this.styles.postTitle}
                 titleStyle={{fontSize: '20px'}}
                 subtitleStyle={this.styles.postSubtitle}>
@@ -340,7 +346,7 @@ class InteractionSingle extends Component {
               </CardHeader>
             </Row>
             <Divider className="card-divider"/>
-            <div style={{paddingBottom: 30}}>
+            <div style={{paddingBottom: 0}}>
               {commentLoader}
               {this.renderComments()}
             </div>

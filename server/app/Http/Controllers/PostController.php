@@ -8,6 +8,7 @@ use App\Post;
 use App\Tag;
 use App\Upvote;
 use Event;
+use App\Events\PostUpdate;
 use Illuminate\Http\Request;
 use Faker;
 use Input;
@@ -93,10 +94,12 @@ class PostController extends Controller
         $post = Post::where('post_guid', $post_guid)
             ->with(['comments' => function ($comment) {
                 $comment->withCount('upvotes');
-                $comment->with('user');
+                $comment->with('user', 'user.userProfile');
                 $comment->orderBy('created_at', 'DESC');
-            }, 'tags', 'user'])->withCount(['comments', 'upvotes'])->get()->first();
-
+            }, 'tags', 'user', 'user.userProfile'])->withCount(['comments', 'upvotes'])->get()->first();
+        if (!$post) {
+            return response()->json(['Error' => 'Post not found.'], 400);
+        }
         $post->isEditable = ($post->user->user_guid == $user->user_guid);
 
         if ($post['is_anonymous']) {
@@ -145,6 +148,7 @@ class PostController extends Controller
             if ($post['is_anonymous']) {
                 unset($post['user']);
             }
+            Event::fire(new PostUpdate($post));
             return response()->json(compact('post'), 202);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);

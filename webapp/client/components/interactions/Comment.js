@@ -9,6 +9,7 @@ import {renderVotes} from './InteractionSingle'
 import FlatButton from 'material-ui/FlatButton';
 import RichTextEditor from 'react-rte';
 import Dialog from 'material-ui/Dialog';
+import Avatar from 'material-ui/Avatar';
 
 
 class Comment extends Component {
@@ -29,21 +30,20 @@ class Comment extends Component {
     return {
       votesContainer: {
         color: grey600,
-        margin: 'auto',
-        marginTop: '-16px',
-        paddingBottom: 0
+        margin: '-16px auto auto',
+        paddingBottom: 0,
+        fontSize: 12
       },
       commentContainer: {
         width: '95%',
         margin: 'auto'
       },
       commentVotesCount: {
-        fontSize: 15,
-        margin: 'auto',
-        marginTop: '-16px'
+        fontSize: 12,
+        margin: '-19px auto auto'
       },
       commentVotesIcon: {
-        fontSize: 52,
+        fontSize: 45,
         margin: 'auto',
         padding: 0,
         color: grey600,
@@ -51,16 +51,16 @@ class Comment extends Component {
       commentFooter: {
         fontWeight: 300,
         fontSize: 13,
-        padding: '6px 26px 10px 0',
-        color: grey600
+        padding: '6px 0 10px 0',
+        color: grey600,
+        marginBottom: 20
       },
       timeContainer: {
-        display: 'inline-block',
-        alignContent: 'right',
         fontSize: 12,
         fontWeight: 300,
         color: 'rgba(0, 0, 0, 0.541176)',
-        position: 'absolute'
+        position: 'absolute',
+        marginTop: 18
       },
       commentUpvotesIconButton : {
         padding: 0,
@@ -156,7 +156,7 @@ class Comment extends Component {
           <span style={this.styles.commentVotesCount}>{comment.upvotes_count}</span>
         </Row>
         <Row>
-          <span style={{margin : 'auto'}}>Votes</span>
+          <span style={{margin : '-5px auto auto auto'}}>votes</span>
         </Row>
       </CardText>
     );
@@ -256,37 +256,55 @@ class Comment extends Component {
     let actions = null;
     if(this.state.edit) {
       actions = [
-        (<div style={{width: '10%', flexBasis: '10%', marginLeft: '14px'}} key={1}>
-          <FlatButton
-            label="submit"
-            style={{marginTop: -25, minWidth: 20}}
-            labelStyle={this.styles.actionButton}
-            onClick={() => this.editComment('submit')}/>
-        </div>),
-        (<div style={{width: '10%', flexBasis: '10%', marginLeft: '14px'}} key={2}>
-          <FlatButton
-            label="cancel"
-            style={{marginTop: -25, minWidth: 20}}
-            labelStyle={this.styles.actionButton}
-            onClick={() => this.editComment('cancel')}/>
-        </div>)
+        (<Col xs={1} key={1}>
+          <label style={this.styles.actionButton}
+                 onClick={() => this.editComment('submit')}>
+            submit
+          </label>
+        </Col>),
+        (<Col xs={1} key={2}>
+          <label style={this.styles.actionButton}
+                 onClick={() => this.editComment('cancel')}>
+            cancel
+          </label>
+        </Col>)
       ];
     }
     else {
+      const username = `${comment.user.first_name} ${comment.user.last_name}`;
       actions = [
-        (<div style={{width: '10%', flexBasis: '10%', marginLeft: '14px'}} key={1}>
+        (<Col xs={1} key={1}>
           {edit}
-        </div>),
-        (<div style={{width: '10%', flexBasis: '10%'}} key={2}>
+        </Col>),
+        (<Col xs={1} key={2}>
           {deleteIcon}
-        </div>)
+        </Col>),
+        (<Col xsOffset={7} xs={3} key={3}>
+          <Row end="xs">
+            <label style={{fontWeight: 400}}>{username}</label>
+            <div style={this.styles.timeContainer}
+                 onMouseEnter={() => this.timeTooltipMouseEnter(timezone, moment.tz(comment.created_at, null).format())}
+                 onMouseLeave={() => {
+                   this.setState({ timeTooltip: {show: false, label: ''} })
+                 }}>
+              <label> {`Answered ${moment(time).tz(timezone).fromNow()}`} </label>
+              <Tooltip show={this.state.timeTooltip.show}
+                       label={this.state.timeTooltip.label}
+                       style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
+                       horizontalPosition="left"
+                       verticalPosition="bottom"
+                       touch={true}
+              />
+            </div>
+          </Row>
+        </Col>)
       ]
     }
 
     return (
       <div style={this.styles.commentContainer}>
         <Row>
-          <div style={{width: '11%', flexBasis: '11%', marginLeft: '14px'}}>
+          <div style={{width: '11%', flexBasis: '11%'}}>
             {this.renderVotes()}
           </div>
           <div style={{width: '85%', flexBasis: '85%', textAlign: 'justify'}}>
@@ -296,19 +314,6 @@ class Comment extends Component {
             <Row style={this.styles.commentFooter}>
               {actions}
               {this.renderDeleteConfirmation()}
-              <div style={{width: '60%', flexBasis: '60%', textAlign: 'right'}}>
-                <div style={this.styles.timeContainer} onMouseEnter={() => this.timeTooltipMouseEnter(timezone, moment.tz(comment.created_at, null).format())}
-                     onMouseLeave={()=>{this.setState({ timeTooltip: {show: false, label: ''} }) }}>
-                  <label> {moment(time).tz(timezone).fromNow()} </label>
-                  <Tooltip show={this.state.timeTooltip.show}
-                           label={this.state.timeTooltip.label}
-                           style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
-                           horizontalPosition="left"
-                           verticalPosition="bottom"
-                           touch={true}
-                  />
-                </div>
-              </div>
             </Row>
           </div>
         </Row>
