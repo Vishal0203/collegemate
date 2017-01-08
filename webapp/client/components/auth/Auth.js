@@ -10,6 +10,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import muiTheme from '../../styles/theme/collegemate.theme';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import FlatButton from 'material-ui/FlatButton';
 
 class Auth extends React.Component {
   constructor(props) {
@@ -28,16 +29,10 @@ class Auth extends React.Component {
         fontSize: 35
       },
       signin: {
-        position: 'relative',
-        fontFamily: 'Roboto',
-        fontWeight: 400,
-        height: '40px',
-        width: '200px',
-        fontSize: '14px',
-        color: 'rgba(0, 0, 0, 0.54)',
-        textAlign: 'initial',
-        marginTop: '40px',
-        padding: 8
+        fontSize: 20,
+        fontWeight: 200,
+        color: 'white',
+        textTransform: 'capitalize'
       }
     }
   }
@@ -83,30 +78,51 @@ class Auth extends React.Component {
           <div>
             <div className="auth-background"></div>
             <Paper className="fixed-top bg-transparent">
-              <Toolbar className="bg-transparent" style={{height: 120, padding: '20px 0 0 50px'}}>
+              <Toolbar className="bg-transparent" style={{height: 120, padding: '0 7px 0 40px'}}>
                 <ToolbarGroup>
                   <ToolbarTitle style={this.styles.title} text="College"/>
                   <ToolbarTitle style={{color: 'white', fontWeight: 400, paddingLeft: 1, fontSize: 35}} text="Mate"/>
                 </ToolbarGroup>
+                <ToolbarGroup>
+                  <FlatButton onClick={() => this.oAuthSignIn()}
+                              label="Sign In"
+                              labelStyle={this.styles.signin}
+                              hoverColor="#00FFFFFF"
+                  />
+                </ToolbarGroup>
               </Toolbar>
-              <div className="auth-content">
-                <Row>
-                  <Col xs={12}>
-                    <Row center="xs">
-                      <Col xs={6} style={{fontSize: 47, fontWeight: 400, marginTop: 40}}>
-                        <div>Your perfect college partner</div>
-                        <button style={this.styles.signin} onClick={() => this.oAuthSignIn()}>
-                          <div className="gsvg"></div>
-                          <div style={{display: 'inline-block', paddingLeft: 42, height: 18, lineHeight: '18px', fontWeight: 500}}>
-                            Sign in with Google
+            </Paper>
+
+            <div className="auth-footer">
+              <Grid>
+                <Row center="xs">
+                  <Col xs={10}>
+                    <Paper style={{backgroundColor: 'rgba(225, 225, 225, 0)', boxShadow: 'none', color: 'white'}}>
+                      <Row style={{cursor: 'default'}}>
+                        <Col xs={6}>
+                          <i className="material-icons footer-icon">announcement</i>
+                          <div className="footer-heading">Announcements</div>
+                          <div style={{marginTop: 10, fontSize: 13, fontWeight: 300, fontStyle: 'italic'}}>
+                            Catch up on the activities your college is upto <br/>
+                            from anywhere. You can also download documents <br/>
+                            shared with you by your college.
                           </div>
-                        </button>
-                      </Col>
-                    </Row>
+                        </Col>
+                        <Col xs={6}>
+                          <i className="material-icons footer-icon">question_answer</i>
+                          <div className="footer-heading" >Interactions</div>
+                          <div style={{marginTop: 10, fontSize: 13, fontWeight: 300, fontStyle: 'italic'}}>
+                            Have a question? Shoot it right away! <br/>
+                            You can also interact with you college officials, your <br/>
+                            college mates and college alumini.
+                          </div>
+                        </Col>
+                      </Row>
+                    </Paper>
                   </Col>
                 </Row>
-              </div>
-            </Paper>
+              </Grid>
+            </div>
           </div>
         </MuiThemeProvider>
       )

@@ -57,6 +57,14 @@ class AuthControllerGeneral extends Controller
 
         $user = User::where('google_id', $payload['sub'])->get()->first();
         if ($user) {
+            $user_profile = UserProfile::where('user_id', $user['id'])->get()->first();
+            $google_avatar = $this->buildBase64($payload['picture']);
+            if ($google_avatar != $user_profile['user_avatar']) {
+                $user_profile->update([
+                    'user_avatar' => $google_avatar
+                ]);
+            }
+
             Auth::login($user, true);
             $user = $this->buildUserReturnable($user);
             return response()->json(compact('user'));
