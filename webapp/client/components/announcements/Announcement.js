@@ -24,7 +24,8 @@ class Announcement extends React.Component {
   get styles() {
     return {
       notificationDescription: {
-        padding: '12px 16px 12px 18px'
+        padding: '12px 18px 12px 18px',
+        textAlign: 'justify'
       },
       notificationAttachment: {
         padding: '0px 16px 0px 16px'
@@ -50,6 +51,10 @@ class Announcement extends React.Component {
       }
     }
   }
+
+  createMarkup(content) {
+    return {__html: content};
+  };
 
   timeTooltipMouseEnter(timezone, time) {
     this.setState({
@@ -126,7 +131,7 @@ class Announcement extends React.Component {
         </CardHeader>
 
         <CardText style={this.styles.notificationDescription}>
-          {announcement.notification_body}
+          <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(announcement.notification_body)}/>
         </CardText>
         {this.showAttachments(announcement)}
         <CardText style={this.styles.notificationPublisher}>

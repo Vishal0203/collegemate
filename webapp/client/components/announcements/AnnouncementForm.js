@@ -6,13 +6,19 @@ import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import RichTextEditor from 'react-rte';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
-    this.state = {value: null};
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+
+    this.state = {
+      value: null,
+      content: RichTextEditor.createEmptyValue()
+    };
   }
 
   get styles() {
@@ -42,7 +48,7 @@ class AnnouncementForm extends React.Component {
     const formData = {
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
       notificationHeader: this.refs.notificationHeader.getValue(),
-      notificationBody: this.refs.notificationBody.getValue(),
+      notificationBody: this.state.content.toString('html'),
       notificationCategory: this.refs.notificationCategory.props.value,
       notificationAttachments: this.refs.notificationAttachments.files
     };
@@ -68,9 +74,27 @@ class AnnouncementForm extends React.Component {
     this.refs.chosenFiles.innerHTML += `<i>${text}</i>`;
   }
 
+  onTextChange(content) {
+    this.setState({value: this.state.value, content});
+  };
+
   render() {
     const {notifying_categories} = this.parentProps.auth_user.selectedInstitute;
     const {onCancelClick} = this.props;
+
+    const toolbarConfig = {
+      display: ['INLINE_STYLE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_BUTTONS'],
+      INLINE_STYLE_BUTTONS: [
+        {label: 'Bold', style: 'BOLD'},
+        {label: 'Italic', style: 'ITALIC'},
+        {label: 'Underline', style: 'UNDERLINE'}
+      ],
+      BLOCK_TYPE_BUTTONS: [
+        {label: 'UL', style: 'unordered-list-item'},
+        {label: 'OL', style: 'ordered-list-item'},
+      ]
+    };
+
     return (
       <Card style={{marginTop: 15, marginBottom: 200}}>
         <CardTitle titleStyle={{fontSize: 20}} style={this.styles.notificationTitle}
@@ -79,8 +103,10 @@ class AnnouncementForm extends React.Component {
           <Col xs={12}>
             <TextField ref="notificationHeader" hintText="Heading" fullWidth={true}
                        style={{paddingTop: '15px', fontWeight: 400}}/>
-            <TextField ref="notificationBody" hintText="Content" multiLine={true} fullWidth={true}
-                       style={{fontSize: 14}}/>
+            <RichTextEditor className="rte-container"
+                            editorClassName="rte-editor"
+                            toolbarConfig={toolbarConfig}
+                            value={this.state.content} onChange={this.onTextChange}/>
 
             <SelectField ref="notificationCategory" value={this.state.value} onChange={this.handleChange}
                          hintText="Choose Category">
