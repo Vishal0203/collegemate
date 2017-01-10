@@ -1,51 +1,15 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {fork, put, call, take, select} from 'redux-saga/effects';
+
+import * as userActions from '../actions/users/index';
 import {toggleSnackbar} from '../actions/snackbar/index';
-import {CREATE_ANNOUNCEMENT_REQUEST, FETCH_ANNOUNCEMENTS_REQUEST} from '../actions/announcements/index';
-import {
-  GOOGLE_AUTH,
-  USER_LOGIN_REQUEST,
-  USER_LOGOUT_REQUEST,
-  SUBSCRIBE_CHANNEL,
-  UNSUBSCRIBE_CHANNEL
-} from '../actions/users/index';
-import {
-  announcementFormToggle,
-  newAnnouncementAdded,
-  fetchAnnouncementResponse,
-  setAnnouncementCategories
-} from '../actions/announcements/index';
-import {userLoginResponse, userLogoutResponse, subscribeChannel, unsubscribeChannel} from '../actions/users/index';
+import * as announcementActions from '../actions/announcements/index';
+import * as interactionsActions from '../actions/interactions/index';
+
 import {HttpHelper} from './apis';
 import {showSnackbar} from './utils'
-import {
-  TAGS_FETCH,
-  CREATE_POST_REQUEST,
-  FETCH_POSTS_REQUEST,
-  FETCH_SINGLE_POST_REQUEST,
-  ADD_COMMENT_REQUEST,
-  TOGGLE_COMMENT_UPVOTE_REQUEST,
-  DELETE_COMMENT_REQUEST,
-  TOGGLE_POST_UPVOTE_REQUEST,
-  UPDATE_POST_REQUEST,
-  DELETE_POST_REQUEST,
-  EDIT_COMMENT_REQUEST
-} from '../actions/interactions';
-import {
-  fetchTagsResponse,
-  createPostResponse,
-  fetchPostsResponse,
-  postFormToggle,
-  fetchSinglePostResponse,
-  addCommentResponse,
-  toggleCommentUpvoteResponse,
-  deleteCommentResponse,
-  togglePostUpvoteResponse,
-  updatePostResponse,
-  deletePostResponse,
-  editCommentResponse
-} from '../actions/interactions';
 import createWebSocketConnection from './SocketConnection';
+import * as selectors from '../reducers/selectors';
 import {browserHistory} from 'react-router';
 
 let subscribedChannels = {};
@@ -64,7 +28,7 @@ function *createAnnouncement(params) {
   );
 
   if (response.status == 200) {
-    yield put(announcementFormToggle())
+    yield put(announcementActions.announcementFormToggle())
   }
 }
 
@@ -75,28 +39,40 @@ function *userAuthentication() {
   };
 
   const response = yield call(HttpHelper, 'login', 'POST', data, null);
-  const categories = response.data.user.default_institute.categories;
-  yield put(setAnnouncementCategories(categories));
-  yield put(userLoginResponse(response.data));
-  for (let i in categories) {
-    const channelName = `category_${categories[i].category_guid}:new-announcement`;
-    yield put(subscribeChannel(channelName, newAnnouncementAdded))
+  if (response.data.user.default_institute) {
+    const subscribed_categories = response.data.user.default_institute.subscriptions;
+    yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
+    // subscribe to categories
+    for (let i in subscribed_categories) {
+      const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
+      yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded))
+    }
+    // subscribe to posts
+    const institute_guid = response.data.user.default_institute.inst_profile_guid;
+    yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse))
+  }
+  yield put(userActions.userLoginResponse(response.data));
+  const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
+  const designation = response.data.user.default_institute.user_institute_info[0].designation;
+  if (!(member_id && designation)) {
+    browserHistory.replace('/settings');
+    yield put(toggleSnackbar('Please update your member id and designation.'));
   }
 }
 
 function *fetchAnnouncements(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
-  yield put(fetchAnnouncementResponse(response.data));
+  yield put(announcementActions.fetchAnnouncementResponse(response.data));
 }
 
 function *fetchPosts(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
-  yield put(fetchPostsResponse(response.data));
+  yield put(interactionsActions.fetchPostsResponse(response.data));
 }
 
 function *fetchTags(params) {
   const response = yield call(HttpHelper, 'tags', 'GET', null, params.url_params);
-  yield put(fetchTagsResponse(response.data.tags))
+  yield put(interactionsActions.fetchTagsResponse(response.data.tags))
 }
 
 function *createPost(params) {
@@ -105,25 +81,31 @@ function *createPost(params) {
   );
 
   if (response.status == 200) {
-    yield put(postFormToggle())
+    yield put(interactionsActions.postFormToggle())
   }
 }
 
 function *googleLogin(params) {
   const response = yield call(HttpHelper, 'google_token', 'POST', params.payload, null);
   if (response.data.user.default_institute) {
-    const categories = response.data.user.default_institute.categories;
-    yield put(setAnnouncementCategories(categories));
+    const subscribed_categories = response.data.user.default_institute.subscriptions;
+    yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
     // subscribe to categories
-    for (let i in categories) {
-      const channelName = `category_${categories[i].category_guid}:new-announcement`;
-      yield put(subscribeChannel(channelName, newAnnouncementAdded))
+    for (let i in subscribed_categories) {
+      const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
+      yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded))
     }
     // subscribe to posts
     const institute_guid = response.data.user.default_institute.inst_profile_guid;
-    yield put(subscribeChannel(`posts_${institute_guid}:new-post`, createPostResponse))
+    yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse))
   }
-  yield put(userLoginResponse(response.data));
+  yield put(userActions.userLoginResponse(response.data));
+  const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
+  const designation = response.data.user.default_institute.user_institute_info[0].designation;
+  if (!(member_id && designation)) {
+    browserHistory.replace('/settings');
+    yield put(toggleSnackbar('Please update your member id and designation.'));
+  }
 }
 
 function *fetchSinglePostRequest(params) {
@@ -135,9 +117,9 @@ function *fetchSinglePostRequest(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(fetchSinglePostResponse(response.data));
-  if(!response.data.error) {
-    yield put(subscribeChannel(`post_${postGuid}:post-update`, fetchSinglePostResponse))
+  yield put(interactionsActions.fetchSinglePostResponse(response.data));
+  if (!response.data.error) {
+    yield put(userActions.subscribeChannel(`post_${postGuid}:post-update`, interactionsActions.fetchSinglePostResponse))
   }
 }
 
@@ -148,7 +130,7 @@ function *addComment(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(addCommentResponse(response.data.comment));
+  yield put(interactionsActions.addCommentResponse(response.data.comment));
 
 }
 
@@ -159,7 +141,7 @@ function *toggleCommentUpvote(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(toggleCommentUpvoteResponse(params.comment, response.data));
+  yield put(interactionsActions.toggleCommentUpvoteResponse(params.comment, response.data));
 }
 
 function *removeComment(params) {
@@ -169,7 +151,7 @@ function *removeComment(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(deleteCommentResponse(params.comment, response.data));
+  yield put(interactionsActions.deleteCommentResponse(params.comment, response.data));
   if (response.data.success) {
     yield put(toggleSnackbar(response.data.success));
   }
@@ -182,7 +164,7 @@ function *editComment(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(editCommentResponse(params.comment, response.data));
+  yield put(interactionsActions.editCommentResponse(params.comment, response.data));
 }
 
 function *togglePostUpvote(params) {
@@ -192,7 +174,7 @@ function *togglePostUpvote(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(togglePostUpvoteResponse(response.data));
+  yield put(interactionsActions.togglePostUpvoteResponse(response.data));
 }
 
 function *editPost(params) {
@@ -202,7 +184,7 @@ function *editPost(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(updatePostResponse(response.data));
+  yield put(interactionsActions.updatePostResponse(response.data));
 }
 
 function *deletePost(params) {
@@ -212,7 +194,7 @@ function *deletePost(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(deletePostResponse(response.data));
+  yield put(interactionsActions.deletePostResponse(response.data));
   if (response.data.success) {
     yield put(toggleSnackbar(response.data.success));
     browserHistory.push('/interactions');
@@ -220,23 +202,59 @@ function *deletePost(params) {
 }
 
 function *logoutUser() {
-  const response = yield call(HttpHelper, 'logout', 'GET', null, null)
+  const response = yield call(HttpHelper, 'logout', 'GET', null, null);
   if (response.status == 200) {
     const GoogleAuth = window.gapi.auth2.getAuthInstance();
     GoogleAuth.signOut();
-    yield put(userLogoutResponse());
+    yield put(userActions.userLogoutResponse());
     browserHistory.push('/login');
   }
 }
 
-export const getSelectedPost = (state) => state.interactions.selectedPost
-
 function *handleTabChange(params) {
   if (!params.payload.pathname.match(/\/interactions\/.+/)) {
-    const post = yield select(getSelectedPost);
-    if(post) {
-      yield put(unsubscribeChannel(`post_${post.post_guid}:post-update`));
+    const post = yield select(selectors.getSelectedPost);
+    if (post) {
+      yield put(userActions.unsubscribeChannel(`post_${post.post_guid}:post-update`));
     }
+  }
+}
+
+function *updateUserProfile(params) {
+  const selected_institute = yield select(selectors.selected_institute);
+  const formData = {...params.profileData, institute_guid: selected_institute.institute_guid};
+  const response = yield call(HttpHelper, 'update_profile', 'POST', formData, null);
+  if (response.status == 200) {
+    yield put(userActions.updateUserProfileResponse(response.data.user));
+    yield put(toggleSnackbar('Your profile has been updated.'));
+  }
+}
+
+function *subscribeAnnouncement(params) {
+  const response = yield call(HttpHelper, `category/${params.category}/subscribe`, 'POST', null, null);
+  if (response.status == 200) {
+    yield put(userActions.subscribeAnnouncementResponse(response.data.category));
+    const selected_institute = yield select(selectors.selected_institute);
+    yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
+
+    const channelName = `category_${response.data.category.category_guid}:new-announcement`;
+    yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
+
+    yield put(toggleSnackbar(`You are subscribed to ${response.data.category.category_type}`));
+  }
+}
+
+function *unsubscribeAnnouncement(params) {
+  const response = yield call(HttpHelper, `category/${params.category}/unsubscribe`, 'POST', null, null);
+  if (response.status == 200) {
+    yield put(userActions.unsubscribeAnnouncementResponse(response.data.category));
+    const selected_institute = yield select(selectors.selected_institute);
+    yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
+
+    const channelName = `category_${response.data.category.category_guid}:new-announcement`;
+    yield put(userActions.unsubscribeChannel(channelName));
+
+    yield put(toggleSnackbar(`You unsubscribed to ${response.data.category.category_type}`));
   }
 }
 
@@ -245,71 +263,83 @@ function *handleTabChange(params) {
  */
 
 function *userAuthenticationRequest() {
-  yield *takeLatest(USER_LOGIN_REQUEST, userAuthentication);
+  yield *takeLatest(userActions.USER_LOGIN_REQUEST, userAuthentication);
 }
 
 function *watchCreateAnnouncement() {
-  yield *takeEvery(CREATE_ANNOUNCEMENT_REQUEST, createAnnouncement);
+  yield *takeEvery(announcementActions.CREATE_ANNOUNCEMENT_REQUEST, createAnnouncement);
 }
 
 function *watchAnnouncementFetch() {
-  yield *takeLatest(FETCH_ANNOUNCEMENTS_REQUEST, fetchAnnouncements);
+  yield *takeLatest(announcementActions.FETCH_ANNOUNCEMENTS_REQUEST, fetchAnnouncements);
 }
 
 function *watchPostsFetch() {
-  yield *takeLatest(FETCH_POSTS_REQUEST, fetchPosts);
+  yield *takeLatest(interactionsActions.FETCH_POSTS_REQUEST, fetchPosts);
 }
 
 function *watchTagsRequest() {
-  yield *takeLatest(TAGS_FETCH, fetchTags);
+  yield *takeLatest(interactionsActions.TAGS_FETCH, fetchTags);
 }
 
 function *watchCreatePostRequest() {
-  yield *takeLatest(CREATE_POST_REQUEST, createPost);
+  yield *takeLatest(interactionsActions.CREATE_POST_REQUEST, createPost);
 }
 
 function *watchGoogleAuth() {
-  yield *takeLatest(GOOGLE_AUTH, googleLogin);
+  yield *takeLatest(userActions.GOOGLE_AUTH, googleLogin);
 }
 
 function *watchUserLogout() {
-  yield *takeLatest(USER_LOGOUT_REQUEST, logoutUser);
+  yield *takeLatest(userActions.USER_LOGOUT_REQUEST, logoutUser);
 }
 
 function *watchSinglePostFetch() {
-  yield *takeLatest(FETCH_SINGLE_POST_REQUEST, fetchSinglePostRequest)
+  yield *takeLatest(interactionsActions.FETCH_SINGLE_POST_REQUEST, fetchSinglePostRequest)
 }
 
 function *watchAddComment() {
-  yield *takeLatest(ADD_COMMENT_REQUEST, addComment);
+  yield *takeLatest(interactionsActions.ADD_COMMENT_REQUEST, addComment);
 }
 
 function *watchToggleCommentUpvote() {
-  yield *takeLatest(TOGGLE_COMMENT_UPVOTE_REQUEST, toggleCommentUpvote);
+  yield *takeLatest(interactionsActions.TOGGLE_COMMENT_UPVOTE_REQUEST, toggleCommentUpvote);
 }
 
 function *watchRemoveComment() {
-  yield *takeLatest(DELETE_COMMENT_REQUEST, removeComment);
+  yield *takeLatest(interactionsActions.DELETE_COMMENT_REQUEST, removeComment);
 }
 
 function *watchTogglePostUpvote() {
-  yield *takeLatest(TOGGLE_POST_UPVOTE_REQUEST, togglePostUpvote);
+  yield *takeLatest(interactionsActions.TOGGLE_POST_UPVOTE_REQUEST, togglePostUpvote);
 }
 
 function *watchEditPost() {
-  yield *takeLatest(UPDATE_POST_REQUEST, editPost);
+  yield *takeLatest(interactionsActions.UPDATE_POST_REQUEST, editPost);
 }
 
 function *watchEditComment() {
-  yield *takeLatest(EDIT_COMMENT_REQUEST, editComment);
+  yield *takeLatest(interactionsActions.EDIT_COMMENT_REQUEST, editComment);
 }
 
 function *watchDeletePost() {
-  yield *takeLatest(DELETE_POST_REQUEST, deletePost);
+  yield *takeLatest(interactionsActions.DELETE_POST_REQUEST, deletePost);
 }
 
 function *watchTabChange() {
   yield *takeLatest('@@router/LOCATION_CHANGE', handleTabChange);
+}
+
+function *watchProfileUpdate() {
+  yield *takeLatest(userActions.UPDATE_USER_PROFILE_REQUEST, updateUserProfile)
+}
+
+function *watchAnnouncementChannelSubscribe() {
+  yield *takeEvery(userActions.SUBSCRIBE_ANNOUNCEMNET_REQUEST, subscribeAnnouncement)
+}
+
+function *watchAnnouncementChannelUnsubscribe() {
+  yield *takeEvery(userActions.UNSUBSCRIBE_ANNOUNCEMNET_REQUEST, unsubscribeAnnouncement)
 }
 
 /*
@@ -344,7 +374,7 @@ function *watchOnSocketEvents(params) {
 }
 
 function *watchChannelSubscription() {
-  yield *takeEvery(SUBSCRIBE_CHANNEL, watchOnSocketEvents)
+  yield *takeEvery(userActions.SUBSCRIBE_CHANNEL, watchOnSocketEvents)
 }
 
 function *unsubscribeSocketChannel(params) {
@@ -353,7 +383,7 @@ function *unsubscribeSocketChannel(params) {
 }
 
 function *watchChannelUnsubscribe() {
-  yield *takeEvery(UNSUBSCRIBE_CHANNEL, unsubscribeSocketChannel)
+  yield *takeEvery(userActions.UNSUBSCRIBE_CHANNEL, unsubscribeSocketChannel)
 }
 
 export default function *rootSaga() {
@@ -377,5 +407,8 @@ export default function *rootSaga() {
     fork(watchEditComment),
     fork(watchDeletePost),
     fork(watchTabChange),
+    fork(watchProfileUpdate),
+    fork(watchAnnouncementChannelSubscribe),
+    fork(watchAnnouncementChannelUnsubscribe)
   ]
 }

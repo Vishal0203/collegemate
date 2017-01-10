@@ -17,7 +17,7 @@ class RedirectIfAuthenticated
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
+     * @param  Guard $auth
      * @return void
      */
     public function __construct(Guard $auth)
@@ -28,25 +28,30 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         if ($this->auth->check()) {
             $user = $this->auth->user();
-            $user->load(['userProfile', 'institutes', 'defaultInstitute.categories' =>
-                function ($categories) use ($user) {
-                    $categories->whereHas('subscribers', function ($subscribers) use ($user) {
-                        $subscribers->where('user_id', $user['id']);
-                    });
-                },
+            $user->load(['userProfile', 'institutes', 'defaultInstitute.categories',
+                'defaultInstitute.subscriptions' =>
+                    function ($categories) use ($user) {
+                        $categories->whereHas('subscribers', function ($subscribers) use ($user) {
+                            $subscribers->where('user_id', $user['id']);
+                        });
+                    },
                 'defaultInstitute.notifyingCategories' =>
                     function ($categories) use ($user) {
                         $categories->whereHas('notifiers', function ($notifiers) use ($user) {
                             $notifiers->where('user_id', $user['id']);
                         });
+                    },
+                'defaultInstitute.userInstituteInfo' =>
+                    function ($userInstitute) use ($user) {
+                        $userInstitute->where('user_id', $user['id']);
                     }
             ]);
 

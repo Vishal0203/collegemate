@@ -103,7 +103,7 @@ class AnnouncementForm extends React.Component {
           <Col xs={12}>
             <TextField ref="notificationHeader" hintText="Heading" fullWidth={true}
                        style={{paddingTop: '15px', fontWeight: 400}}/>
-            <RichTextEditor className="rte-container"
+            <RichTextEditor className="rte-container-announcement"
                             editorClassName="rte-editor"
                             toolbarConfig={toolbarConfig}
                             value={this.state.content} onChange={this.onTextChange}/>

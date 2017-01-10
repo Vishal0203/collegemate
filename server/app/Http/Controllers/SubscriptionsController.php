@@ -37,7 +37,7 @@ class SubscriptionsController extends Controller
             'user_id' => \Auth::user()['id']
         ]);
 
-        return response()->json(compact('subscriptions'), 200);
+        return response()->json(compact('category'), 200);
     }
 
     /**
@@ -63,7 +63,7 @@ class SubscriptionsController extends Controller
             $category = Category::where('category_guid', $category_guid)->first();
             $result = $user->subscriptions()->detach($category);
             return $result == 1 ?
-                response()->json(['success' => 'successfully unsubscribed from category'], 200) :
+                response()->json(compact('category'), 200) :
                 response()->json(['failure' => 'member is not subscribed to the category'], 400);
         }
         return response()->json(['failure' => 'Notifiers cannot unsubscribe from the Category'], 400);

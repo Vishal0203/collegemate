@@ -1,13 +1,4 @@
-import {
-  CREATE_ANNOUNCEMENT_REQUEST,
-  NEW_ANNOUNCEMENT_ADDED,
-  CREATE_ANNOUNCEMENT_TOGGLE,
-  FETCH_ANNOUNCEMENTS_REQUEST,
-  FETCH_ANNOUNCEMENTS_RESPONSE,
-  SET_ANNOUNCEMENT_CATEGORIES,
-  ADD_FILTER,
-  REMOVE_FILTER
-} from '../actions/announcements';
+import * as actions from '../actions/announcements/index';
 
 const initialState = {
   categories: [],
@@ -24,11 +15,11 @@ const initialState = {
 
 export default function announcementReducer(state = initialState, action) {
   switch (action.type) {
-    case FETCH_ANNOUNCEMENTS_REQUEST:
-    case CREATE_ANNOUNCEMENT_REQUEST: {
+    case actions.FETCH_ANNOUNCEMENTS_REQUEST:
+    case actions.CREATE_ANNOUNCEMENT_REQUEST: {
       return {...state, loadingMore: true}
     }
-    case NEW_ANNOUNCEMENT_ADDED: {
+    case actions.NEW_ANNOUNCEMENT_ADDED: {
       const skip = state.skip + 1;
       const match = state.filters.filter(function (filter) {
         return filter.category_guid === action.notification.category.category_guid
@@ -46,7 +37,7 @@ export default function announcementReducer(state = initialState, action) {
         loadingMore: false
       };
     }
-    case FETCH_ANNOUNCEMENTS_RESPONSE: {
+    case actions.FETCH_ANNOUNCEMENTS_RESPONSE: {
       return {
         ...state,
         skip: state.skip,
@@ -56,14 +47,14 @@ export default function announcementReducer(state = initialState, action) {
         nextPageUrl: action.response.next_page_url
       };
     }
-    case SET_ANNOUNCEMENT_CATEGORIES: {
+    case actions.SET_ANNOUNCEMENT_CATEGORIES: {
       return {
         ...state,
         categories: action.categories,
         filters: action.categories
       }
     }
-    case ADD_FILTER: {
+    case actions.ADD_FILTER: {
       const {categories, filters} = state;
       if (categories.length == filters.length) {
         return {
@@ -83,7 +74,7 @@ export default function announcementReducer(state = initialState, action) {
         return state;
       }
     }
-    case REMOVE_FILTER: {
+    case actions.REMOVE_FILTER: {
       const {categories, filters} = state;
       const index = filters.indexOf(action.filter);
       let newFiltersSet = [...filters.slice(0, index), ...filters.slice(index + 1)];
@@ -96,7 +87,7 @@ export default function announcementReducer(state = initialState, action) {
         filters: newFiltersSet
       }
     }
-    case CREATE_ANNOUNCEMENT_TOGGLE: {
+    case actions.CREATE_ANNOUNCEMENT_TOGGLE: {
       return {...state, toggleForm: !state.toggleForm};
     }
     case '@@router/LOCATION_CHANGE': {
@@ -106,6 +97,8 @@ export default function announcementReducer(state = initialState, action) {
           categories: state.categories,
           filters: state.filters
         }
+      } else {
+        return state
       }
     }
     default: {

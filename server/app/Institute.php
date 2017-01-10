@@ -39,6 +39,11 @@ class Institute extends Model
         return $this->hasMany('App\Category');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany('App\Category');
+    }
+
     public function notifyingCategories()
     {
         return $this->hasMany('App\Category');
@@ -46,10 +51,17 @@ class Institute extends Model
 
     public function notifications()
     {
-        return
+        return $this->hasManyThrough(
+            'App\NotificationData',
+            'App\Category',
+            'institute_id',
+            'category_id'
+        );
+    }
 
-        $this
-        ->hasManyThrough('App\NotificationData', 'App\Category', 'institute_id', 'category_id');
+    public function userInstituteInfo()
+    {
+        return $this->hasMany('App\UserInstitute');
     }
 
     public function jobs()

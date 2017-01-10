@@ -9,13 +9,12 @@ use Illuminate\Http\Request;
 use Mail;
 use Validator;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Faker;
 
 class AuthControllerGeneral extends Controller
 {
-    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
+    use AuthenticatesUsers;
 
     public function __construct()
     {
@@ -24,17 +23,22 @@ class AuthControllerGeneral extends Controller
 
     private function buildUserReturnable(User $user)
     {
-        $user->load(['userProfile', 'institutes', 'defaultInstitute.categories' =>
-            function ($categories) use ($user) {
-                $categories->whereHas('subscribers', function ($subscribers) use ($user) {
-                    $subscribers->where('user_id', $user['id']);
-                });
-            },
+        $user->load(['userProfile', 'institutes', 'defaultInstitute.categories',
+            'defaultInstitute.subscriptions' =>
+                function ($categories) use ($user) {
+                    $categories->whereHas('subscribers', function ($subscribers) use ($user) {
+                        $subscribers->where('user_id', $user['id']);
+                    });
+                },
             'defaultInstitute.notifyingCategories' =>
                 function ($categories) use ($user) {
                     $categories->whereHas('notifiers', function ($notifiers) use ($user) {
                         $notifiers->where('user_id', $user['id']);
                     });
+                },
+            'defaultInstitute.userInstituteInfo' =>
+                function ($userInstitute) use ($user) {
+                    $userInstitute->where('user_id', $user['id']);
                 }
         ]);
 
@@ -45,7 +49,7 @@ class AuthControllerGeneral extends Controller
     {
         $image = file_get_contents($url);
         if ($image !== false) {
-            return 'data:image/jpg;base64,'.base64_encode($image);
+            return 'data:image/jpg;base64,' . base64_encode($image);
         }
     }
 
@@ -58,7 +62,7 @@ class AuthControllerGeneral extends Controller
         $user = User::where('google_id', $payload['sub'])->get()->first();
         if ($user) {
             $user_profile = UserProfile::where('user_id', $user['id'])->get()->first();
-            $google_avatar = $this->buildBase64($payload['picture']);
+            $google_avatar = $this->buildBase64($payload['picture'] . '?sz=250');
             if ($google_avatar != $user_profile['user_avatar']) {
                 $user_profile->update([
                     'user_avatar' => $google_avatar
@@ -83,7 +87,7 @@ class AuthControllerGeneral extends Controller
                 UserProfile::create([
                     'user_profile_guid' => $internals->uuid,
                     'user_id' => $user['id'],
-                    'user_avatar' => $this->buildBase64($payload['picture'])
+                    'user_avatar' => $this->buildBase64($payload['picture'] . '?sz=250')
                 ]);
 
                 Auth::login($user, true);

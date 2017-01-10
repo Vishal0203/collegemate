@@ -6,7 +6,7 @@ import Main from './components/Main';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
-import Career from './components/careers/Career';
+import SettingsContainer from './components/settings/SettingsContainer';
 import InteractionsContainer from './components/interactions/InteractionsContainer';
 import InteractionSingle from './components/interactions/InteractionSingle';
 import configureStore from './store/configureStore';
@@ -31,7 +31,7 @@ const router = (
           <IndexRoute component={InteractionsContainer}/>
           <Route path='/interactions/:postGuid' component={InteractionSingle}/>
         </Route>
-        <Route path='/career' component={Career}/>
+        <Route path='/settings' component={SettingsContainer}/>
       </Route>
     </Router>
   </Provider>

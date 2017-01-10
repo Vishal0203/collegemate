@@ -98,7 +98,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::group(['prefix' => 'category/{category_guid}'], function () {
         Route::post('subscribe', 'SubscriptionsController@store');
         Route::get('subscriptions', 'SubscriptionsController@index');
-        Route::get('unsubscribe', 'SubscriptionsController@unsubscribe');
+        Route::post('unsubscribe', 'SubscriptionsController@unsubscribe');
     });
 
     Route::group(['prefix' => 'post/{post_guid}'], function () {
