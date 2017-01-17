@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Header from '../Header';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import Loader from 'halogen/BeatLoader';
+import Loader from 'halogen/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
 import StickyDiv from 'react-stickydiv';
@@ -40,7 +40,7 @@ class InteractionsContainer extends Component {
     const loader = (
       <div style={{marginTop: '70px', marginBottom: '50px'}}>
         <Row center="xs">
-          <Loader color="#126B6F" size="12px" margin="5px"/>
+          <Loader color="#126B6F" size="10px" margin="5px"/>
         </Row>
       </div>
     );

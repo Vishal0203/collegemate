@@ -9,6 +9,8 @@ import Navbar from './Navbar';
 import muiTheme from '../styles/theme/collegemate.theme';
 import {toggleSnackbar} from '../actions/snackbar'
 import {browserHistory} from 'react-router';
+import {Grid, Row, Col} from 'react-flexbox-grid';
+import Loader from 'halogen/ScaleLoader';
 import tz from 'moment-timezone';
 
 class Main extends React.Component {
@@ -57,6 +59,12 @@ class Main extends React.Component {
             />
           </div>
         </MuiThemeProvider>
+      )
+    } else {
+      return (
+        <Row center="xs" className="initial-loader">
+          <Loader color="#126B6F" size="16px" margin="5px"/>
+        </Row>
       )
     }
   }

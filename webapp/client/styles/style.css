@@ -135,3 +135,9 @@ body {
     width: 95%;
     margin: 0.5em auto !important;
 }
+
+.initial-loader {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+}
