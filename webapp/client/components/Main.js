@@ -2,7 +2,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/users';
-import {gapiLoaded} from '../actions/misc/index'
 import initGapi from '../store/configureGapi';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Snackbar from 'material-ui/Snackbar';
@@ -28,7 +27,6 @@ class Main extends React.Component {
       window.gapi.load('auth2', function () {
         window.gapi.auth2.init(params)
           .then(() => {
-            actions.gapiLoaded();
             const GoogleAuth = window.gapi.auth2.getAuthInstance();
             if (GoogleAuth.isSignedIn.get()) {
               const GoogleUser = GoogleAuth.currentUser.get();
@@ -76,13 +74,12 @@ function mapStateToProps(state) {
   return {
     auth_user: state.auth_user,
     snackbar: state.snackbar,
-    misc: state.misc
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...userActions, toggleSnackbar, gapiLoaded}, dispatch)
+    actions: bindActionCreators({...userActions, toggleSnackbar}, dispatch)
   };
 }
 

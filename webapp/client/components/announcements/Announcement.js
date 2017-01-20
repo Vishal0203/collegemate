@@ -69,7 +69,7 @@ class Announcement extends React.Component {
     this.setState({
       attachmentTooltip: {
         show: true,
-        label: `${files.length} ${files.length > 1 ? 'files': 'file'}`
+        label: `${files.length} ${files.length > 1 ? 'files' : 'file'}`
       }
     })
   }
@@ -85,9 +85,11 @@ class Announcement extends React.Component {
             <FlatButton href={fileUrl}
                         target="_blank"
                         onMouseEnter={() => this.attachmentTooltipMouseEnter(announcement.notification_files)}
-                        onMouseLeave={()=>{this.setState({ attachmentTooltip: {show: false, label: ''} }) }}
+                        onMouseLeave={() => {
+                          this.setState({attachmentTooltip: {show: false, label: ''}})
+                        }}
                         secondary={true} className="attachment-btn" label="Download Attachments"
-                        icon={<i className="material-icons">attachment</i>} />
+                        icon={<i className="material-icons">attachment</i>}/>
           </CardText>
           <Tooltip show={this.state.attachmentTooltip.show}
                    label={this.state.attachmentTooltip.label}
@@ -118,7 +120,9 @@ class Announcement extends React.Component {
           }
           subtitleStyle={{textTransform: 'capitalize', marginTop: 4}}>
           <div className="time-container" onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
-               onMouseLeave={()=>{this.setState({ timeTooltip: {show: false, label: ''} }) }}>
+               onMouseLeave={() => {
+                 this.setState({timeTooltip: {show: false, label: ''}})
+               }}>
             <label> {moment(time).tz(timezone).fromNow()} </label>
           </div>
           <Tooltip show={this.state.timeTooltip.show}

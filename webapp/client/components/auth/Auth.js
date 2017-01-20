@@ -2,7 +2,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../../actions/users/index';
-import {gapiLoaded} from '../../actions/misc/index'
 import initGapi from '../../store/configureGapi';
 import {browserHistory, Link} from 'react-router';
 import Paper from 'material-ui/Paper';
@@ -48,10 +47,11 @@ class Auth extends React.Component {
       window.gapi.load('auth2', function () {
         window.gapi.auth2.init(params)
           .then(() => {
-            _scope.setState({gapi: true});
             const GoogleAuth = window.gapi.auth2.getAuthInstance();
             if (GoogleAuth.isSignedIn.get()) {
               browserHistory.push('/');
+            } else {
+              _scope.setState({gapi: true});
             }
           });
       });
@@ -113,7 +113,7 @@ class Auth extends React.Component {
                           <div className="footer-heading" >Interactions</div>
                           <div style={{marginTop: 10, fontSize: 13, fontWeight: 300, fontStyle: 'italic'}}>
                             Have a question? Shoot it right away! <br/>
-                            You can also interact with you college officials, your <br/>
+                            You can also interact with your college officials, your <br/>
                             college mates and college alumini.
                           </div>
                         </Col>
@@ -140,14 +140,13 @@ class Auth extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    auth_user: state.auth_user,
-    misc: state.misc
+    auth_user: state.auth_user
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...userActions, gapiLoaded}, dispatch)
+    actions: bindActionCreators({...userActions}, dispatch)
   };
 }
 

@@ -13,7 +13,7 @@ class SubscriptionsUser extends Model
 
     protected $hidden = ['category_id', 'created_at', 'updated_at'];
     
-    public function institutes()
+    public function institute()
     {
         return $this->belongsTo('App\Category', 'category_id');
     }

@@ -1,5 +1,10 @@
 .rte-container {
-    min-height: 200px;;
+    min-height: 200px;
+    font-family: "Roboto", sans-serif;
+}
+
+.rte-container-announcement {
+    min-height: 150px;
     font-family: "Roboto", sans-serif;
 }
 

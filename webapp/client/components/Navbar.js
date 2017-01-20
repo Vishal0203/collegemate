@@ -7,7 +7,6 @@ import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton/IconButton';
 import MenuItem from 'material-ui/MenuItem';
-import Divider from 'material-ui/Divider';
 import {browserHistory} from 'react-router';
 import {userLogout} from '../actions/users/index'
 import {toggleSnackbar} from '../actions/snackbar/index';
@@ -64,6 +63,47 @@ class Navbar extends React.Component {
     this.props.actions.userLogout()
   };
 
+  renderBrand() {
+    const {auth_user} = this.props;
+    const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
+    const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
+
+    if (member_id && designation) {
+      return (
+        <Link to="/" style={{textDecoration: 'none'}}>
+          <ToolbarTitle style={this.styles.title} text="College"/>
+          <ToolbarTitle style={{color: 'white', fontWeight: 400, paddingLeft: 1}} text="Mate"/>
+        </Link>
+      )
+    } else {
+      return (
+        <div style={{cursor: 'default'}}>
+          <ToolbarTitle style={this.styles.title} text="College"/>
+          <ToolbarTitle style={{color: 'white', fontWeight: 400, paddingLeft: 1}} text="Mate"/>
+        </div>
+      )
+    }
+  }
+
+  renderTabs(tabIndex) {
+    const {auth_user} = this.props;
+    const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
+    const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
+    if(member_id && designation) {
+      return (
+        <ToolbarGroup className="tab-container">
+          <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} initialSelectedIndex={tabIndex}>
+            <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements"/>
+            <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
+                 label="Interactions"/>
+            {/* To be enabled in next release */}
+            {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
+          </Tabs>
+        </ToolbarGroup>
+      )
+    }
+  }
+
   renderUserNav() {
     const {parentProps} = this.props;
     if(Object.keys(this.props.auth_user.user).length != 0) {
@@ -82,12 +122,7 @@ class Navbar extends React.Component {
                     }
                     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                     targetOrigin={{horizontal: 'right', vertical: 'top'}} >
-
-            <MenuItem primaryText="Refresh"/>
-            <MenuItem primaryText="Send feedback"/>
-            <MenuItem primaryText="Settings"/>
-            <MenuItem primaryText="Help"/>
-            <Divider />
+            <MenuItem onClick={() => browserHistory.push('/settings')} primaryText="Settings"/>
             <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
           </IconMenu>
         </ToolbarGroup>
@@ -97,14 +132,13 @@ class Navbar extends React.Component {
 
   getTabIndex(pathname) {
     const INTERACTION_REGEX = /^\/interactions(\/.*)?/i;
-
     if (pathname == '/') {
       return 0
     }
-
     if (INTERACTION_REGEX.test(pathname)) {
       return 1
     }
+    return -1
   }
 
   render() {
@@ -115,23 +149,10 @@ class Navbar extends React.Component {
       <Paper className="fixed-top">
         <Toolbar className="navbar">
           <ToolbarGroup>
-            <Link to="/" style={{textDecoration: 'none'}}>
-              <ToolbarTitle style={this.styles.title} text="College"/>
-              <ToolbarTitle style={{color: 'white', fontWeight: 400, paddingLeft: 1}} text="Mate"/>
-            </Link>
+            {this.renderBrand()}
           </ToolbarGroup>
-          <ToolbarGroup className="tab-container">
-            <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} initialSelectedIndex={tabIndex}>
-              <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements"/>
-              <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
-                   label="Interactions"/>
-              {/* To be enabled in next release */}
-              {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
-            </Tabs>
-          </ToolbarGroup>
-
+          {this.renderTabs(tabIndex)}
           {this.renderUserNav()}
-
         </Toolbar>
       </Paper>
     );

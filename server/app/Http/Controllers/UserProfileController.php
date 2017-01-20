@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Institute;
+use App\UserInstitute;
 use App\UserProfile;
 use Illuminate\Http\Request;
 
@@ -52,31 +54,25 @@ class UserProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = \Auth::user();
-        $response = [];
-        if ($request->hasFile('avatar')) {
-            $avatar = $this->updateAvatar($request, $user);
-            UserProfile::where('user_id', $user['id'])->update([
-                'about_me' => $request['about_me'],
-                'gender' => $request['gender'],
-                'user_avatar' => $avatar
-            ]);
-            $response['avatar'] = $avatar;
-        } elseif ($request->has('avatar')) {
-            UserProfile::where('user_id', $user['id'])->update([
-                'about_me' => $request['about_me'],
-                'gender' => $request['gender'],
-                'user_avatar' => $request['avatar']
-            ]);
-            $response['avatar'] = $request['avatar'];
-        } else {
-            UserProfile::where('user_id', $user['id'])->update([
-                'about_me' => $request['about_me'],
-                'gender' => $request['gender']
-            ]);
-        }
-        $response['about_me'] = $request['about_me'];
-        $response['gender'] = $request['gender'];
+        $institute = Institute::where('inst_profile_guid', $request['institute_guid'])->first();
 
-        return response()->json(compact('response'));
+        UserProfile::where('user_id', $user['id'])->update([
+            'about_me' => $request['aboutMe'],
+            'gender' => $request['gender'],
+            'dob' => $request['dob']
+        ]);
+
+        UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
+            'member_id' => $request['memberId'],
+            'designation' => $request['designation']
+        ]);
+
+        $user->load(['userProfile', 'defaultInstitute.userInstituteInfo' =>
+            function ($userInstitute) use ($user) {
+                $userInstitute->where('user_id', $user['id']);
+            }
+        ]);
+
+        return response()->json(compact('user'));
     }
 }
