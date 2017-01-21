@@ -11,14 +11,30 @@ import Chip from 'material-ui/Chip';
 import Divider from 'material-ui/Divider';
 import StickyDiv from 'react-stickydiv';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import {grey500} from 'material-ui/styles/colors';
+import IconButton from 'material-ui/IconButton';
+
+import SubscriptionForm from '../settings/SubscriptionForm';
+import {
+  subscribeAnnouncementRequest,
+  unsubscribeAnnouncementRequest,
+  createAnnouncementCategoryRequest
+} from '../../actions/users/index';
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
     super(props);
     this.colorMap = {};
     this.letterAvatarColors = [...letterAvatarColors];
+    this.state = {
+      timeTooltip: {
+        show: false,
+        label: ''
+      },
+      showConfirmation: false
+    };
   }
 
   get styles() {
@@ -42,6 +58,10 @@ class AnnouncementsContainer extends Component {
         color: '#9E9E9E'
       }
     }
+  }
+
+  toggleConfirmation(visiblity) {
+    this.setState({showConfirmation: visiblity});
   }
 
 
@@ -120,6 +140,29 @@ class AnnouncementsContainer extends Component {
     }
   }
 
+  renderSelectCategories() {
+    const actions = [
+      <FlatButton
+        label="Close"
+        primary={true}
+        onTouchTap={() => this.toggleConfirmation(false)}
+      />,
+    ];
+    return (
+      <Dialog
+        title="Category Settings"
+        actions={actions}
+        modal={false}
+        open={this.state.showConfirmation}
+        onRequestClose={() => this.toggleConfirmation(false)}
+        autoScrollBodyContent={true}
+      >
+        <SubscriptionForm parentProps={this.props}/>
+      </Dialog>
+
+    );
+  }
+
   render() {
     const loader = (
       <div style={{marginTop: '70px', marginBottom: '50px'}}>
@@ -148,7 +191,7 @@ class AnnouncementsContainer extends Component {
                   </InfiniteScroll>
                 </Col>
                 <Col xs={4}>
-                  <StickyDiv offsetTop={65}>
+                  <StickyDiv zIndex={1} offsetTop={65}>
                     <div className="right-content">
                       <label>Currently Showing</label>
                       <Divider style={{marginTop: 2, marginBottom: 2}}/>
@@ -159,12 +202,14 @@ class AnnouncementsContainer extends Component {
                       <Divider style={{marginTop: 2, marginBottom: 2}}/>
                       <div style={this.styles.wrapper}>
                         {this.renderFilterChips()}
-                        <div style={{marginRight: '20px'}}>
-                          <FloatingActionButton secondary={true}>
-                            <i className="material-icons" style={{fontSize: 26}}>settings</i>
-                          </FloatingActionButton>
-                          <div>
-                          </div>
+                        <div style={{paddingTop: 10}}>
+                          <IconButton iconStyle={{color: grey500, fontSize: 20}}
+                                      style={{width: 29, height: 29, padding: 0}}
+                                      tooltip="Subscriptions">
+                            <i className="material-icons" onTouchTap={() => this.toggleConfirmation(true)}>
+                              settings
+                            </i>
+                          </IconButton>
                         </div>
                       </div>
                     </div>
@@ -173,6 +218,9 @@ class AnnouncementsContainer extends Component {
               </Row>
             </div>
           </Grid>
+        </div>
+        <div>
+          {this.renderSelectCategories()}
         </div>
       </div>
     );
@@ -188,10 +236,13 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...announcementActions}, dispatch)
+    actions: bindActionCreators({
+      ...announcementActions,
+      subscribeAnnouncementRequest,
+      unsubscribeAnnouncementRequest,
+      createAnnouncementCategoryRequest
+    }, dispatch)
   };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnnouncementsContainer);
-
-

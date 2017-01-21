@@ -90,6 +90,13 @@ export default function announcementReducer(state = initialState, action) {
     case actions.CREATE_ANNOUNCEMENT_TOGGLE: {
       return {...state, toggleForm: !state.toggleForm};
     }
+    case actions.RELOAD_ANNOUNCEMENTS: {
+      return {
+        ...initialState,
+        categories: state.categories,
+        filters: state.filters
+      }
+    }
     case '@@router/LOCATION_CHANGE': {
       if (action.payload.pathname != '/') {
         return {

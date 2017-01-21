@@ -92,10 +92,10 @@ class Navbar extends React.Component {
     if(member_id && designation) {
       return (
         <ToolbarGroup className="tab-container">
-          <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} initialSelectedIndex={tabIndex}>
-            <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements"/>
+          <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} value={tabIndex}>
+            <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements" value='announcements'/>
             <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
-                 label="Interactions"/>
+                 label="Interactions" value='interactions'/>
             {/* To be enabled in next release */}
             {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
           </Tabs>
@@ -133,10 +133,10 @@ class Navbar extends React.Component {
   getTabIndex(pathname) {
     const INTERACTION_REGEX = /^\/interactions(\/.*)?/i;
     if (pathname == '/') {
-      return 0
+      return 'announcements'
     }
     if (INTERACTION_REGEX.test(pathname)) {
-      return 1
+      return 'interactions'
     }
     return -1
   }

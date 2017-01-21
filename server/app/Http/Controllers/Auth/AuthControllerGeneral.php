@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\UserInstitute;
 use App\UserProfile;
 use Auth;
 use Illuminate\Http\Request;
@@ -73,6 +74,7 @@ class AuthControllerGeneral extends Controller
             $user = $this->buildUserReturnable($user);
             return response()->json(compact('user'));
         } else {
+            //Todo: Hardcoded inst details. Need to update base on user input
             if ($payload) {
                 $internals = Faker\Factory::create('en_US');
                 $user = User::create([
@@ -80,6 +82,7 @@ class AuthControllerGeneral extends Controller
                     'google_id' => $payload['sub'],
                     'email' => $payload['email'],
                     'first_name' => $payload['given_name'],
+                    'default_institute' => 1,
                     'last_name' => $payload['family_name'],
                     'is_verified' => $payload['email_verified']
                 ]);
@@ -88,6 +91,13 @@ class AuthControllerGeneral extends Controller
                     'user_profile_guid' => $internals->uuid,
                     'user_id' => $user['id'],
                     'user_avatar' => $this->buildBase64($payload['picture'] . '?sz=250')
+                ]);
+
+                UserInstitute::create([
+                    'user_id' => $user['id'],
+                    'institute_id' => 1,
+                    'role' => 'inst_student',
+                    'invitation_status' => 'accepted'
                 ]);
 
                 Auth::login($user, true);

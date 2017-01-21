@@ -58,7 +58,6 @@ class CategoryController extends Controller
         ]);
 
         $this->addNotifierToCategory($category, Auth::user());
-
         return response()->json(compact('category'), 200);
     }
 

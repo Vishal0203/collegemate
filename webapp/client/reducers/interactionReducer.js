@@ -1,32 +1,9 @@
 
-import {
-  CREATE_POST_TOGGLE,
-  CREATE_POST_REQUEST,
-  CREATE_POST_RESPONSE,
-  FETCH_POSTS_REQUEST,
-  FETCH_POSTS_RESPONSE,
-  TAGS_RESPONSE,
-  FETCH_SINGLE_POST_REQUEST,
-  FETCH_SINGLE_POST_RESPONSE,
-  TOGGLE_POST_UPVOTE_REQUEST,
-  TOGGLE_POST_UPVOTE_RESPONSE,
-  DELETE_POST_REQUEST,
-  DELETE_POST_RESPONSE,
-  UPDATE_POST_REQUEST,
-  UPDATE_POST_RESPONSE,
-  TOGGLE_POST_UPDATE_FORM,
-  ADD_COMMENT_TOGGLE,
-  ADD_COMMENT_REQUEST,
-  ADD_COMMENT_RESPONSE,
-  TOGGLE_COMMENT_UPVOTE_RESPONSE,
-  DELETE_COMMENT_REQUEST,
-  DELETE_COMMENT_RESPONSE,
-  EDIT_COMMENT_REQUEST,
-  EDIT_COMMENT_RESPONSE
-} from '../actions/interactions';
+import * as actions from '../actions/interactions';
 
 const initialState = {
   tags: [],
+  filters: [],
   toggleForm: false,
   loadingMore: false,
   nextPageUrl: null,
@@ -44,11 +21,11 @@ const initialState = {
 
 export default function interactionReducer(state = initialState, action) {
   switch (action.type) {
-    case FETCH_POSTS_REQUEST:
-    case CREATE_POST_REQUEST: {
+    case actions.FETCH_POSTS_REQUEST:
+    case actions.CREATE_POST_REQUEST: {
       return {...state, loadingMore: true}
     }
-    case CREATE_POST_RESPONSE: {
+    case actions.CREATE_POST_RESPONSE: {
       const skip = state.skip + 1;
       return {
         ...state,
@@ -57,7 +34,7 @@ export default function interactionReducer(state = initialState, action) {
         loadingMore: false
       };
     }
-    case FETCH_POSTS_RESPONSE: {
+    case actions.FETCH_POSTS_RESPONSE: {
       return {
         ...state,
         skip: state.skip,
@@ -67,16 +44,46 @@ export default function interactionReducer(state = initialState, action) {
         nextPageUrl: action.response.next_page_url
       };
     }
-    case CREATE_POST_TOGGLE: {
+    case actions.CREATE_POST_TOGGLE: {
       return {...state, toggleForm: !state.toggleForm};
     }
-    case TAGS_RESPONSE: {
+    case actions.TAGS_RESPONSE: {
       return {...state, tags: [...action.tags]}
     }
-    case FETCH_SINGLE_POST_REQUEST: {
+    case actions.ADD_TAG_FILTER: {
+      const {tags, filters} = state;
+      if (tags.length == filters.length) {
+        return {
+          ...initialState,
+          tags,
+          filters: [action.filter]
+        }
+      }
+      else if (tags.length != filters.length && filters.indexOf(action.filter) == -1) {
+        return {
+          ...initialState,
+          tags,
+          filters: [action.filter, ...state.filters]
+        }
+      }
+      else {
+        return state;
+      }
+    }
+    case actions.REMOVE_TAG_FILTER: {
+      const {tags, filters} = state;
+      const index = filters.indexOf(action.filter);
+      let newFiltersSet = [...filters.slice(0, index), ...filters.slice(index + 1)];
+      return {
+        ...initialState,
+        tags,
+        filters: newFiltersSet
+      }
+    }
+    case actions.FETCH_SINGLE_POST_REQUEST: {
       return {...state, postLoading: true}
     }
-    case FETCH_SINGLE_POST_RESPONSE: {
+    case actions.FETCH_SINGLE_POST_RESPONSE: {
       if (state.selectedPost)
       {
         return {
@@ -93,7 +100,7 @@ export default function interactionReducer(state = initialState, action) {
       }
       return {...state, selectedPost:action.response.post, postLoading: false}
     }
-    case TOGGLE_POST_UPVOTE_RESPONSE: {
+    case actions.TOGGLE_POST_UPVOTE_RESPONSE: {
       if(action.response.error) {
         return {...state, postLoading: false}
       }
@@ -102,19 +109,19 @@ export default function interactionReducer(state = initialState, action) {
         selectedPost: {...state.selectedPost, upvotes_count: action.response.upvotes_count}
       }
     }
-    case DELETE_POST_REQUEST: {
+    case actions.DELETE_POST_REQUEST: {
       return {...state, postLoading: true}
     }
-    case DELETE_POST_RESPONSE: {
+    case actions.DELETE_POST_RESPONSE: {
       return {...state, selectedPost: null, postLoading: false}
     }
-    case TOGGLE_POST_UPDATE_FORM: {
+    case actions.TOGGLE_POST_UPDATE_FORM: {
       return {...state, togglePostUpdateForm: !state.togglePostUpdateForm}
     }
-    case UPDATE_POST_REQUEST: {
+    case actions.UPDATE_POST_REQUEST: {
       return {...state, postLoading: true}
     }
-    case UPDATE_POST_RESPONSE: {
+    case actions.UPDATE_POST_RESPONSE: {
       const postResponse = action.response.post;
       const updatedPost = {
         ...state.selectedPost,
@@ -139,16 +146,16 @@ export default function interactionReducer(state = initialState, action) {
         postLoading: false
       }
     }
-    case ADD_COMMENT_TOGGLE: {
+    case actions.ADD_COMMENT_TOGGLE: {
       return {
         ...state,
         toggleCommentForm: !state.toggleCommentForm
       }
     }
-    case ADD_COMMENT_REQUEST: {
+    case actions.ADD_COMMENT_REQUEST: {
       return {...state, commentLoading: true}
     }
-    case ADD_COMMENT_RESPONSE: {
+    case actions.ADD_COMMENT_RESPONSE: {
       return {
         ...state,
         toggleCommentForm: !state.toggleCommentForm,
@@ -160,7 +167,7 @@ export default function interactionReducer(state = initialState, action) {
         }
       }
     }
-    case TOGGLE_COMMENT_UPVOTE_RESPONSE: {
+    case actions.TOGGLE_COMMENT_UPVOTE_RESPONSE: {
       if(action.response.error) {
         return state
       }
@@ -179,13 +186,13 @@ export default function interactionReducer(state = initialState, action) {
         },
       }
     }
-    case DELETE_COMMENT_REQUEST: {
+    case actions.DELETE_COMMENT_REQUEST: {
       return {
         ...state,
         commentLoading: true
       }
     }
-    case DELETE_COMMENT_RESPONSE: {
+    case actions.DELETE_COMMENT_RESPONSE: {
       if(action.response.error) {
         return {
           ...state,
@@ -205,13 +212,13 @@ export default function interactionReducer(state = initialState, action) {
         commentLoading: false
       }
     }
-    case EDIT_COMMENT_REQUEST: {
+    case actions.EDIT_COMMENT_REQUEST: {
       return {
         ...state,
         commentLoading: true
       }
     }
-    case EDIT_COMMENT_RESPONSE: {
+    case actions.EDIT_COMMENT_RESPONSE: {
       if(action.response.error) {
         return {...state, commentLoading: false}
       }

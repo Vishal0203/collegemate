@@ -3,7 +3,6 @@ import {Card, CardText, CardTitle} from 'material-ui/Card';
 import {Col, Row} from 'react-flexbox-grid';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RichTextEditor from 'react-rte';
 import InteractionForm from './InteractionForm'
 
 /**

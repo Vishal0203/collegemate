@@ -13,7 +13,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
 
 import Header from '../Header';
-import * as userActions from '../../actions/users/index';
 import SubscriptionForm from './SubscriptionForm'
 
 class SettingsContainer extends Component {
@@ -21,11 +20,9 @@ class SettingsContainer extends Component {
     super(props);
     const gender = props.auth_user.user.user_profile.gender;
 
-    // work around for style issues
     this.state = {
       gender
     };
-    this.state['datePickerStyle'] = gender == null ? {marginTop: 9.5} : {marginTop: 0}
   }
 
   get styles() {
@@ -34,13 +31,15 @@ class SettingsContainer extends Component {
         fontSize: 14,
         fontWeight: 300,
         width: '100%',
-        marginTop: 5
+      },
+      floatingLabelStyle: {
+        fontSize: 16
       }
     }
   }
 
   handleChange(event, index, value) {
-    this.setState({gender: value, datePickerStyle: {marginTop: 0}})
+    this.setState({gender: value})
   }
 
   handleUserProfileSave() {
@@ -66,6 +65,8 @@ class SettingsContainer extends Component {
         return (
           <DatePicker
             ref="dob"
+            floatingLabelText="Date of birth"
+            floatingLabelStyle={this.styles.floatingLabelStyle}
             defaultDate={new Date(dob)}
             style={this.state.datePickerStyle}
             textFieldStyle={this.styles.formField}
@@ -81,8 +82,9 @@ class SettingsContainer extends Component {
         return (
           <DatePicker
             ref="dob"
+            floatingLabelText="Date of birth"
+            floatingLabelStyle={this.styles.floatingLabelStyle}
             textFieldStyle={this.styles.formField}
-            style={this.state.datePickerStyle}
             hintText="Date of Birth"
             formatDate={new global.Intl.DateTimeFormat('en-US', {
               day: 'numeric',
@@ -102,9 +104,9 @@ class SettingsContainer extends Component {
             <div className="wrap">
               <Card style={{padding: 16}}>
                 <Row>
-                  <Col xs={4} style={{marginTop: 60}}>
+                  <Col xs={4} style={{marginTop: 80}}>
                     <Row center="xs">
-                      <Avatar src={this.props.auth_user.user.user_profile.user_avatar} size={150}/>
+                      <Avatar src={this.props.auth_user.user.user_profile.user_avatar} size={180}/>
                     </Row>
                     <Row center="xs" style={{marginTop: 10}}>
                       <div style={{color: grey600, fontWeight: 500, fontSize: 14}}>{username}</div>
@@ -119,18 +121,22 @@ class SettingsContainer extends Component {
                     <div style={{paddingTop: 5}}>
                       <TextField style={this.styles.formField}
                                  ref="memberId"
-                                 hintText="* Member ID"
+                                 floatingLabelText="* Member ID"
+                                 floatingLabelStyle={this.styles.floatingLabelStyle}
                                  fullWidth={true}
                                  defaultValue={member_id}/>
                       <TextField style={this.styles.formField}
                                  ref="designation"
-                                 hintText="* Designation (ex: CSE Student, CSE Staff etc)"
+                                 floatingLabelText="* Designation"
+                                 floatingLabelStyle={this.styles.floatingLabelStyle}
+                                 hintText="ex: CSE Student, CSE Staff etc"
                                  fullWidth={true}
                                  defaultValue={designation}/>
                       <Row>
                         <Col xs={6}>
                           <SelectField
-                            hintText="Gender"
+                            floatingLabelText="Gender"
+                            floatingLabelStyle={this.styles.floatingLabelStyle}
                             style={this.styles.formField}
                             fullWidth={true}
                             value={this.state.gender}
@@ -146,8 +152,9 @@ class SettingsContainer extends Component {
                       </Row>
                       <TextField
                         defaultValue={about_me}
+                        floatingLabelText="About me"
+                        floatingLabelStyle={this.styles.floatingLabelStyle}
                         ref="aboutMe"
-                        hintText="About me"
                         style={this.styles.formField}
                         multiLine={true}
                         fullWidth={true}
@@ -155,19 +162,19 @@ class SettingsContainer extends Component {
                         rowsMax={4}
                       />
                     </div>
-                    <RaisedButton label="Save"
-                                  onClick={() => this.handleUserProfileSave()}
-                                  buttonStyle={{height: '30px', lineHeight: '30px'}}
-                                  labelStyle={{fontSize: 11}}
-                                  style={{marginTop: 12}}
-                                  primary={true}/>
+                    <RaisedButton
+                      label="Save"
+                      onClick={() => this.handleUserProfileSave()}
+                      buttonStyle={{height: '30px', lineHeight: '30px'}}
+                      labelStyle={{fontSize: 11}}
+                      style={{marginTop: 12}}
+                      primary={true}/>
                   </Col>
                 </Row>
               </Card>
 
               <Card style={{padding: 16, marginBottom: 40, marginTop: 20}}>
-                <CardTitle title="Subscriptions"
-                           subtitle="Your institute's announcement categories"/>
+                <CardTitle title="Announcement Settings"/>
                 <SubscriptionForm parentProps={this.props}/>
               </Card>
             </div>
@@ -178,16 +185,4 @@ class SettingsContainer extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {}
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators({...userActions}, dispatch)
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SettingsContainer);
-
-
+export default SettingsContainer;
