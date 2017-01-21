@@ -4,13 +4,15 @@ import {bindActionCreators} from 'redux';
 import Announcement from './Announcement'
 import * as announcementActions  from '../../actions/announcements/index';
 import Header from '../Header';
-import Loader from 'halogen/BeatLoader';
+import Loader from 'halogen/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
 import Chip from 'material-ui/Chip';
 import Divider from 'material-ui/Divider';
 import StickyDiv from 'react-stickydiv';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
@@ -41,6 +43,7 @@ class AnnouncementsContainer extends Component {
       }
     }
   }
+
 
   getAvatarColor(category) {
     if (!(category in this.colorMap)) {
@@ -77,7 +80,8 @@ class AnnouncementsContainer extends Component {
 
   renderAnnouncements() {
     return this.props.announcements.items.data.map((announcement, i) =>
-      <Announcement key={i} parentProps={this.props} announcement={announcement} avatarColor={this.getAvatarColor(announcement.category.category_type)} />
+      <Announcement key={i} parentProps={this.props} announcement={announcement}
+                    avatarColor={this.getAvatarColor(announcement.category.category_type)}/>
     )
   }
 
@@ -120,7 +124,7 @@ class AnnouncementsContainer extends Component {
     const loader = (
       <div style={{marginTop: '70px', marginBottom: '50px'}}>
         <Row center="xs">
-          <Loader color="#126B6F" size="12px" margin="5px"/>
+          <Loader color="#126B6F" size="10px" margin="5px"/>
         </Row>
       </div>
     );
@@ -151,10 +155,17 @@ class AnnouncementsContainer extends Component {
                       <div style={this.styles.wrapper}>
                         {this.renderSelectedFilters()}
                       </div>
-                      <label>Filters</label>
+                      <label>Categories</label>
                       <Divider style={{marginTop: 2, marginBottom: 2}}/>
                       <div style={this.styles.wrapper}>
                         {this.renderFilterChips()}
+                        <div style={{marginRight: '20px'}}>
+                          <FloatingActionButton secondary={true}>
+                            <i className="material-icons" style={{fontSize: 26}}>settings</i>
+                          </FloatingActionButton>
+                          <div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </StickyDiv>
@@ -167,6 +178,7 @@ class AnnouncementsContainer extends Component {
     );
   }
 }
+
 
 function mapStateToProps(state) {
   return {

@@ -8,7 +8,7 @@ stderr_logfile=/usr/local/var/log/redis_stderr.log
 
 [program:laravel-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php <application_root>/artisan queue:work database --sleep=3 --tries=3 --daemon
+command=php <application_root>/artisan queue:work redis --sleep=3 --tries=3
 autostart=true
 autorestart=true
 user=<os_user>

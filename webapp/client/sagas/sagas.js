@@ -222,7 +222,7 @@ function *handleTabChange(params) {
 
 function *updateUserProfile(params) {
   const selected_institute = yield select(selectors.selected_institute);
-  const formData = {...params.profileData, institute_guid: selected_institute.institute_guid};
+  const formData = {...params.profileData, institute_guid: selected_institute.inst_profile_guid};
   const response = yield call(HttpHelper, 'update_profile', 'POST', formData, null);
   if (response.status == 200) {
     yield put(userActions.updateUserProfileResponse(response.data.user));

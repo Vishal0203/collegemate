@@ -54,15 +54,6 @@ LOCK TABLES `dynamic_tables` WRITE;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `failed_jobs`
---
-
-LOCK TABLES `failed_jobs` WRITE;
-/*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping data for table `institute_notifiers`
 --
 
@@ -80,25 +71,6 @@ LOCK TABLES `institute_profile` WRITE;
 /*!40000 ALTER TABLE `institute_profile` DISABLE KEYS */;
 INSERT INTO `institute_profile` VALUES (1,'8ad199ca-df8f-314e-8634-c64195a11d0d',1,'94743-2564','Paucek, Skiles and Kovacek','Harum quaerat fuga quis aperiam ullam tempora deleniti.','1-919-394-1321','5129 Herzog Ferry Apt. 773\nNew Amanda, MN 29370','Lake Nellie','22231','Cuba',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(2,'3eb283f0-8dc2-3b77-8c64-783db1218bbe',7,'32927','Nienow Ltd','Tempore quo ipsa et numquam mollitia voluptates aliquam deleniti.','457.921.5621','728 Lang View\nLake Lulaport, FL 01033-2943','South Johnsonshire','58141','Jordan',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(3,'b9265365-4529-3f69-a2d1-25ae24d80034',17,'18905-7863','Osinski-Legros','Voluptas est nostrum rerum quidem quos voluptatem.','962.391.0463 x348','99135 Vincenza Groves Apt. 219\nLegrosborough, LA 77014-6639','Legroshaven','88199-6439','Korea',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(4,'6d56bf59-4b64-3c98-b7fa-f9fc8d37cb9e',5,'28814-4764','Fahey, Reichert and Marquardt','Molestiae corrupti repellendus at id.','710.758.2455 x3220','829 Elouise Mill Suite 982\nEast Kale, NM 69937-9706','Sidport','12810','Swaziland',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(5,'4ace111a-f886-32e9-8152-0cf08ce505ad',17,'29071','Koepp LLC','Qui dolorum tempore corrupti et sit quis sit.','745-558-2025','92679 Alisha Divide\nWeissnatville, WA 67207','Ankundingstad','71686-1112','Montenegro',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(6,'6f56e8c4-a9d5-3c0b-a58f-d8728507d501',5,'13085-4461','Pacocha, Hilll and Weissnat','Aliquam consequatur laudantium eum sapiente ut exercitationem nam.','543.719.1262 x64436','1149 Wunsch Squares\nClementineport, WY 69362-7618','Ernestberg','98758','Central African Republic',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(7,'840d1f68-20c7-371a-ada0-83c858e4e892',16,'37670','Predovic and Sons','Aut deserunt voluptas deleniti quasi et ea.','(556) 545-9557 x4410','169 Jast Road\nSouth Mavisbury, ME 18337-2755','Robelside','45614-0310','Central African Republic',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(8,'bdb84bf4-0afe-3189-94d3-5f379c70c5fd',13,'02708','Rolfson-Barrows','Eaque voluptatem praesentium iste dolorem veniam et rerum.','721-432-0541','7982 Grimes Villages\nNew Burdetteberg, NH 13112-7449','East Lucious','10931','Russian Federation',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(9,'f3f1d1a2-0899-3b44-b664-9d3cbac3d339',1,'32824','Kessler-Roob','Esse laboriosam ducimus maiores.','+1-875-443-3208','23184 Destiny Lodge\nEast Codybury, ND 70869','Connland','94821','Falkland Islands (Malvinas)',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32'),(10,'64faf510-e8a6-3387-bae7-65db48a29413',3,'07797','Zieme-Ernser','Nisi et velit non.','(573) 717-5562','9930 Harvey Drives\nNorth Don, MT 32660-1961','North Bobbieshire','74267','Samoa',3,NULL,'2016-10-31 10:23:32','2016-10-31 10:23:32');
 /*!40000 ALTER TABLE `institute_profile` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `jobs`
---
-
-LOCK TABLES `jobs` WRITE;
-/*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `migrations`
---
-
-LOCK TABLES `migrations` WRITE;
-/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES ('2014_10_12_000000_initial_tables',1),('2014_10_12_100000_create_password_resets_table',1),('2015_11_15_164223_dynamic_institute_table',1),('2015_11_25_100653_users_hash_column',1),('2016_02_20_190037_column_invite_status',1),('2016_02_28_205828_create_jobs_table',1),('2016_03_09_051650_is_default_column_dynamic_tables',1),('2016_03_16_212425_first_name_last_name_nullable',1),('2016_03_20_054319_create_failed_jobs_table',1),('2016_04_07_101909_user_avatar_column',1),('2016_05_20_071312_drop_subscrptions',1),('2016_05_21_075033_notification_level_column',1),('2016_05_25_085109_drop_deletedat_subscription',1),('2016_06_15_212239_notification_files',1),('2016_08_02_085959_create_sessions_table',1),('2016_08_12_050808_user_posts_table',1),('2016_08_12_064329_post_comments',1),('2016_08_12_183832_jobs_table',1),('2016_08_12_190833_create_tags_table',1),('2016_08_12_191124_create_taggables_table',1),('2016_08_13_011159_upvotes',1),('2016_08_15_100717_company_column_jobs',1),('2016_08_15_101629_type_guid_column_tags',1),('2016_08_15_103940_institute_id_jobs_posts',1),('2016_08_15_163703_user_id_column_upvotes',1),('2016_10_28_194034_rename_inst_notification',1),('2016_10_29_175138_designation_column',1),('2016_10_31_141157_add_designation_to_user_institutes',1),('2016_12_26_224652_google_oauth',2),('2016_12_29_112244_change_user_profile_data',3);
-/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -229,4 +201,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-17 14:23:34
+-- Dump completed on 2017-01-21  0:48:54
