@@ -11,7 +11,7 @@ import InteractionsContainer from './components/interactions/InteractionsContain
 import InteractionSingle from './components/interactions/InteractionSingle';
 import configureStore from './store/configureStore';
 import {Provider} from 'react-redux';
-import rootSaga from './sagas/sagas';
+import rootSaga from './sagas/index';
 import {syncHistoryWithStore} from 'react-router-redux';
 import './styles/style.css';
 

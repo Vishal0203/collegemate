@@ -14,6 +14,9 @@ export const SUBSCRIBE_ANNOUNCEMNET_RESPONSE = 'SUBSCRIBE_ANNOUNCEMENT_RESPONSE'
 export const UNSUBSCRIBE_ANNOUNCEMNET_REQUEST = 'UNSUBSCRIBE_ANNOUNCEMNET_REQUEST';
 export const UNSUBSCRIBE_ANNOUNCEMNET_RESPONSE = 'UNSUBSCRIBE_ANNOUNCEMNET_RESPONSE';
 
+export const CREATE_ANNOUNCEMENT_CATEGORY_REQUEST = 'CREATE_ANNOUNCEMENT_CATEGORY_REQUEST';
+export const CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE = 'CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE';
+
 export function userLogin() {
   return {
     type: USER_LOGIN_REQUEST
@@ -63,6 +66,20 @@ export function unsubscribeAnnouncementRequest(category) {
 export function unsubscribeAnnouncementResponse(category) {
   return {
     type: UNSUBSCRIBE_ANNOUNCEMNET_RESPONSE,
+    category
+  }
+}
+
+export function createAnnouncementCategoryRequest(category) {
+  return {
+    type: CREATE_ANNOUNCEMENT_CATEGORY_REQUEST,
+    category
+  }
+}
+
+export function createAnnouncementCategoryResponse(category) {
+  return {
+    type: CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE,
     category
   }
 }

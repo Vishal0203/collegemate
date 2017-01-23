@@ -7,6 +7,7 @@ export const REMOVE_FILTER = 'REMOVE_FILTER';
 export const SET_ANNOUNCEMENT_CATEGORIES = 'SET_ANNOUNCEMENT_CATEGORIES';
 export const REMOVE_ANNOUNCEMENT_CATEGORY = 'REMOVE_ANNOUNCEMENT_CATEGORY';
 
+export const RELOAD_ANNOUNCEMENTS = 'RELOAD_ANNOUNCEMENTS';
 export const FETCH_ANNOUNCEMENTS_REQUEST = 'FETCH_ANNOUNCEMENTS_REQUEST';
 export const FETCH_ANNOUNCEMENTS_RESPONSE = 'FETCH_ANNOUNCEMENTS_RESPONSE';
 
@@ -70,5 +71,11 @@ export function removeFilter(filter) {
   return {
     type: REMOVE_FILTER,
     filter
+  }
+}
+
+export function reloadAnnouncements() {
+  return {
+    type: RELOAD_ANNOUNCEMENTS
   }
 }

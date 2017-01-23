@@ -4,6 +4,7 @@
 }
 
 .rte-container-announcement {
+    margin-top: 6px;
     min-height: 150px;
     font-family: "Roboto", sans-serif;
 }

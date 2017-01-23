@@ -36,6 +36,9 @@ export const DELETE_POST_RESPONSE = 'DELETE_POST_RESPONSE';
 export const EDIT_COMMENT_REQUEST = 'EDIT_COMMENT_REQUEST';
 export const EDIT_COMMENT_RESPONSE = 'EDIT_COMMENT_RESPONSE';
 
+export const ADD_TAG_FILTER = 'ADD_TAG_FILTER';
+export const REMOVE_TAG_FILTER = 'REMOVE_TAG_FILTER';
+
 export function postFormToggle() {
   return {
     type: CREATE_POST_TOGGLE
@@ -222,5 +225,19 @@ export function editCommentResponse(comment, response) {
     type: EDIT_COMMENT_RESPONSE,
     comment,
     response
+  }
+}
+
+export function addTagFilter(filter) {
+  return {
+    type: ADD_TAG_FILTER,
+    filter
+  }
+}
+
+export function removeTagFilter(filter) {
+  return {
+    type: REMOVE_TAG_FILTER,
+    filter
   }
 }

@@ -33,9 +33,26 @@ class PostController extends Controller
         $posts_query = Institute::where('inst_profile_guid', $institute_guid)->first()->posts();
         $page = $request->get('page', 1);
         $skip = ($page - 1) * 10 + $request->get('skip', 0);
+        $tags_guid = $request['tags_guid'];
+        if (!$tags_guid) {
+            $posts = $posts_query->with(['user', 'tags'])->withCount(['upvotes', 'comments'])
+                ->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
 
-        $posts = $posts_query->with(['user', 'tags'])->withCount(['upvotes', 'comments'])
-            ->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
+            $total = Institute::where('inst_profile_guid', $institute_guid)->first()->posts()->count();
+        } else {
+            $tags_guid = explode(',', $tags_guid);
+            $posts = $posts_query->whereHas('tags', function ($tags) use ($tags_guid) {
+                $tags->whereIn('tag_guid', $tags_guid);
+            }, '=', count($tags_guid))
+                ->with(['user', 'tags'])->withCount(['upvotes', 'comments'])
+                ->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
+
+            $total = Institute::where('inst_profile_guid', $institute_guid)->first()
+                ->posts()->whereHas('tags', function ($tags) use ($tags_guid) {
+                    $tags->whereIn('tag_guid', $tags_guid);
+                }, '=', count($tags_guid))
+                ->count();
+        }
 
         foreach ($posts as $post) {
             if ($post['is_anonymous']) {
@@ -43,7 +60,6 @@ class PostController extends Controller
             }
         }
 
-        $total = Institute::where('inst_profile_guid', $institute_guid)->first()->posts()->count();
         $nextPage = $page + 1;
         $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
         $next_page_url = ($nextPage - 1) * 10 < $total ?
