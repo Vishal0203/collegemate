@@ -160,7 +160,7 @@ class PostController extends Controller
                 $tag = Tag::where('tag_guid', $tag_guid)->where('type', 'posts')->first();
                 $post->tags()->attach($tag);
             }
-            $post->load('tags', 'user');
+            $post->load('tags', 'user', 'user.userProfile');
             if ($post['is_anonymous']) {
                 unset($post['user']);
             }

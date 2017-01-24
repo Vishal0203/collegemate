@@ -31,7 +31,7 @@ class InteractionForm extends React.Component {
   get styles() {
     return {
       postTitle: {
-        padding: '12px 16px 0px 16px',
+        padding: '12px 16px 15px 16px',
       },
       formDescription: {
         padding: '0 16px 0 16px',
@@ -193,7 +193,7 @@ class InteractionForm extends React.Component {
       postHeader = (
         <div>
           <TextField ref="postHeading" hintText="What would you like to ask? Be specific." fullWidth={true}
-                     style={{paddingTop: '15px', fontWeight: 400}} defaultValue={defaultHeading}/>
+                     style={{fontWeight: 400}} defaultValue={defaultHeading}/>
           <div style={{marginTop: '5px'}}></div>
         </div>
       );
@@ -264,7 +264,11 @@ class InteractionForm extends React.Component {
     );
 
     if (type == 'PostUpdate') {
-      formContent = cardContents.slice(1)
+      formContent = (
+        <div style={{paddingTop: 15}}>
+          {cardContents.slice(1)}
+        </div>
+      )
     }
 
     return (
