@@ -148,8 +148,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-        Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class
     ],
 
     /*
