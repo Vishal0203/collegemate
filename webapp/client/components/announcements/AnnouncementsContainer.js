@@ -60,8 +60,8 @@ class AnnouncementsContainer extends Component {
     }
   }
 
-  toggleConfirmation(visiblity) {
-    this.setState({showConfirmation: visiblity});
+  toggleAnnouncementSettings(visibility) {
+    this.setState({showConfirmation: visibility});
   }
 
 
@@ -105,6 +105,23 @@ class AnnouncementsContainer extends Component {
     )
   }
 
+  renderHeader() {
+    const notifyingCategories = this.props.auth_user.selectedInstitute.notifying_categories;
+    if (notifyingCategories.length) {
+      return (
+        <Header title="Activities and events happening in your college."
+                type="Announcement"
+                parentProps={this.props}
+                hasButton={true}
+                buttonLabel="Make an announcement"/>
+      );
+    } else {
+      return (
+        <Header title="Activities and events happening in your college."/>
+      );
+    }
+  }
+
   renderFilterChips() {
     if (Object.keys(this.props.auth_user.user).length != 0) {
       const categories = this.props.announcements.categories;
@@ -145,7 +162,7 @@ class AnnouncementsContainer extends Component {
       <FlatButton
         label="Close"
         primary={true}
-        onTouchTap={() => this.toggleConfirmation(false)}
+        onTouchTap={() => this.toggleAnnouncementSettings(false)}
       />,
     ];
     return (
@@ -154,7 +171,7 @@ class AnnouncementsContainer extends Component {
         actions={actions}
         modal={false}
         open={this.state.showConfirmation}
-        onRequestClose={() => this.toggleConfirmation(false)}
+        onRequestClose={() => this.toggleAnnouncementSettings(false)}
         autoScrollBodyContent={true}
       >
         <SubscriptionForm parentProps={this.props}/>
@@ -174,11 +191,7 @@ class AnnouncementsContainer extends Component {
 
     return (
       <div className="main-content">
-        <Header title="Activities and events happening in your college."
-                type="Announcement"
-                parentProps={this.props}
-                hasButton={true}
-                buttonLabel="Make an announcement"/>
+        {this.renderHeader()}
         <div style={{marginTop: '20px'}}>
           <Grid>
             <div className="wrap">
@@ -206,7 +219,7 @@ class AnnouncementsContainer extends Component {
                           <IconButton iconStyle={{color: grey500, fontSize: 20}}
                                       style={{width: 29, height: 29, padding: 0}}
                                       tooltip="Subscriptions">
-                            <i className="material-icons" onTouchTap={() => this.toggleConfirmation(true)}>
+                            <i className="material-icons" onTouchTap={() => this.toggleAnnouncementSettings(true)}>
                               settings
                             </i>
                           </IconButton>
