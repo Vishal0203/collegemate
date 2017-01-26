@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Main from './components/Main';
-import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import SettingsContainer from './components/settings/SettingsContainer';
@@ -18,7 +18,7 @@ import './styles/style.css';
 injectTapEventPlugin();
 
 const store = configureStore();
-const history = syncHistoryWithStore(browserHistory, store);
+const history = syncHistoryWithStore(hashHistory, store);
 store.runSaga(rootSaga);
 
 const router = (

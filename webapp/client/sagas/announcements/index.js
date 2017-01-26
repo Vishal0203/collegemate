@@ -7,7 +7,7 @@ import * as announcementActions from '../../actions/announcements/index';
 
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 function *createAnnouncement(params) {
   let data = new FormData();

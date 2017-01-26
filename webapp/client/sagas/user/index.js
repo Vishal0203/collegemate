@@ -8,7 +8,7 @@ import * as interactionsActions from '../../actions/interactions/index';
 
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 function *handleAuthResponse(response) {
   if (response.data.user.default_institute) {
@@ -27,7 +27,7 @@ function *handleAuthResponse(response) {
   const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
   const designation = response.data.user.default_institute.user_institute_info[0].designation;
   if (!(member_id && designation)) {
-    browserHistory.replace('/settings');
+    hashHistory.replace('/settings');
     yield put(toggleSnackbar('Please update your member id and designation.'));
   }
 }
@@ -63,7 +63,7 @@ function *logoutUser() {
     const GoogleAuth = window.gapi.auth2.getAuthInstance();
     GoogleAuth.signOut();
     yield put(userActions.userLogoutResponse());
-    browserHistory.push('/login');
+    hashHistory.push('/login');
   }
 }
 

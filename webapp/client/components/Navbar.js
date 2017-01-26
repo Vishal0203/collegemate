@@ -7,7 +7,7 @@ import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton/IconButton';
 import MenuItem from 'material-ui/MenuItem';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {userLogout} from '../actions/users/index'
 import {toggleSnackbar} from '../actions/snackbar/index';
 import {connect} from 'react-redux';
@@ -56,7 +56,7 @@ class Navbar extends React.Component {
   }
 
   handleActive(tab) {
-    browserHistory.push(tab.props['data-route']);
+    hashHistory.push(tab.props['data-route']);
   }
 
   logoutUser() {
@@ -122,7 +122,7 @@ class Navbar extends React.Component {
                     }
                     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                     targetOrigin={{horizontal: 'right', vertical: 'top'}} >
-            <MenuItem onClick={() => browserHistory.push('/settings')} primaryText="Settings"/>
+            <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="Settings"/>
             <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
           </IconMenu>
         </ToolbarGroup>

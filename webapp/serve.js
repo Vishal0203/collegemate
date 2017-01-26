@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const port = 7777;
+const port = 80;
 
 const app = express();
 
