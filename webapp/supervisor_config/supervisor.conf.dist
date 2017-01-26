@@ -1,0 +1,6 @@
+[program:webapp-server]
+directory=<application_root>/webapp
+command=/usr/local/bin/node-supervisor serve.js
+autostart=true
+autorestart=true
+stderr_logfile=<application_root>/webapp/logs/webapp_err.log
