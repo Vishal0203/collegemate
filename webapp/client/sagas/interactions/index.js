@@ -7,7 +7,7 @@ import * as interactionsActions from '../../actions/interactions/index';
 
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 function *fetchPosts(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
@@ -118,7 +118,7 @@ function *deletePost(params) {
   yield put(interactionsActions.deletePostResponse(response.data));
   if (response.data.success) {
     yield put(toggleSnackbar(response.data.success));
-    browserHistory.push('/interactions');
+    hashHistory.push('/interactions');
   }
 }
 

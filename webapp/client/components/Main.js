@@ -8,7 +8,7 @@ import Snackbar from 'material-ui/Snackbar';
 import Navbar from './Navbar';
 import muiTheme from '../styles/theme/collegemate.theme';
 import {toggleSnackbar} from '../actions/snackbar'
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import Loader from 'halogen/ScaleLoader';
 import tz from 'moment-timezone';
@@ -37,7 +37,7 @@ class Main extends React.Component {
               });
             }
             else {
-              browserHistory.push('/login');
+              hashHistory.push('/login');
             }
           });
       });

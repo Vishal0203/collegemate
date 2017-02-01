@@ -1,5 +1,5 @@
 import React from 'react';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
 import moment from 'moment';
 import Chip from 'material-ui/Chip';
@@ -84,7 +84,7 @@ class InteractionPost extends React.Component {
   }
 
   cardClick(post) {
-    browserHistory.push(`/interactions/${post.post_guid}`);
+    hashHistory.push(`/interactions/${post.post_guid}`);
   }
 
   renderChips(post) {

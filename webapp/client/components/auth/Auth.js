@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../../actions/users/index';
 import initGapi from '../../store/configureGapi';
-import {browserHistory, Link} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import Paper from 'material-ui/Paper';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import muiTheme from '../../styles/theme/collegemate.theme';
@@ -49,7 +49,7 @@ class Auth extends React.Component {
           .then(() => {
             const GoogleAuth = window.gapi.auth2.getAuthInstance();
             if (GoogleAuth.isSignedIn.get()) {
-              browserHistory.push('/');
+              hashHistory.push('/');
             } else {
               _scope.setState({gapi: true});
             }
@@ -63,7 +63,7 @@ class Auth extends React.Component {
     GoogleAuth.signIn({scope: 'profile email'})
       .then(
         (res) => {
-          browserHistory.push('/');
+          hashHistory.push('/');
         },
         (err) => {
           console.log(err)
