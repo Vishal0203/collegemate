@@ -8,7 +8,7 @@ module.exports = {
     './client/collegemate'
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, '../server/public/dist'),
     filename: 'bundle.js',
     publicPath: '/dist/'
   },

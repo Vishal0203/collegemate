@@ -7,7 +7,7 @@
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "build": "npm run clean && npm run build:webpack",
     "test": "NODE_ENV=production mocha './tests/**/*.spec.js' --compilers js:babel-core/register",
-    "clean": "rimraf dist",
+    "clean": "rimraf ../server/public/dist",
     "start": "npm install && node devServer.js",
     "tunnel": "browser-sync start --proxy localhost:7777 --tunnel wesbos"
   },

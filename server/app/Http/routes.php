@@ -10,6 +10,8 @@
 |
 */
 
+Route::get('/', 'HomeController@show');
+
 Route::get('verify', 'Auth\AuthControllerGeneral@verifyAccountView');
 Route::post('verify', 'Auth\AuthControllerGeneral@verifyAccount');
 
