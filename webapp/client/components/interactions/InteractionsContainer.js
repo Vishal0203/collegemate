@@ -10,7 +10,8 @@ import Divider from 'material-ui/Divider';
 import StickyDiv from 'react-stickydiv';
 import * as interactionActions  from '../../actions/interactions/index';
 import InteractionPost from './InteractionPost';
-import {toggleSnackbar} from '../../actions/snackbar'
+import {toggleSnackbar} from '../../actions/snackbar';
+import Paper from 'material-ui/Paper';
 
 class InteractionsContainer extends Component {
 
@@ -69,9 +70,19 @@ class InteractionsContainer extends Component {
   }
 
   renderInteractions() {
-    return this.props.interactions.items.posts.map((post, i) =>
-      <InteractionPost key={i} parentProps={this.props} post={post} />
-    )
+    if (this.props.interactions.items.posts.length) {
+      return this.props.interactions.items.posts.map((post, i) =>
+        <InteractionPost key={i} parentProps={this.props} post={post} />
+      );
+    }
+
+    if (this.props.interactions.items.posts.length == 0 && this.props.interactions.loadingMore == false) {
+      return [
+        <Paper className="paper-style" zDepth={0} key={0}>
+          <p>There are no interactions to show.</p>
+        </Paper>
+      ]
+    }
   }
 
   renderTagChips() {

@@ -23,7 +23,6 @@ class NotificationController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('belongs_to_institute');
-        $this->middleware('inst_admin', ['except' => ['categoryNotifications']]);
     }
 
     /**

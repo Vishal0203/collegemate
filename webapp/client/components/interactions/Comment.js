@@ -3,7 +3,7 @@ import moment from 'moment';
 import {Row, Col} from 'react-flexbox-grid'
 import {CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
-import {grey600} from 'material-ui/styles/colors';
+import {grey500, grey600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {renderVotes} from './InteractionSingle'
 import FlatButton from 'material-ui/FlatButton';
@@ -46,7 +46,7 @@ class Comment extends Component {
         fontSize: 45,
         margin: 'auto',
         padding: 0,
-        color: grey600,
+        color: grey500,
       },
       commentFooter: {
         fontWeight: 300,
@@ -143,12 +143,16 @@ class Comment extends Component {
     if (comment.user.user_guid == auth_user.user_guid) {
       disabled = true;
     }
+    let upvotedColor = null;
+    if (comment.upvoted == true) {
+      upvotedColor = {color: 'rgb(18, 107, 111)'}
+    }
     return (
       <CardText style={this.styles.votesContainer}>
         <Row>
           <IconButton disabled={disabled} style={this.styles.commentUpvotesIconButton} onClick={() => this.toggleCommentUpvote(comment)}>
             <div>
-              <i className="material-icons" style={this.styles.commentVotesIcon}>arrow_drop_up</i>
+              <i className="material-icons" style={{...this.styles.commentVotesIcon, ...upvotedColor}}>arrow_drop_up</i>
             </div>
           </IconButton>
         </Row>

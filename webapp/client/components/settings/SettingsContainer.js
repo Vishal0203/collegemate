@@ -117,7 +117,7 @@ class SettingsContainer extends Component {
                     </Row>
                   </Col>
                   <Col xs={8}>
-                    <CardTitle style={{padding: 0}} title="User Details" subtitle="Help us know you better"/>
+                    <CardTitle style={{padding: 0}} title="Your Profile" />
                     <div style={{paddingTop: 5}}>
                       <TextField style={this.styles.formField}
                                  ref="memberId"

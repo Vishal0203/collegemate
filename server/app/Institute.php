@@ -12,7 +12,7 @@ class Institute extends Model
     protected $table = 'institute_profile';
 
     protected $fillable = ['inst_profile_guid', 'institute_code', 'institute_name', 'institute_description',
-        'user_id', 'contact', 'address', 'city', 'postal_code', 'country'];
+        'user_id', 'contact', 'address', 'city', 'postal_code', 'country', 'state'];
 
     protected $hidden = ['id', 'dynamic_table_limit', 'updated_at', 'deleted_at', 'user_id'];
 

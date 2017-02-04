@@ -58,10 +58,13 @@ class Navbar extends React.Component {
 
   renderBrand() {
     const {auth_user} = this.props;
-    const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
-    const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
+    let member_id, designation;
+    if (Object.keys(auth_user.selectedInstitute).length != 0) {
+      member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
+      designation = auth_user.selectedInstitute.user_institute_info[0].designation;
+    }
 
-    if (member_id && designation) {
+    if (Object.keys(auth_user.selectedInstitute).length != 0 && member_id && designation) {
       return (
         <Link to="/" style={{textDecoration: 'none'}}>
           <ToolbarTitle style={this.styles.title} text="College"/>
@@ -78,28 +81,32 @@ class Navbar extends React.Component {
     }
   }
 
-  renderTabs(tabIndex) {
+  renderTabs(tabIndex) {  
     const {auth_user} = this.props;
-    const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
-    const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
-    if(member_id && designation) {
-      return (
-        <ToolbarGroup className="tab-container">
-          <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} value={tabIndex}>
-            <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements" value='announcements'/>
-            <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
-                 label="Interactions" value='interactions'/>
-            {/* To be enabled in next release */}
-            {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
-          </Tabs>
-        </ToolbarGroup>
-      )
+    if (Object.keys(auth_user.selectedInstitute).length != 0) {
+      const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
+      const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
+
+      if (member_id && designation) {
+        return (
+          <ToolbarGroup className="tab-container">
+            <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} value={tabIndex}>
+              <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements" value='announcements'/>
+              <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
+                   label="Interactions" value='interactions'/>
+              {/* To be enabled in next release */}
+              {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
+            </Tabs>
+          </ToolbarGroup>
+        )
+      }
     }
   }
 
   renderUserNav() {
     const {parentProps} = this.props;
-    if(Object.keys(this.props.auth_user.user).length != 0) {
+    const {auth_user} = this.props;
+    if (Object.keys(auth_user.selectedInstitute).length != 0 && Object.keys(this.props.auth_user.user).length != 0) {
       const username = `${parentProps.auth_user.user.first_name} ${parentProps.auth_user.user.last_name}`;
       const instituteName = parentProps.auth_user.selectedInstitute.institute_name;
 

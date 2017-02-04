@@ -2,6 +2,7 @@
 @import "_header.css";
 @import "_animations.css";
 @import "_interactions.css";
+@import "_institute.css";
 
 body {
     margin: 0;
@@ -21,6 +22,14 @@ body {
     -o-background-size: cover;
     background-size: cover;
     z-index: -1;
+}
+
+.footer-image {
+    position: absolute;
+    height: 773px;
+    width: 100%;
+    bottom: 0;
+    background: url("images/institutes.png");
 }
 
 .auth-footer {
@@ -144,4 +153,10 @@ body {
 
 .notification-text {
     margin: 6px 0 0 0;
+}
+
+.paper-style {
+    text-align: center;
+    background-color: transparent !important;
+    margin-top: 50px;
 }

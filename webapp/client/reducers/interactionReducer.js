@@ -1,4 +1,3 @@
-
 import * as actions from '../actions/interactions';
 
 const initialState = {
@@ -27,6 +26,23 @@ export default function interactionReducer(state = initialState, action) {
     }
     case actions.CREATE_POST_RESPONSE: {
       const skip = state.skip + 1;
+      let i = 0;
+      let tag_guids = action.post.tags.map((tag) => {
+        return tag.tag_guid;
+      } );
+
+      for(; i < state.filters.length; i++) {
+        if (tag_guids.indexOf(state.filters[i].tag_guid) == -1)
+        {
+          break;
+        }
+      }
+      if (i < state.filters.length) {
+        return {
+          ...state,
+          loadingMore: false
+        };
+      }
       return {
         ...state,
         skip,
@@ -106,7 +122,11 @@ export default function interactionReducer(state = initialState, action) {
       }
       return {
         ...state,
-        selectedPost: {...state.selectedPost, upvotes_count: action.response.upvotes_count}
+        selectedPost: {
+          ...state.selectedPost,
+          upvotes_count: action.response.upvotes_count,
+          upvoted: action.response.upvoted
+        }
       }
     }
     case actions.DELETE_POST_REQUEST: {
@@ -175,7 +195,8 @@ export default function interactionReducer(state = initialState, action) {
       const index = newComments.indexOf(action.comment);
       const updatedComment = {
         ...newComments[index],
-        upvotes_count: action.response.upvotes_count
+        upvotes_count: action.response.upvotes_count,
+        upvoted: action.response.upvoted
       };
       newComments.splice(index, 1, updatedComment);
       return {

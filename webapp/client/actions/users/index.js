@@ -17,6 +17,8 @@ export const UNSUBSCRIBE_ANNOUNCEMNET_RESPONSE = 'UNSUBSCRIBE_ANNOUNCEMNET_RESPO
 export const CREATE_ANNOUNCEMENT_CATEGORY_REQUEST = 'CREATE_ANNOUNCEMENT_CATEGORY_REQUEST';
 export const CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE = 'CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE';
 
+export const SET_SELECTED_INSTITUTE = 'SET_SELECTED_INSTITUTE';
+
 export function userLogin() {
   return {
     type: USER_LOGIN_REQUEST
@@ -117,5 +119,12 @@ export function unsubscribeChannel(channelName) {
   return {
     type: UNSUBSCRIBE_CHANNEL,
     channelName
+  }
+}
+
+export function setSelectedInstitute(data) {
+  return {
+    type: SET_SELECTED_INSTITUTE,
+    data
   }
 }

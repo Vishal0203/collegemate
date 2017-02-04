@@ -7,6 +7,7 @@ import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import SettingsContainer from './components/settings/SettingsContainer';
+import InstituteSettingsContainer from './components/InstituteSettings/InstituteSettingsContainer';
 import InteractionsContainer from './components/interactions/InteractionsContainer';
 import InteractionSingle from './components/interactions/InteractionSingle';
 import configureStore from './store/configureStore';
@@ -32,6 +33,7 @@ const router = (
           <Route path='/interactions/:postGuid' component={InteractionSingle}/>
         </Route>
         <Route path='/settings' component={SettingsContainer}/>
+        <Route path='/institute' component={InstituteSettingsContainer}/>
       </Route>
     </Router>
   </Provider>

@@ -1,0 +1,13 @@
+.transparent-tabs {
+    background-color: transparent;
+}
+
+.transparent-tabs > div {
+    background-color: transparent !important;
+}
+
+.dark-text-tab > div {
+    text-transform: capitalize;
+    font-weight: 400;
+    color: #39435B;
+}

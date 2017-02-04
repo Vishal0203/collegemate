@@ -141,6 +141,6 @@ class CommentController extends Controller
             Notification::send($comment->user, new CommentUpvoteNotification($comment, $user));
         }
 
-        return response()->json(['upvotes_count' => $comment->upvotesCount()]);
+        return response()->json(['upvotes_count' => $comment->upvotesCount(), 'upvoted' => !$upvote]);
     }
 }

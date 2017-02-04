@@ -15,6 +15,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import {grey500} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
+import Paper from 'material-ui/Paper';
 
 import SubscriptionForm from '../settings/SubscriptionForm';
 import {
@@ -99,10 +100,20 @@ class AnnouncementsContainer extends Component {
   }
 
   renderAnnouncements() {
-    return this.props.announcements.items.data.map((announcement, i) =>
-      <Announcement key={i} parentProps={this.props} announcement={announcement}
-                    avatarColor={this.getAvatarColor(announcement.category.category_type)}/>
-    )
+    if (this.props.announcements.items.data.length) {
+      return this.props.announcements.items.data.map((announcement, i) =>
+        <Announcement key={i} parentProps={this.props} announcement={announcement}
+                      avatarColor={this.getAvatarColor(announcement.category.category_type)}/>
+      )
+    }
+
+    if (this.props.announcements.items.data.length == 0 && this.props.announcements.loadingMore == false) {
+      return [
+        <Paper className="paper-style" zDepth={0} key={0}>
+          <p>There are no announcements to show.</p>
+        </Paper>
+      ]
+    }
   }
 
   renderHeader() {

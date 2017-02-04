@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use Illuminate\Http\Request;
-
 use App\Helper\DynamicSchema;
-use App\DynamicTables;
-
 use App\Institute;
 use App\UserInstitute;
 use App\InstituteNotifiers;
-
 use Faker;
 use Validator;
 use Schema;
@@ -35,7 +30,6 @@ class InstituteController extends Controller
         $institutes = Institute::all();
         foreach ($institutes as $institute) {
             $institute->superUser;
-            $institute->dynamicTables;
         }
         return response()->json(compact('institutes'), 200);
     }
@@ -52,29 +46,32 @@ class InstituteController extends Controller
             'contact' => $data['contact'],
             'address' => $data['address'],
             'city' => $data['city'],
+            'state' => $data['state'],
             'postal_code' => $data['postal_code'],
             'country' => $data['country']
         ]);
 
-        $table_actual_name = $institute['id'] . '_members_info';
-        $table_display_name = 'members_info';
-        $status = $this->createDynamicTable($this->getInstituteMembersSchema($table_actual_name), $table_actual_name);
+        return $institute;
 
-        if ($status == true) {
-            DynamicTables::create([
-                'dynamic_table_guid' => $internals->uuid,
-                'institute_id' => $institute['id'],
-                'table_display_name' => $table_display_name,
-                'table_actual_name' => $table_actual_name,
-                'table_description' => 'Default institute members table, member_id to be considered as foreign key',
-                'is_default' => true,
-                'table_schema' => json_encode($this->getInstituteMembersSchema($table_actual_name))
-            ]);
-
-            return $institute;
-        } else {
-            return null;
-        }
+//        $table_actual_name = $institute['id'] . '_members_info';
+//        $table_display_name = 'members_info';
+//        $status = $this->createDynamicTable($this->getInstituteMembersSchema($table_actual_name), $table_actual_name);
+//
+//        if ($status == true) {
+//            DynamicTables::create([
+//                'dynamic_table_guid' => $internals->uuid,
+//                'institute_id' => $institute['id'],
+//                'table_display_name' => $table_display_name,
+//                'table_actual_name' => $table_actual_name,
+//                'table_description' => 'Default institute members table, member_id to be considered as foreign key',
+//                'is_default' => true,
+//                'table_schema' => json_encode($this->getInstituteMembersSchema($table_actual_name))
+//            ]);
+//
+//            return $institute;
+//        } else {
+//            return null;
+//        }
     }
 
     /**
@@ -106,9 +103,28 @@ class InstituteController extends Controller
             'invitation_status' => 'accepted'
         ]);
 
-        $institute->dynamicTables;
-        $institute['pivot'] = ['member_id' => null, 'role' => 'inst_superuser', 'invitation_status' => 'accepted'];
-        return response()->json(compact('institute'), 200);
+        $user = \Auth::user();
+        $user->update(['default_institute' => $institute->id]);
+        $user->load(['institutes', 'defaultInstitute.categories',
+            'defaultInstitute.subscriptions' =>
+                function ($categories) use ($user) {
+                    $categories->whereHas('subscribers', function ($subscribers) use ($user) {
+                        $subscribers->where('user_id', $user['id']);
+                    });
+                },
+            'defaultInstitute.notifyingCategories' =>
+                function ($categories) use ($user) {
+                    $categories->whereHas('notifiers', function ($notifiers) use ($user) {
+                        $notifiers->where('user_id', $user['id']);
+                    });
+                },
+            'defaultInstitute.userInstituteInfo' =>
+                function ($userInstitute) use ($user) {
+                    $userInstitute->where('user_id', $user['id']);
+                }
+        ]);
+
+        return response()->json(compact('user'));
     }
 
     /**
@@ -179,27 +195,47 @@ class InstituteController extends Controller
             'address' => 'required',
             'city' => 'required',
             'postal_code' => 'required|max:16|min:',
+            'state' => 'required',
             'country' => 'required'
         ], $messages);
     }
 
-    public function registerToInstitute(Request $request)
+    public function registerToInstitute($institute_guid)
     {
-        $institute_guid = $request->route('institute_guid');
         $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
         $institute_id = $institute->id;
-
-        // ToDo add logic to check entered roll number in the institute dynamic table
+        $user = \Auth::user();
 
         $user_inst = UserInstitute::create([
-            'user_id' => \Auth::user()->id,
+            'user_id' => $user['id'],
             'institute_id' => $institute_id,
-            'member_id' => $request['member_id'],
-            'role' => 'inst_student'
+            'role' => 'inst_student',
+            'invitation_status' => 'accepted',
         ]);
 
+        $user->update(['default_institute' => $institute_id]);
+
         if (!is_null($user_inst)) {
-            return response()->json(["success" => "You are added to ". $institute->institute_name], 202);
+            $user->load(['institutes', 'defaultInstitute.categories',
+                'defaultInstitute.subscriptions' =>
+                    function ($categories) use ($user) {
+                        $categories->whereHas('subscribers', function ($subscribers) use ($user) {
+                            $subscribers->where('user_id', $user['id']);
+                        });
+                    },
+                'defaultInstitute.notifyingCategories' =>
+                    function ($categories) use ($user) {
+                        $categories->whereHas('notifiers', function ($notifiers) use ($user) {
+                            $notifiers->where('user_id', $user['id']);
+                        });
+                    },
+                'defaultInstitute.userInstituteInfo' =>
+                    function ($userInstitute) use ($user) {
+                        $userInstitute->where('user_id', $user['id']);
+                    }
+            ]);
+
+            return response()->json(compact('user'));
         } else {
             return response()->json(["error" => "Some thing went wrong"], 500);
         }
