@@ -8,18 +8,18 @@
     color: #616161;
     margin-top: 47px;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .header-or {
     color: #616161;
-    margin-top: 2px;
+    margin-top: 4px;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .header-button {
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 .header-button > button > div > div > span {

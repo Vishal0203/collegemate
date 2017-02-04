@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Broadcasting\Channel;
 
 class User extends Model implements
     AuthenticatableContract,
@@ -65,6 +66,11 @@ class User extends Model implements
     public function comments()
     {
         return $this->hasMany('App\Comment');
+    }
+
+    public function receivesBroadcastNotificationsOn()
+    {
+        return new Channel('users_'. $this->user_guid);
     }
 
     public function toArray()

@@ -12,6 +12,7 @@ import {userLogout} from '../actions/users/index'
 import {toggleSnackbar} from '../actions/snackbar/index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import Notifications from './Notifications';
 
 class Navbar extends React.Component {
 
@@ -32,25 +33,17 @@ class Navbar extends React.Component {
         fontWeight: 300,
         color: 'rgba(255, 255, 255, 0.85)',
         cursor: 'default',
-        paddingRight: 0,
-        position: 'absolute',
-        right: '48px',
-        minHeight: '28px',
-        lineHeight: '28px',
-        top: '5px'
+        textAlign: 'right',
+        marginBottom: 0
       },
 
       instituteName: {
         fontSize: 12,
-        fontWeight: 100,
+        fontWeight: 200,
         color: 'rgba(255, 255, 255, 0.85)',
         cursor: 'default',
-        paddingRight: 0,
-        position: 'absolute',
-        right: '48px',
-        minHeight: '28px',
-        lineHeight: '28px',
-        bottom: '5px'
+        textAlign: 'right',
+        marginTop: 4
       }
     }
   }
@@ -112,19 +105,24 @@ class Navbar extends React.Component {
 
       return (
         <ToolbarGroup >
-          <ToolbarTitle style={this.styles.username} text={username}/>
-          <ToolbarTitle style={this.styles.instituteName} text={instituteName}/>
-          <IconMenu desktop={true}
-                    iconButtonElement={
-                      <IconButton style={{height: '61px'}}>
-                        <Avatar src={parentProps.auth_user.user.user_profile.user_avatar} size={37}/>
-                      </IconButton>
-                    }
-                    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-                    targetOrigin={{horizontal: 'right', vertical: 'top'}} >
-            <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="Settings"/>
-            <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
-          </IconMenu>
+          <Notifications/>
+          <div style={{display: 'inline-block'}}>
+            <p style={this.styles.username}>{username}</p>
+            <p style={this.styles.instituteName}>{instituteName}</p>
+          </div>
+          <div style={{display: 'inline-block'}}>
+            <IconMenu desktop={true}
+                      iconButtonElement={
+                        <IconButton style={{height: '61px'}}>
+                          <Avatar src={parentProps.auth_user.user.user_profile.user_avatar} size={37}/>
+                        </IconButton>
+                      }
+                      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                      targetOrigin={{horizontal: 'right', vertical: 'top'}} >
+              <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="Settings"/>
+              <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
+            </IconMenu>
+          </div>
         </ToolbarGroup>
       )
     }

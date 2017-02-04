@@ -193,7 +193,7 @@ class InteractionForm extends React.Component {
       postHeader = (
         <div>
           <TextField ref="postHeading" hintText="What would you like to ask? Be specific." fullWidth={true}
-                     style={{fontWeight: 400}} defaultValue={defaultHeading}/>
+                     style={{fontWeight: 400}} defaultValue={defaultHeading} autoFocus/>
           <div style={{marginTop: '5px'}}></div>
         </div>
       );

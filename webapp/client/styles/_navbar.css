@@ -15,6 +15,7 @@
 .tabs {
     position: relative;
     width: inherit;
+    margin-left: 50px;
 }
 
 .tabs > div {

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Events\PostUpdate;
+use App\Notifications\CommentUpvoteNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\PostCommentNotification;
 
 use Event;
 use App\Http\Requests;
@@ -40,13 +43,14 @@ class CommentController extends Controller
     public function store(Request $request, $post_guid)
     {
         $internals = Faker\Factory::create('en_US');
+        $user = \Auth::user();
         $post = Post::where('post_guid', $post_guid)->first();
         if (!$post) {
             return response()->json(['Error' => 'Post not found.'], 400);
         }
         $comment = Comment::create([
             'comment_guid' => $internals->uuid,
-            'user_id' => \Auth::user()['id'],
+            'user_id' => $user['id'],
             'post_id' => $post['id'],
             'comment' => $request['comment'],
         ]);
@@ -54,6 +58,11 @@ class CommentController extends Controller
         $comment->load(['user','user.userProfile']);
         $comment['upvotes_count'] = $comment->upvotesCount();
         Event::fire(new PostUpdate($post));
+
+        if ($post->user['id'] != $user['id']) {
+            Notification::send($post->user, new PostCommentNotification($post, $user));
+        }
+
         return response()->json(compact('comment'), 201);
     }
 
@@ -126,6 +135,10 @@ class CommentController extends Controller
             $comment->upvotes()->create([
                 'user_id' => \Auth::user()['id']
             ]);
+        }
+
+        if (!$upvote) {
+            Notification::send($comment->user, new CommentUpvoteNotification($comment, $user));
         }
 
         return response()->json(['upvotes_count' => $comment->upvotesCount()]);

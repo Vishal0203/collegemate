@@ -137,7 +137,7 @@ class InteractionsContainer extends Component {
                   </InfiniteScroll>
                 </Col>
                 <Col xs={4}>
-                  <StickyDiv offsetTop={65}>
+                  <StickyDiv zIndex={1} offsetTop={65}>
                     <div className="right-content">
                       <label>Currently Showing</label>
                       <Divider style={{marginTop: 2, marginBottom: 2}}/>

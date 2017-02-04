@@ -24,7 +24,7 @@ class AuthControllerGeneral extends Controller
 
     private function buildUserReturnable(User $user)
     {
-        $user->load(['userProfile', 'institutes', 'defaultInstitute.categories',
+        $user->load(['userProfile', 'institutes', 'unreadNotifications', 'defaultInstitute.categories',
             'defaultInstitute.subscriptions' =>
                 function ($categories) use ($user) {
                     $categories->whereHas('subscribers', function ($subscribers) use ($user) {
@@ -42,6 +42,15 @@ class AuthControllerGeneral extends Controller
                     $userInstitute->where('user_id', $user['id']);
                 }
         ]);
+
+        foreach ($user['unreadNotifications'] as $notification) {
+            unset(
+                $notification['notifiable_id'],
+                $notification['notifiable_type'],
+                $notification['read_at'],
+                $notification['updated_at']
+            );
+        }
 
         return $user;
     }
@@ -74,7 +83,7 @@ class AuthControllerGeneral extends Controller
             $user = $this->buildUserReturnable($user);
             return response()->json(compact('user'));
         } else {
-            //Todo: Hardcoded inst details. Need to update base on user input
+            //Todo: Hardcoded inst details. Need to update based on user input
             if ($payload) {
                 $internals = Faker\Factory::create('en_US');
                 $user = User::create([

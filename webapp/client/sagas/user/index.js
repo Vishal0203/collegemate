@@ -5,6 +5,7 @@ import * as userActions from '../../actions/users/index';
 import {toggleSnackbar} from '../../actions/snackbar/index';
 import * as announcementActions from '../../actions/announcements/index';
 import * as interactionsActions from '../../actions/interactions/index';
+import * as notificationActions from '../../actions/notifications/index';
 
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
@@ -17,11 +18,15 @@ function *handleAuthResponse(response) {
     // subscribe to categories
     for (let i in subscribed_categories) {
       const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
-      yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded))
+      yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
     }
     // subscribe to posts
     const institute_guid = response.data.user.default_institute.inst_profile_guid;
-    yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse))
+    yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
+
+    // subscribe to notifications
+    const user_guid = response.data.user.user_guid;
+    yield put(userActions.subscribeChannel(`private-users_${user_guid}:new-notification`, notificationActions.newNotification));
   }
   yield put(userActions.userLoginResponse(response.data));
   const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
@@ -114,6 +119,6 @@ export default function *userSaga() {
     fork(watchUserLogout),
     fork(userAuthenticationRequest),
     fork(watchProfileUpdate),
-    fork(watchCreateAnnouncementCategory)
+    fork(watchCreateAnnouncementCategory),
   ]
 }
