@@ -11,6 +11,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Storage;
 use Response;
+use Carbon\Carbon;
 
 class UserProfileController extends Controller
 {
@@ -74,5 +75,20 @@ class UserProfileController extends Controller
         ]);
 
         return response()->json(compact('user'));
+    }
+
+    public function readNotifications(Request $request)
+    {
+        $user = \Auth::user();
+        $notificationIds = $request["notification_ids"];
+        $user->unreadNotifications()->whereIn('id', $notificationIds)->update(['read_at' => Carbon::now()]);
+        return response()->json(['success' => 'Marked notification as read'], 200);
+    }
+
+    public function readAllNotifications(Request $request)
+    {
+        $user = \Auth::user();
+        $user->unreadNotifications()->update(['read_at' => Carbon::now()]);
+        return response()->json(['success' => 'Marked all as read'], 200);
     }
 }

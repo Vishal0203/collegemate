@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\NewPost;
 use App\Institute;
+use App\Notifications\PostUpvoteNotification;
+use Illuminate\Support\Facades\Notification;
 use App\Post;
 use App\Tag;
 use App\Upvote;
@@ -211,6 +213,10 @@ class PostController extends Controller
             $post->upvotes()->create([
                 'user_id' => \Auth::user()['id']
             ]);
+        }
+
+        if (!$upvote) {
+            Notification::send($post->user, new PostUpvoteNotification($post, $user));
         }
 
         return response()->json(['upvotes_count' => $post->upvotesCount()]);

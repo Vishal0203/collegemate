@@ -1,4 +1,5 @@
 import * as actions from '../actions/announcements/index';
+import {OPEN_CATEGORY_ANNOUNCEMENTS} from '../actions/notifications/index';
 
 const initialState = {
   categories: [],
@@ -95,6 +96,13 @@ export default function announcementReducer(state = initialState, action) {
         ...initialState,
         categories: state.categories,
         filters: state.filters
+      }
+    }
+    case OPEN_CATEGORY_ANNOUNCEMENTS: {
+      return {
+        ...initialState,
+        categories: state.categories,
+        filters: [action.announcementGuid]
       }
     }
     case '@@router/LOCATION_CHANGE': {

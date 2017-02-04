@@ -102,8 +102,8 @@ class AnnouncementForm extends React.Component {
         <CardText style={this.styles.notificationDescription}>
           <Col xs={12}>
             <TextField ref="notificationHeader" hintText="Heading" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
-            <RichTextEditor className="rte-container-announcement"
+                       style={{paddingTop: 15, fontWeight: 400, marginBottom: 6}} autoFocus/>
+            <RichTextEditor className="rte-container"
                             editorClassName="rte-editor"
                             toolbarConfig={toolbarConfig}
                             value={this.state.content} onChange={this.onTextChange}/>

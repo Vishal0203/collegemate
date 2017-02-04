@@ -141,3 +141,7 @@ body {
     top: 45%;
     left: 50%;
 }
+
+.notification-text {
+    margin: 6px 0 0 0;
+}

@@ -1,4 +1,5 @@
-import * as actions from '../actions/users/index'
+import * as actions from '../actions/users/index';
+import * as notificationActions from '../actions/notifications/index';
 
 const initialState = {
   user: {},
@@ -74,7 +75,7 @@ export default function userReducer(state=initialState, action) {
         selectedInstitute: {
           ...state.selectedInstitute,
           subscriptions: state.selectedInstitute.subscriptions.filter(
-            category => category.category_guid != action.category.category_guid
+            (category) => category.category_guid != action.category.category_guid
           ),
           categories: state.selectedInstitute.categories.map((category) => {
             return category.category_guid == action.category.category_guid ? {...category, disabled: false} : category
@@ -97,6 +98,39 @@ export default function userReducer(state=initialState, action) {
     }
     case actions.USER_LOGOUT_RESPONSE: {
       return initialState;
+    }
+    case notificationActions.READ_NOTIFICATION_RESPONSE: {
+      let updatedNotifications = [...state.user.unread_notifications];
+      updatedNotifications = updatedNotifications.filter(function (notification) {
+        return action.notificationIds.indexOf(notification.id) == -1
+      });
+
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          unread_notifications: updatedNotifications
+        }
+      };
+    }
+    case notificationActions.READ_ALL_NOTIFICATIONS_RESPONSE: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          unread_notifications: []
+        }
+      };
+    }
+    case notificationActions.NEW_NOTIFICATION: {
+      delete action.notification.message;
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          unread_notifications: [...state.user.unread_notifications, action.notification]
+        }
+      }
     }
     default: {
       return state;

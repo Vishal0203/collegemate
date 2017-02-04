@@ -1,15 +1,10 @@
 .rte-container {
-    min-height: 200px;
-    font-family: "Roboto", sans-serif;
-}
-
-.rte-container-announcement {
-    margin-top: 6px;
     min-height: 150px;
     font-family: "Roboto", sans-serif;
 }
 
 .rte-editor {
+    min-height: 100px;
     font-size: 14px;
 }
 
@@ -18,4 +13,9 @@
     font-weight: 400;
     font-style: normal !important;
     font-family: "Roboto", sans-serif !important;
+}
+
+.DraftEditor-root, .DraftEditor-editorContainer, .public-DraftEditor-content {
+    min-height: inherit;
+    text-align: initial;
 }

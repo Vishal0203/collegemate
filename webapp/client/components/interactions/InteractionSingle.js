@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import {bindActionCreators} from 'redux';
-import Loader from 'halogen/BeatLoader';
+import Loader from 'halogen/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import StickyDiv from 'react-stickydiv';
 import * as interactionActions from '../../actions/interactions/index'

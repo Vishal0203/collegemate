@@ -29,6 +29,9 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::get('logout', 'Auth\AuthControllerGeneral@getLogout');
     Route::post('update_profile', 'UserProfileController@updateProfile');
 
+    Route::put('read_notifications', 'UserProfileController@readNotifications');
+    Route::put('read_all_notifications', 'UserProfileController@readAllNotifications');
+
     Route::resource(
         'institutes',
         'InstituteController',

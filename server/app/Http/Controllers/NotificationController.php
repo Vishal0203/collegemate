@@ -13,6 +13,8 @@ use App\Category;
 use Faker;
 use Event;
 use App\Events\NewAnnouncement;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\AnnouncementNotification;
 
 class NotificationController extends Controller
 {
@@ -81,6 +83,9 @@ class NotificationController extends Controller
         }
 
         Event::fire(new NewAnnouncement($notification, $institute_guid));
+
+        Notification::send($category->subscribers, new AnnouncementNotification($category, $notification));
+
         return response()->json(['message' => 'Announcement published in ' . $category['category_type']], 200);
     }
 

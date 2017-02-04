@@ -36,7 +36,7 @@ class RedirectIfAuthenticated
     {
         if ($this->auth->check()) {
             $user = $this->auth->user();
-            $user->load(['userProfile', 'institutes', 'defaultInstitute.categories',
+            $user->load(['userProfile', 'institutes', 'unreadNotifications', 'defaultInstitute.categories',
                 'defaultInstitute.subscriptions' =>
                     function ($categories) use ($user) {
                         $categories->whereHas('subscribers', function ($subscribers) use ($user) {
@@ -54,6 +54,15 @@ class RedirectIfAuthenticated
                         $userInstitute->where('user_id', $user['id']);
                     }
             ]);
+
+            foreach ($user['unreadNotifications'] as $notification) {
+                unset(
+                    $notification['notifiable_id'],
+                    $notification['notifiable_type'],
+                    $notification['read_at'],
+                    $notification['updated_at']
+                );
+            }
 
             return response()->json(compact('user'));
         }
