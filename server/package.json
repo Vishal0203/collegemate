@@ -1,14 +1,9 @@
 {
   "name": "collegemate",
   "private": true,
-  "devDependencies": {
-    "gulp": "^3.8.8"
-  },
   "dependencies": {
-    "bootstrap-sass": "^3.0.0",
     "express": "^4.14.0",
     "ioredis": "^2.4.2",
-    "laravel-elixir": "^3.0.0",
     "socket.io": "^1.7.2"
   }
 }
