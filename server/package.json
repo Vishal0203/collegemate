@@ -2,6 +2,7 @@
   "name": "collegemate",
   "private": true,
   "dependencies": {
+    "dotenv": "^4.0.0",
     "express": "^4.14.0",
     "ioredis": "^2.4.2",
     "socket.io": "^1.7.2"

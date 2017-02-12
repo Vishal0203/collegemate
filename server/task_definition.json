@@ -1,0 +1,47 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "main-server",
+            "links": [
+                "redis-server"
+            ],
+            "image": "640330380514.dkr.ecr.ap-southeast-1.amazonaws.com/collegemate-server:latest",
+            "essential": true,
+            "entryPoint": null,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80
+                }
+            ],
+            "memory": 500,
+            "cpu": 10
+        },
+        {
+            "name": "pubsub-server",
+            "links": [
+                "redis-server"
+            ],
+            "image": "640330380514.dkr.ecr.ap-southeast-1.amazonaws.com/pubsub-server:latest",
+            "essential": true,
+            "entryPoint": null,
+            "portMappings": [
+                {
+                    "containerPort": 6001,
+                    "hostPort": 6001
+                }
+            ],
+            "cpu": 10,
+            "memory": 500
+        },
+        {
+            "name": "redis-server",
+            "image": "redis",
+            "essential": true,
+            "entryPoint": null,
+            "cpu": 10,
+            "memory": 800
+        }
+    ],
+    "family": "collegemate"
+}
