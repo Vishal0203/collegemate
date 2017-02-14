@@ -1,8 +1,15 @@
+require('dotenv').config();
 var app = require('http').createServer(handler);
 var io = require('socket.io')(app);
 
 var Redis = require('ioredis');
-var redis = new Redis();
+var redis;
+
+if (process.env.APP_ENV == "production") {
+  redis = new Redis(6379, process.env.REDIS_HOST);
+} else {
+  redis = new Redis();
+}
 
 app.listen(6001, function() {
   console.log('Server is running!');
