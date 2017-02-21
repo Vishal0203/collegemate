@@ -5,6 +5,7 @@ import instituteSaga from './institutes/index';
 import socketSaga from './socket/index';
 import userSaga from './user/index';
 import notificationSaga from './notifications/index';
+import notifiersSaga from './notifiers/index';
 
 export default function *rootSaga() {
   yield [
@@ -13,6 +14,7 @@ export default function *rootSaga() {
     fork(instituteSaga),
     fork(socketSaga),
     fork(userSaga),
-    fork(notificationSaga)
+    fork(notificationSaga),
+    fork(notifiersSaga),
   ]
 }

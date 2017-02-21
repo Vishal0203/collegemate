@@ -40,7 +40,7 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      *
      * @param string $institute_guid
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store($institute_guid, Request $request)
@@ -62,13 +62,12 @@ class CategoryController extends Controller
     }
 
 
-
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @param string $institute_guid
-     * @param  string  $category_guid
+     * @param  string $category_guid
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $institute_guid, $category_guid)
@@ -94,15 +93,18 @@ class CategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param string $institute_guid
-     * @param  string  $category_guid
+     * @param  string $category_guid
      * @return \Illuminate\Http\Response
      */
     public function destroy($institute_guid, $category_guid)
     {
-        $category = Category::where('category_guid', $category_guid)->first();
-        InstituteNotifiers::where('category_id', $category['id'])->delete();
+        $deletedCategory = Category::where('category_guid', $category_guid)->delete();
 
-        $category->delete();
+        if (count($deletedCategory)) {
+            return response()->json(['message' => 'Category deleted']);
+        } else {
+            return response()->json(['message' => 'Something went wrong'], 400);
+        }
     }
 
     public function addNotifierToCategory(Category $category, User $user_data)
@@ -136,7 +138,7 @@ class CategoryController extends Controller
         }
     }
 
-    public function removeStaff(Request $request)
+    public function removeNotifier(Request $request)
     {
         $user = User::where('user_guid', $request['user_guid'])->with(['notifyingCategories' =>
             function ($query) use ($request) {
@@ -145,10 +147,10 @@ class CategoryController extends Controller
 
         $user->notifyingCategories()->detach($user['notifyingCategories'][0]);
 
-        return response()->json(['success' => 'successfully retracted from category'], 201);
+        return response()->json(['success' => 'Removed ' . $user['first_name'] . ' as notifier'], 200);
     }
 
-    public function assignStaff(Request $request)
+    public function assignNotifier(Request $request)
     {
         $category_guid = $request['category_guid'];
         $category = Category::where('category_guid', $category_guid)->first();
@@ -159,9 +161,42 @@ class CategoryController extends Controller
 
     public function getNotifiers(Request $request)
     {
+        $user = \Auth::user();
         $category_guid = $request['category_guid'];
+        $institute = Category::where('category_guid', $category_guid)->first()->institutes;
         $category_users = Category::where('category_guid', $category_guid)
-            ->with(['notifiers.userProfile'])->get()->first();
+            ->with(['creator', 'notifiers.userProfile', 'notifiers.institutes' =>
+                function ($notifierInstitute) use ($institute) {
+                    $notifierInstitute->where('institute_id', $institute['id'])->select('designation');
+                }])->get()->first();
+        foreach ($category_users->notifiers as $notifier) {
+            $notifier->designation = $notifier->institutes[0]->designation;
+            $notifier->editable_by_user = (
+                ($notifier->pivot['created_by'] === $user['id'] ||
+                    $category_users->creator['id'] === $user['id']) &&
+                $notifier['id'] != $user['id']
+            );
+            unset($notifier->institutes);
+            unset($notifier->pivot);
+        }
         return response()->json(compact('category_users'), 200);
+    }
+
+    public function validateNotifier($institute_guid, Request $request)
+    {
+        $category_guid = $request['category_guid'];
+        $email = $request['email'];
+        $category_notifier = Category::where('category_guid', $category_guid)->first()->notifiers()
+            ->where('email', $email)->first();
+        if ($category_notifier) {
+            return response()->json(['error' => 'Already a notifier'], 200);
+        }
+        $user = Institute::where('inst_profile_guid', $institute_guid)->first()->users()
+            ->where('email', $email)->where('google_id', '!=', '')->with('userProfile')->first();
+        if ($user) {
+            return response()->json(compact('user'), 200);
+        } else {
+            return response()->json(['error' => 'User not found in institute'], 200);
+        }
     }
 }

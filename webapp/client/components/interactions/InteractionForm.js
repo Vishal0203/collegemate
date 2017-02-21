@@ -16,7 +16,7 @@ class InteractionForm extends React.Component {
       const post = props.parentProps.interactions.selectedPost;
       this.state = {
         tags: post.tags,
-        value: RichTextEditor.createValueFromString(post.post_description, 'html')
+        value: RichTextEditor.createValueFromString(post.post_description, 'markdown')
       };
     }
     else {
@@ -76,7 +76,7 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: this.state.value.toString('html'),
+      post_description: this.state.value.toString('markdown'),
       tags
     };
 
@@ -91,7 +91,7 @@ class InteractionForm extends React.Component {
     const postGuid = this.parentProps.interactions.selectedPost.post_guid;
     const formData = {
       institute_guid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      comment: this.state.value.toString('html')
+      comment: this.state.value.toString('markdown')
     };
 
     if (formData.comment == '<p><br></p>') {
@@ -109,7 +109,7 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: this.state.value.toString('html'),
+      post_description: this.state.value.toString('markdown'),
       tags
     };
 
@@ -175,7 +175,6 @@ class InteractionForm extends React.Component {
       INLINE_STYLE_BUTTONS: [
         {label: 'Bold', style: 'BOLD'},
         {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'},
         {label: 'Monospace', style: 'CODE'},
       ],
       BLOCK_TYPE_DROPDOWN: [

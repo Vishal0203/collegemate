@@ -36,7 +36,11 @@ class RedirectIfAuthenticated
     {
         if ($this->auth->check()) {
             $user = $this->auth->user();
-            $user->load(['userProfile', 'institutes', 'unreadNotifications', 'defaultInstitute.categories',
+            $user->load(['userProfile', 'institutes', 'unreadNotifications',
+                'defaultInstitute.categories' =>
+                    function ($category) {
+                        $category->with('creator');
+                    },
                 'defaultInstitute.subscriptions' =>
                     function ($categories) use ($user) {
                         $categories->whereHas('subscribers', function ($subscribers) use ($user) {

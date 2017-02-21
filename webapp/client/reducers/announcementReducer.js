@@ -25,7 +25,7 @@ export default function announcementReducer(state = initialState, action) {
       const match = state.filters.filter(function (filter) {
         return filter.category_guid === action.notification.category.category_guid
       });
-      if(match.length == 0) {
+      if (match.length == 0) {
         return {
           ...state,
           loadingMore: false
@@ -99,10 +99,18 @@ export default function announcementReducer(state = initialState, action) {
       }
     }
     case OPEN_CATEGORY_ANNOUNCEMENTS: {
+      let newFilters = state.categories.filter((category) => {
+        return category.category_guid == action.announcementGuid.category_guid
+      });
+
+      if (!newFilters.length) {
+        newFilters = state.filters
+      }
+
       return {
         ...initialState,
         categories: state.categories,
-        filters: [action.announcementGuid]
+        filters: newFilters
       }
     }
     case '@@router/LOCATION_CHANGE': {

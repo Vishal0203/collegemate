@@ -48,10 +48,6 @@ class Navbar extends React.Component {
     }
   }
 
-  handleActive(tab) {
-    hashHistory.push(tab.props['data-route']);
-  }
-
   logoutUser() {
     this.props.actions.userLogout()
   };
@@ -91,11 +87,18 @@ class Navbar extends React.Component {
         return (
           <ToolbarGroup className="tab-container">
             <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} value={tabIndex}>
-              <Tab data-route="/" onActive={(tab) => this.handleActive(tab)} className="tab" label="Announcements" value='announcements'/>
-              <Tab data-route="/interactions" onActive={(tab) => this.handleActive(tab)} className="tab"
-                   label="Interactions" value='interactions'/>
+              <Tab data-route="/"
+                   onActive={(tab) => hashHistory.push(tab.props['data-route'])}
+                   className="tab"
+                   label="Announcements"
+                   value='announcements'/>
+              <Tab data-route="/interactions"
+                   onActive={(tab) => hashHistory.push(tab.props['data-route'])}
+                   className="tab"
+                   label="Interactions"
+                   value='interactions'/>
               {/* To be enabled in next release */}
-              {/*<Tab data-route="/career" onActive={(tab) => this.handleActive(tab)} className="tab" label="Career"/>*/}
+              {/*<Tab data-route="/career" onActive={(tab) => hashHistory.push(tab.props['data-route'])} className="tab" label="Career"/>*/}
             </Tabs>
           </ToolbarGroup>
         )
@@ -120,11 +123,11 @@ class Navbar extends React.Component {
           <div style={{display: 'inline-block'}}>
             <IconMenu desktop={true}
                       iconButtonElement={
-                        <IconButton style={{height: '61px'}}>
-                          <Avatar src={parentProps.auth_user.user.user_profile.user_avatar} size={37}/>
+                        <IconButton style={{height: 56, padding: 10}}>
+                          <Avatar src={parentProps.auth_user.user.user_profile.user_avatar} size={38}/>
                         </IconButton>
                       }
-                      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                      anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
                       targetOrigin={{horizontal: 'right', vertical: 'top'}} >
               <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="Settings"/>
               <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>

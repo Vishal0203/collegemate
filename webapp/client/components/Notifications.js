@@ -14,6 +14,7 @@ import {readNotificationRequest, readAllNotificationsRequest, openCategoryAnnoun
 import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 import {bindActionCreators} from 'redux';
+import FontIcon from 'material-ui/FontIcon';
 
 export const POST_COMMENT_NOTIFICATION = 'App\\Notifications\\PostCommentNotification';
 export const ANNOUNCEMENT_NOTIFICATION = 'App\\Notifications\\AnnouncementNotification';
@@ -70,9 +71,7 @@ class Notifications extends React.Component {
   }
 
   openNotificationMenu(event) {
-
     event.preventDefault();
-
     this.setState({
       notificationsMenuOpen: !this.state.notificationsMenuOpen,
       anchorEl: event.currentTarget,
@@ -239,9 +238,17 @@ class Notifications extends React.Component {
         >
           <IconButton onTouchTap={(event) => this.openNotificationMenu(event)}>
             <NotificationsIcon viewBox="0 0 28 28" color={notificationIconColor}/>
+            <FontIcon className={
+              this.state.notificationsMenuOpen ?
+                'material-icons arrow-up visible' :
+                'material-icons arrow-up hidden'
+            }>
+              arrow_drop_up
+            </FontIcon>
           </IconButton>
         </Badge>
         <Popover
+          className="notification-popover"
           open={this.state.notificationsMenuOpen}
           anchorEl={this.state.anchorEl}
           anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}

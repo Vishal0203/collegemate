@@ -5,7 +5,6 @@ export const CREATE_ANNOUNCEMENT_TOGGLE = 'CREATE_ANNOUNCEMENT_TOGGLE';
 export const ADD_FILTER = 'ADD_FILTER';
 export const REMOVE_FILTER = 'REMOVE_FILTER';
 export const SET_ANNOUNCEMENT_CATEGORIES = 'SET_ANNOUNCEMENT_CATEGORIES';
-export const REMOVE_ANNOUNCEMENT_CATEGORY = 'REMOVE_ANNOUNCEMENT_CATEGORY';
 
 export const RELOAD_ANNOUNCEMENTS = 'RELOAD_ANNOUNCEMENTS';
 export const FETCH_ANNOUNCEMENTS_REQUEST = 'FETCH_ANNOUNCEMENTS_REQUEST';
@@ -50,13 +49,6 @@ export function setAnnouncementCategories(categories) {
   return {
     type: SET_ANNOUNCEMENT_CATEGORIES,
     categories
-  }
-}
-
-export function removeAnnouncementCategory(category) {
-  return {
-    type: REMOVE_ANNOUNCEMENT_CATEGORY,
-    category
   }
 }
 

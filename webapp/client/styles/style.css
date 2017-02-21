@@ -160,3 +160,7 @@ body {
     background-color: transparent !important;
     margin-top: 50px;
 }
+
+.notification-popover {
+    top: 56px !important;
+}

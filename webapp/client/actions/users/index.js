@@ -16,8 +16,20 @@ export const UNSUBSCRIBE_ANNOUNCEMNET_RESPONSE = 'UNSUBSCRIBE_ANNOUNCEMNET_RESPO
 
 export const CREATE_ANNOUNCEMENT_CATEGORY_REQUEST = 'CREATE_ANNOUNCEMENT_CATEGORY_REQUEST';
 export const CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE = 'CREATE_ANNOUNCEMENT_CATEGORY_RESPONSE';
+export const REMOVE_ANNOUNCEMENT_CATEGORY_REQUEST = 'REMOVE_ANNOUNCEMENT_CATEGORY_REQUEST';
+export const REMOVE_ANNOUNCEMENT_CATEGORY_RESPONSE = 'REMOVE_ANNOUNCEMENT_CATEGORY_RESPONSE';
 
 export const SET_SELECTED_INSTITUTE = 'SET_SELECTED_INSTITUTE';
+
+export const TOGGLE_NOTIFIERS_DIALOG = 'TOGGLE_NOTIFIERS_DIALOG';
+export const FETCH_CATEGORY_NOTIFIERS_REQUEST = 'FETCH_CATEGORY_NOTIFIERS_REQUEST';
+export const FETCH_CATEGORY_NOTIFIERS_RESPONSE = 'FETCH_CATEGORY_NOTIFIERS_RESPONSE';
+export const NOTIFIER_VALIDATION_REQUEST = 'NOTIFIER_VALIDATION_REQUEST';
+export const NOTIFIER_VALIDATION_RESPONSE = 'NOTIFIER_VALIDATION_RESPONSE';
+export const REMOVE_VALIDATED_NOTIFIER = 'CLEAR_VALIDATED_NOTIFIER';
+export const ADD_NOTIFIERS_REQUEST = 'ADD_NOTIFIERS_REQUEST';
+export const REMOVE_NOTIFIER_REQUEST = 'REMOVE_NOTIFIER_REQUEST';
+export const REMOVE_NOTIFIER_RESPONSE = 'REMOVE_NOTIFIER_RESPONSE';
 
 export function userLogin() {
   return {
@@ -86,6 +98,20 @@ export function createAnnouncementCategoryResponse(category) {
   }
 }
 
+export function removeAnnouncementCategoryRequest(category_guid) {
+  return {
+    type: REMOVE_ANNOUNCEMENT_CATEGORY_REQUEST,
+    category_guid
+  }
+}
+
+export function removeAnnouncementCategoryResponse(category_guid) {
+  return {
+    type: REMOVE_ANNOUNCEMENT_CATEGORY_RESPONSE,
+    category_guid
+  }
+}
+
 export function updateUserProfileRequest(profileData) {
   return {
     type: UPDATE_USER_PROFILE_REQUEST,
@@ -126,5 +152,71 @@ export function setSelectedInstitute(data) {
   return {
     type: SET_SELECTED_INSTITUTE,
     data
+  }
+}
+
+export function toggleNotifiersDialog() {
+  return {
+    type: TOGGLE_NOTIFIERS_DIALOG
+  }
+}
+
+export function fetchCategoryNotifersRequest(data, url) {
+  return {
+    type: FETCH_CATEGORY_NOTIFIERS_REQUEST,
+    data,
+    url
+  }
+}
+
+export function fetchCategoryNotifersResponse(data) {
+  return {
+    type: FETCH_CATEGORY_NOTIFIERS_RESPONSE,
+    data
+  }
+}
+
+export function notifierValidationRequest(data, url) {
+  return {
+    type: NOTIFIER_VALIDATION_REQUEST,
+    data,
+    url
+  }
+}
+
+export function notifierValidationResponse(data) {
+  return {
+    type: NOTIFIER_VALIDATION_RESPONSE,
+    data
+  }
+}
+
+export function removeValidatedNotifier(user_guid) {
+  return {
+    type: REMOVE_VALIDATED_NOTIFIER,
+    user_guid
+  }
+}
+
+export function addNotifiersRequest(data, institute_guid) {
+  return {
+    type: ADD_NOTIFIERS_REQUEST,
+    institute_guid,
+    data
+  }
+}
+
+export function removeNotifierRequest(data, url) {
+  return {
+    type: REMOVE_NOTIFIER_REQUEST,
+    url,
+    data
+  }
+}
+
+export function removeNotifierResponse(user_guid) {
+  return {
+    type: REMOVE_NOTIFIER_RESPONSE,
+    user_guid
   }
 }

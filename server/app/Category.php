@@ -20,7 +20,8 @@ class Category extends Model
 
     public function notifiers()
     {
-        return $this->belongsToMany('App\User', 'institute_notifiers', 'category_id')->withTimestamps();
+        return $this->belongsToMany('App\User', 'institute_notifiers', 'category_id')
+            ->withPivot('created_by')->withTimestamps();
     }
 
     public function institutes()
@@ -51,5 +52,10 @@ class Category extends Model
             return $this->notificationsCountRelation->count;
         }
         return 0;
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'created_by');
     }
 }

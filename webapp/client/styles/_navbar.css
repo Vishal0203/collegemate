@@ -30,3 +30,18 @@
 .tab > div > div {
     height: 56px !important;
 }
+
+.arrow-up {
+    top: -6px;
+    right: 3px;
+    font-size: 28px !important;
+    color: #FFFFFF !important;
+}
+
+.arrow-up.visible {
+    display: inline-block !important;
+}
+
+.arrow-up.hidden {
+    display: none !important;
+}
