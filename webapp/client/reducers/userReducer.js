@@ -8,20 +8,21 @@ const initialState = {
 
 export default function userReducer(state=initialState, action) {
   switch (action.type) {
-    case actions.USER_LOGIN_REQUEST: {
-      // ToDo might be needed later to show loader
-      return state;
-    }
     case actions.USER_LOGIN_RESPONSE: {
-      return {
-        ...state,
-        user: action.userData.user,
-        selectedInstitute: {
+      let selectedInstitute = {};
+      if (action.userData.user.default_institute) {
+        selectedInstitute = {
           ...action.userData.user.default_institute,
           categories: action.userData.user.default_institute.categories.map((category) => {
             return {...category, disabled: false}
           })
         }
+      }
+
+      return {
+        ...state,
+        user: action.userData.user,
+        selectedInstitute
       };
     }
     case actions.SUBSCRIBE_ANNOUNCEMNET_REQUEST: {
@@ -94,6 +95,27 @@ export default function userReducer(state=initialState, action) {
           ...state.selectedInstitute,
           user_institute_info: action.response.default_institute.user_institute_info
         }
+      }
+    }
+    case actions.SET_SELECTED_INSTITUTE: {
+      let selectedInstitute = {};
+      if (action.data.default_institute) {
+        selectedInstitute = {
+          ...action.data.default_institute,
+          categories: action.data.default_institute.categories.map((category) => {
+            return {...category, disabled: false}
+          })
+        }
+      }
+
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          institutes: action.data.institutes,
+          default_institute: action.data.default_institute
+        },
+        selectedInstitute
       }
     }
     case actions.USER_LOGOUT_RESPONSE: {

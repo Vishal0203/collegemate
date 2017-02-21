@@ -10,7 +10,7 @@ import Header from '../Header';
 import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
 import Comment from './Comment'
 import Chip from 'material-ui/Chip';
-import {grey600} from 'material-ui/styles/colors';
+import {grey500, grey600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
@@ -99,7 +99,7 @@ class InteractionSingle extends Component {
         fontSize: 55,
         margin: 'auto',
         padding: 0,
-        color: grey600
+        color: grey500
       },
       postUpvotesIconButton : {
         padding: 0,
@@ -166,12 +166,16 @@ class InteractionSingle extends Component {
     if (post.isEditable) {
       disabled = true;
     }
+    let upvotedColor = null;
+    if (post.upvoted == true) {
+      upvotedColor = {color: 'rgb(18, 107, 111)'}
+    }
     return (
       <CardText style={this.styles.votesContainer}>
         <Row>
           <IconButton disabled={disabled} style={this.styles.postUpvotesIconButton} onClick={() => this.togglePostUpvote(post)}>
             <div>
-              <i className="material-icons" style={this.styles.postVotesIcon}>arrow_drop_up</i>
+              <i className="material-icons" style={{...this.styles.postVotesIcon, ...upvotedColor}}>arrow_drop_up</i>
             </div>
           </IconButton>
         </Row>

@@ -78,7 +78,7 @@ class Auth extends React.Component {
           <div>
             <div className="auth-background"></div>
             <Paper className="fixed-top bg-transparent">
-              <Toolbar className="bg-transparent" style={{height: 120, padding: '0 7px 0 40px'}}>
+              <Toolbar className="bg-transparent" style={{height: 80, padding: '0 7px 0 40px'}}>
                 <ToolbarGroup>
                   <ToolbarTitle style={this.styles.title} text="College"/>
                   <ToolbarTitle style={{color: 'white', fontWeight: 400, paddingLeft: 1, fontSize: 35}} text="Mate"/>
@@ -102,7 +102,7 @@ class Auth extends React.Component {
                         <Col xs={6}>
                           <i className="material-icons footer-icon">announcement</i>
                           <div className="footer-heading">Announcements</div>
-                          <div style={{marginTop: 10, fontSize: 13, fontWeight: 300, fontStyle: 'italic'}}>
+                          <div style={{marginTop: 10, fontSize: 13, fontWeight: 300}}>
                             Catch up on the activities your college is upto <br/>
                             from anywhere. You can also download documents <br/>
                             shared with you by your college.
@@ -111,7 +111,7 @@ class Auth extends React.Component {
                         <Col xs={6}>
                           <i className="material-icons footer-icon">question_answer</i>
                           <div className="footer-heading" >Interactions</div>
-                          <div style={{marginTop: 10, fontSize: 13, fontWeight: 300, fontStyle: 'italic'}}>
+                          <div style={{marginTop: 10, fontSize: 13, fontWeight: 300}}>
                             Have a question? Shoot it right away! <br/>
                             You can also interact with your college officials, your <br/>
                             college mates and college alumini.

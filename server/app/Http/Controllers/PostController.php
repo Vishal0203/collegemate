@@ -120,6 +120,13 @@ class PostController extends Controller
         }
         $post->isEditable = ($post->user->user_guid == $user->user_guid);
 
+        foreach ($post->comments as $comment) {
+            $upvote = Upvote::where('upvotable_id', $comment['id'])->where('user_id', $user['id'])->first();
+            $comment->upvoted = $upvote ? true: false;
+        }
+        $upvote = Upvote::where('upvotable_id', $post['id'])->where('user_id', $user['id'])->first();
+        $post->upvoted = $upvote ? true: false;
+
         if ($post['is_anonymous']) {
             unset($post['user']);
         }
@@ -219,6 +226,6 @@ class PostController extends Controller
             Notification::send($post->user, new PostUpvoteNotification($post, $user));
         }
 
-        return response()->json(['upvotes_count' => $post->upvotesCount()]);
+        return response()->json(['upvotes_count' => $post->upvotesCount(), 'upvoted' => !$upvote]);
     }
 }

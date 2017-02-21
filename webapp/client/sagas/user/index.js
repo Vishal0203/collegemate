@@ -1,8 +1,8 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {put, call, select, fork} from 'redux-saga/effects';
 
-import * as userActions from '../../actions/users/index';
 import {toggleSnackbar} from '../../actions/snackbar/index';
+import * as userActions from '../../actions/users/index';
 import * as announcementActions from '../../actions/announcements/index';
 import * as interactionsActions from '../../actions/interactions/index';
 import * as notificationActions from '../../actions/notifications/index';
@@ -12,6 +12,10 @@ import * as selectors from '../../reducers/selectors';
 import {hashHistory} from 'react-router';
 
 function *handleAuthResponse(response) {
+  // subscribe to notifications
+  const user_guid = response.data.user.user_guid;
+  yield put(userActions.subscribeChannel(`private-users_${user_guid}:new-notification`, notificationActions.newNotification));
+
   if (response.data.user.default_institute) {
     const subscribed_categories = response.data.user.default_institute.subscriptions;
     yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
@@ -24,17 +28,19 @@ function *handleAuthResponse(response) {
     const institute_guid = response.data.user.default_institute.inst_profile_guid;
     yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
 
-    // subscribe to notifications
-    const user_guid = response.data.user.user_guid;
-    yield put(userActions.subscribeChannel(`private-users_${user_guid}:new-notification`, notificationActions.newNotification));
+    const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
+    const designation = response.data.user.default_institute.user_institute_info[0].designation;
+    if (!(member_id && designation)) {
+      hashHistory.replace('/settings');
+      yield put(toggleSnackbar('Please update your member id and designation.'));
+    }
+  }  
+  else {
+    hashHistory.replace('/institute');
+    yield put(toggleSnackbar('Please Select an Institute'));
   }
-  yield put(userActions.userLoginResponse(response.data));
-  const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
-  const designation = response.data.user.default_institute.user_institute_info[0].designation;
-  if (!(member_id && designation)) {
-    hashHistory.replace('/settings');
-    yield put(toggleSnackbar('Please update your member id and designation.'));
-  }
+  
+  yield put(userActions.userLoginResponse(response.data)); 
 }
 
 function *userAuthentication() {

@@ -4,7 +4,6 @@ import {Grid, Col, Row} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
 import AnnouncementForm from './announcements/AnnouncementForm';
 import InteractionForm from './interactions/InteractionForm';
-//noinspection JSUnresolvedVariable
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 class Header extends Component {
@@ -23,6 +22,7 @@ class Header extends Component {
         break;
       case 'InteractionSingle':
         this.parentProps.actions.commentFormToggle();
+        break;
     }
   }
 
@@ -112,6 +112,7 @@ class Header extends Component {
         break;
       }
     }
+    
 
     return (
       <Paper style={headerHeight} className="header" zDepth={0}>
