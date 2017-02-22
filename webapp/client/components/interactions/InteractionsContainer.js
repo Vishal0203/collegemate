@@ -12,6 +12,7 @@ import * as interactionActions  from '../../actions/interactions/index';
 import InteractionPost from './InteractionPost';
 import {toggleSnackbar} from '../../actions/snackbar';
 import Paper from 'material-ui/Paper';
+import Branding from '../Branding';
 
 class InteractionsContainer extends Component {
 
@@ -160,6 +161,7 @@ class InteractionsContainer extends Component {
                       <div style={this.styles.wrapper}>
                         {this.renderTagChips()}
                       </div>
+                      <Branding/>
                     </div>
                   </StickyDiv>
                 </Col>
