@@ -2,11 +2,11 @@ import React from 'react';
 import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
 import RichTextEditor from 'react-rte';
 import ChipInput from 'material-ui-chip-input';
-import Toggle from 'material-ui/Toggle';
 import Chip from 'material-ui/Chip';
+import Formsy from 'formsy-react';
+import {FormsySelect, FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
 
 class InteractionForm extends React.Component {
   constructor(props) {
@@ -22,7 +22,8 @@ class InteractionForm extends React.Component {
     else {
       this.state = {
         tags: [],
-        value: RichTextEditor.createEmptyValue()
+        value: RichTextEditor.createEmptyValue(),
+        canSubmit: true
       };
     }
     this.onTextChange = this.onTextChange.bind(this);
@@ -53,55 +54,82 @@ class InteractionForm extends React.Component {
     }
   }
 
-  handlePostSubmit() {
+  enableButton() {
+    this.setState({
+      ...this.state,
+      canSubmit: true
+    })
+  }
+
+  disableButton() {
+    this.setState({
+      ...this.state,
+      canSubmit: false
+    })
+  }
+
+  handlePostSubmit(data) {
     const tags = this.state.tags.map(function (a) {
       return a.tag_guid
     });
+
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
-      post_heading: this.refs.postHeading.getValue(),
+      ...data,
       post_description: this.state.value.toString('html'),
-      is_anonymous: this.refs.isAnonymous.state.switched,
       tags
     };
 
-    this.parentProps.actions.createPostRequest(instituteGuid, formData);
+    if (formData.post_description == '<p><br></p>') {
+      this.parentProps.actions.toggleSnackbar('Post description can\'t be left empty.')
+    } else {
+      this.parentProps.actions.createPostRequest(instituteGuid, formData);
+    }
   }
 
-  handleCommentSubmit() {
+  handleCommentSubmit(data) {
     const postGuid = this.parentProps.interactions.selectedPost.post_guid;
     const formData = {
       institute_guid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
       comment: this.state.value.toString('html')
     };
-    this.parentProps.actions.addCommentRequest(postGuid, formData)
+
+    if (formData.comment == '<p><br></p>') {
+      this.parentProps.actions.toggleSnackbar('Forgot to write the comment?')
+    } else {
+      this.parentProps.actions.addCommentRequest(postGuid, formData);
+    }
   }
 
-  handlePostUpdateSubmit() {
+  handlePostUpdateSubmit(data) {
     const tags = this.state.tags.map(function (a) {
       return a.tag_guid
     });
     const postGuid = this.parentProps.interactions.selectedPost.post_guid;
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
-      post_heading: this.refs.postHeading.getValue(),
+      ...data,
       post_description: this.state.value.toString('html'),
-      is_anonymous: this.refs.isAnonymous.state.switched,
       tags
     };
-    this.parentProps.actions.updatePostRequest(instituteGuid, postGuid, formData);
+
+    if (formData.post_description == '<p><br></p>') {
+      this.parentProps.actions.toggleSnackbar('Post description can\'t be left empty.')
+    } else {
+      this.parentProps.actions.updatePostRequest(instituteGuid, postGuid, formData);
+    }
   }
 
-  handleSubmit(type) {
+  handleSubmit(data, type) {
     switch (type) {
       case 'Interactions' :
-        this.handlePostSubmit();
+        this.handlePostSubmit(data);
         break;
       case 'InteractionSingle':
-        this.handleCommentSubmit();
+        this.handleCommentSubmit(data);
         break;
       case 'PostUpdate':
-        this.handlePostUpdateSubmit();
+        this.handlePostUpdateSubmit(data);
         break;
       default:
         break;
@@ -192,8 +220,16 @@ class InteractionForm extends React.Component {
         false;
       postHeader = (
         <div>
-          <TextField ref="postHeading" hintText="What would you like to ask? Be specific." fullWidth={true}
-                     style={{fontWeight: 400}} defaultValue={defaultHeading} autoFocus/>
+          <FormsyText
+            name="post_heading"
+            hintText="What would you like to ask? Be specific."
+            fullWidth={true}
+            style={{fontWeight: 400}}
+            defaultValue={defaultHeading}
+            required
+            autoFocus
+            autoComplete="off"
+          />
           <div style={{marginTop: '5px'}}></div>
         </div>
       );
@@ -223,13 +259,11 @@ class InteractionForm extends React.Component {
         />
       );
       anonymousToggle = (
-
-        <Toggle
-          ref="isAnonymous"
+        <FormsyToggle
+          name="is_anonymous"
           defaultToggled={toggleDefault}
           label="Post Anonymously"
           style={this.styles.toggleButton}
-
         />
       );
     }
@@ -252,22 +286,43 @@ class InteractionForm extends React.Component {
         </Col>
       </CardText>,
       <CardActions style={{textAlign: 'right'}} key='actions'>
-        <FlatButton label='Cancel' secondary={true} onClick={onCancelClick}/>
-        <FlatButton label={confirmText} primary={true} onClick={() => this.handleSubmit(type)}/>
+        <FlatButton
+          label='Cancel'
+          secondary={true}
+          onClick={onCancelClick}
+        />
+        <FlatButton
+          label={confirmText}
+          primary={true}
+          type="submit"
+          disabled={!this.state.canSubmit}
+        />
       </CardActions>
     ];
 
     let formContent = (
       <Card style={{marginTop: 15, marginBottom: 200}}>
-        {cardContents}
+        <Formsy.Form
+          onValid={this.enableButton.bind(this)}
+          onInvalid={this.disableButton.bind(this)}
+          onValidSubmit={(data) => this.handleSubmit(data, type)}
+        >
+          {cardContents}
+        </Formsy.Form>
       </Card>
     );
 
     if (type == 'PostUpdate') {
       formContent = (
-        <div style={{paddingTop: 15}}>
-          {cardContents.slice(1)}
-        </div>
+        <Formsy.Form
+          onValid={this.enableButton.bind(this)}
+          onInvalid={this.disableButton.bind(this)}
+          onValidSubmit={(data) => this.handleSubmit(data, type)}
+        >
+          <div style={{paddingTop: 15}}>
+            {cardContents.slice(1)}
+          </div>
+        </Formsy.Form>
       )
     }
 

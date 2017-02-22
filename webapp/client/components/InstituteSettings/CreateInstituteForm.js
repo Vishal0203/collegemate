@@ -2,14 +2,19 @@ import React from 'react';
 import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
 import {Col, Row} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+import Formsy from 'formsy-react';
+import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
 
 class CreateInstituteForm extends React.Component {
   constructor(props) {
     super(props);
-    this.parentProps = props.parentProps;    
+    this.parentProps = props.parentProps;
+
+    this.state = {
+      canSubmit: false
+    }
   };
-  
+
   get styles() {
     return {
       instituteSettingsTitle: {
@@ -23,75 +28,142 @@ class CreateInstituteForm extends React.Component {
     }
   }
 
-  onCreate() {
-    const formData = {
-      institute_code: this.refs.instituteCode.getValue(),
-      institute_name: this.refs.instituteName.getValue(),
-      institute_description: this.refs.instituteDescripton.getValue(),
-      address: this.refs.address.getValue(),
-      city: this.refs.city.getValue(),
-      state: this.refs.state.getValue(),
-      country: this.refs.country.getValue(),
-      postal_code: this.refs.postalCode.getValue(),
-      contact: this.refs.contact.getValue(),
-    };
+  enableButton() {
+    this.setState({
+      canSubmit: true
+    })
+  }
 
-    this.parentProps.actions.createInstituteRequest(formData);
+  disableButton() {
+    this.setState({
+      canSubmit: false
+    })
+  }
+
+  onCreate(data) {
+    this.parentProps.actions.createInstituteRequest(data);
   }
 
   render() {
     return (
-      <div>
+      <Formsy.Form
+        onValid={this.enableButton.bind(this)}
+        onInvalid={this.disableButton.bind(this)}
+        onValidSubmit={(data) => this.onCreate(data)}
+      >
         <Row>
           <Col xs={2}>
-            <TextField ref="instituteCode" hintText="Institue Code" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="institute_code"
+              hintText="Institue Code"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
           <Col xs={10}>
-            <TextField ref="instituteName" hintText="Institue Name" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="institute_name"
+              hintText="Institue Name"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
         </Row>
         <Row>
           <Col xs={12}>
-            <TextField ref="instituteDescripton" hintText="Institue Description" multiLine={true} fullWidth={true}
-                       rowsMax={4} style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="institute_descripton"
+              hintText="Institue Description"
+              multiLine={true}
+              fullWidth={true}
+              rowsMax={4}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
         </Row>
         <Row>
           <Col xs={12}>
-            <TextField ref="address" hintText="Address" multiLine={true} fullWidth={true}
-                       rowsMax={2} style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="address"
+              hintText="Address"
+              multiLine={true}
+              fullWidth={true}
+              rowsMax={2}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
         </Row>
         <Row>
           <Col xs={4}>
-            <TextField ref="city" hintText="City" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="city"
+              hintText="City"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
           <Col xs={4}>
-            <TextField ref="state" hintText="State" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="state"
+              hintText="State"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
           <Col xs={4}>
-            <TextField ref="country" hintText="Country" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="country"
+              hintText="Country"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
         </Row>
         <Row>
           <Col xs={6}>
-            <TextField ref="postalCode" hintText="Postal Code" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="postal_code"
+              hintText="Postal Code"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
           <Col xs={6}>
-            <TextField ref="contact" hintText="Contact" fullWidth={true}
-                       style={{paddingTop: '15px', fontWeight: 400}}/>
+            <FormsyText
+              name="contact"
+              hintText="Contact"
+              fullWidth={true}
+              style={{paddingTop: '15px', fontWeight: 400}}
+              required
+              autoComplete="off"
+            />
           </Col>
         </Row>
         <div style={{marginTop: 15}}>
-          <RaisedButton label="Create" onClick={() => this.onCreate()} primary={true}/>
+          <RaisedButton
+            label="Create"
+            type="submit"
+            disabled={!this.state.canSubmit}
+            primary={true}
+          />
         </div>
-      </div>
+      </Formsy.Form>
     );
   }
 }

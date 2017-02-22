@@ -4,13 +4,12 @@ import Avatar from 'material-ui/Avatar';
 import {bindActionCreators} from 'redux';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {grey600} from 'material-ui/styles/colors';
-import TextField from 'material-ui/TextField';
 import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
-import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import DatePicker from 'material-ui/DatePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
+import Formsy from 'formsy-react';
+import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
 
 import Header from '../Header';
 import SubscriptionForm from './SubscriptionForm'
@@ -18,10 +17,9 @@ import SubscriptionForm from './SubscriptionForm'
 class SettingsContainer extends Component {
   constructor(props) {
     super(props);
-    const gender = props.auth_user.user.user_profile.gender;
 
     this.state = {
-      gender
+      canSubmit: false
     };
   }
 
@@ -38,17 +36,22 @@ class SettingsContainer extends Component {
     }
   }
 
-  handleChange(event, index, value) {
-    this.setState({gender: value})
+  enableButton() {
+    this.setState({
+      canSubmit: true
+    })
   }
 
-  handleUserProfileSave() {
+  disableButton() {
+    this.setState({
+      canSubmit: false
+    })
+  }
+
+  handleUserProfileSave(data) {
     const profileData = {
-      memberId: this.refs.memberId.getValue(),
-      designation: this.refs.designation.getValue(),
-      gender: this.state.gender,
-      dob: moment(this.refs.dob.getDate()).format('YYYY-MM-DD'),
-      aboutMe: this.refs.aboutMe.getValue()
+      ...data,
+      dob: moment(data.dob).format('YYYY-MM-DD')
     };
 
     this.props.actions.updateUserProfileRequest(profileData)
@@ -58,19 +61,19 @@ class SettingsContainer extends Component {
     // initial values of the form
     const username = `${this.props.auth_user.user.first_name} ${this.props.auth_user.user.last_name}`;
     const {member_id, designation} = this.props.auth_user.selectedInstitute.user_institute_info[0];
-    const {dob, about_me} = this.props.auth_user.user.user_profile;
+    const {dob, about_me, gender} = this.props.auth_user.user.user_profile;
 
     const renderDate = () => {
       if (dob) {
         return (
-          <DatePicker
-            ref="dob"
+          <FormsyDate
+            name="dob"
             floatingLabelText="Date of birth"
             floatingLabelStyle={this.styles.floatingLabelStyle}
             defaultDate={new Date(dob)}
-            style={this.state.datePickerStyle}
             textFieldStyle={this.styles.formField}
             hintText="Date of Birth"
+            required
             formatDate={new global.Intl.DateTimeFormat('en-US', {
               day: 'numeric',
               month: 'long',
@@ -80,12 +83,13 @@ class SettingsContainer extends Component {
         )
       } else {
         return (
-          <DatePicker
-            ref="dob"
+          <FormsyDate
+            name="dob"
             floatingLabelText="Date of birth"
             floatingLabelStyle={this.styles.floatingLabelStyle}
             textFieldStyle={this.styles.formField}
             hintText="Date of Birth"
+            required
             formatDate={new global.Intl.DateTimeFormat('en-US', {
               day: 'numeric',
               month: 'long',
@@ -117,58 +121,74 @@ class SettingsContainer extends Component {
                     </Row>
                   </Col>
                   <Col xs={8}>
-                    <CardTitle style={{padding: 0}} title="Your Profile" />
-                    <div style={{paddingTop: 5}}>
-                      <TextField style={this.styles.formField}
-                                 ref="memberId"
-                                 floatingLabelText="* Member ID"
-                                 floatingLabelStyle={this.styles.floatingLabelStyle}
-                                 fullWidth={true}
-                                 defaultValue={member_id}/>
-                      <TextField style={this.styles.formField}
-                                 ref="designation"
-                                 floatingLabelText="* Designation"
-                                 floatingLabelStyle={this.styles.floatingLabelStyle}
-                                 hintText="ex: CSE Student, CSE Staff etc"
-                                 fullWidth={true}
-                                 defaultValue={designation}/>
-                      <Row>
-                        <Col xs={6}>
-                          <SelectField
-                            floatingLabelText="Gender"
-                            floatingLabelStyle={this.styles.floatingLabelStyle}
-                            style={this.styles.formField}
-                            fullWidth={true}
-                            value={this.state.gender}
-                            onChange={(event, index, value) => this.handleChange(event, index, value)}
-                          >
-                            <MenuItem value="male" primaryText="Male"/>
-                            <MenuItem value="female" primaryText="Female"/>
-                          </SelectField>
-                        </Col>
-                        <Col xs={6}>
-                          {renderDate()}
-                        </Col>
-                      </Row>
-                      <TextField
-                        defaultValue={about_me}
-                        floatingLabelText="About me"
-                        floatingLabelStyle={this.styles.floatingLabelStyle}
-                        ref="aboutMe"
-                        style={this.styles.formField}
-                        multiLine={true}
-                        fullWidth={true}
-                        rows={1}
-                        rowsMax={4}
-                      />
-                    </div>
-                    <RaisedButton
-                      label="Save"
-                      onClick={() => this.handleUserProfileSave()}
-                      buttonStyle={{height: '30px', lineHeight: '30px'}}
-                      labelStyle={{fontSize: 11}}
-                      style={{marginTop: 12}}
-                      primary={true}/>
+                    <Formsy.Form
+                      onValid={this.enableButton.bind(this)}
+                      onInvalid={this.disableButton.bind(this)}
+                      onValidSubmit={(data) => this.handleUserProfileSave(data)}
+                    >
+                      <CardTitle style={{padding: 0}} title="Your Profile"/>
+                      <div style={{paddingTop: 5}}>
+                        <FormsyText
+                          style={this.styles.formField}
+                          name="memberId"
+                          floatingLabelText="* Member ID"
+                          floatingLabelStyle={this.styles.floatingLabelStyle}
+                          fullWidth={true}
+                          defaultValue={member_id}
+                          required
+                          autoComplete="off"
+                        />
+                        <FormsyText
+                          style={this.styles.formField}
+                          name="designation"
+                          floatingLabelText="* Designation"
+                          floatingLabelStyle={this.styles.floatingLabelStyle}
+                          hintText="ex: CSE Student, CSE Staff etc"
+                          fullWidth={true}
+                          defaultValue={designation}
+                          required
+                          autoComplete="off"
+                        />
+                        <Row>
+                          <Col xs={6}>
+                            <FormsySelect
+                              floatingLabelText="Gender"
+                              floatingLabelStyle={this.styles.floatingLabelStyle}
+                              style={this.styles.formField}
+                              fullWidth={true}
+                              value={gender}
+                              name="gender"
+                            >
+                              <MenuItem value="male" primaryText="Male"/>
+                              <MenuItem value="female" primaryText="Female"/>
+                            </FormsySelect>
+                          </Col>
+                          <Col xs={6}>
+                            {renderDate()}
+                          </Col>
+                        </Row>
+                        <FormsyText
+                          defaultValue={about_me}
+                          floatingLabelText="About me"
+                          floatingLabelStyle={this.styles.floatingLabelStyle}
+                          name="aboutMe"
+                          style={this.styles.formField}
+                          multiLine={true}
+                          fullWidth={true}
+                          rows={1}
+                          rowsMax={4}
+                          required
+                        />
+                      </div>
+                      <RaisedButton
+                        label="Save"
+                        type="submit"
+                        disabled={!this.state.canSubmit}
+                        buttonStyle={{height: '30px', lineHeight: '30px'}}
+                        labelStyle={{fontSize: 11}}
+                        style={{marginTop: 12}}
+                        primary={true}/>
+                    </Formsy.Form>
                   </Col>
                 </Row>
               </Card>

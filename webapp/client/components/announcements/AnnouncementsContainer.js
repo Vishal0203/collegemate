@@ -24,6 +24,7 @@ import {
   unsubscribeAnnouncementRequest,
   createAnnouncementCategoryRequest
 } from '../../actions/users/index';
+import {toggleSnackbar} from '../../actions/snackbar/index'
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
@@ -266,7 +267,8 @@ function mapDispatchToProps(dispatch) {
       ...announcementActions,
       subscribeAnnouncementRequest,
       unsubscribeAnnouncementRequest,
-      createAnnouncementCategoryRequest
+      createAnnouncementCategoryRequest,
+      toggleSnackbar
     }, dispatch)
   };
 }
