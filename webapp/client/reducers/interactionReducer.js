@@ -1,4 +1,4 @@
-import * as actions from '../actions/interactions';
+import * as actions from '../actions/interactions/index';
 
 const initialState = {
   tags: [],

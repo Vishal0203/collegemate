@@ -16,6 +16,7 @@ import FlatButton from 'material-ui/FlatButton';
 import {grey500} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
 import Paper from 'material-ui/Paper';
+import Branding from '../Branding';
 
 import SubscriptionForm from '../settings/SubscriptionForm';
 import {
@@ -236,6 +237,7 @@ class AnnouncementsContainer extends Component {
                           </IconButton>
                         </div>
                       </div>
+                      <Branding />
                     </div>
                   </StickyDiv>
                 </Col>
