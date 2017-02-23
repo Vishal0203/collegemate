@@ -29,6 +29,8 @@
     "es6-promise": "^4.0.3",
     "express": "^4.14.0",
     "flexboxgrid": "^6.3.1",
+    "formsy-material-ui": "^0.5.5",
+    "formsy-react": "^0.18.0",
     "halogen": "^0.2.0",
     "material-ui": "^0.17.0",
     "material-ui-chip-input": "^0.13.0",

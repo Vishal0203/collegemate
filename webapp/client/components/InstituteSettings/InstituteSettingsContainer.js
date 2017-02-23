@@ -85,7 +85,11 @@ class InstituteSettingsContainer extends Component {
   }
 
   onProceed() {
-    this.props.actions.selectInstituteRequest(this.state.chosenInstitute.inst_profile_guid)
+    if (this.state.chosenInstitute) {
+      this.props.actions.selectInstituteRequest(this.state.chosenInstitute.inst_profile_guid)
+    } else {
+      this.props.actions.toggleSnackbar('Please select an institute.')
+    }
   }
 
   render() {

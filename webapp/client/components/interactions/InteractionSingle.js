@@ -17,6 +17,7 @@ import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import Dialog from 'material-ui/Dialog';
 import PostUpdateDialog from './PostUpdateDialog';
+import {toggleSnackbar} from '../../actions/snackbar';
 import Avatar from 'material-ui/Avatar';
 
 class InteractionSingle extends Component {
@@ -406,7 +407,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...interactionActions}, dispatch)
+    actions: bindActionCreators({...interactionActions, toggleSnackbar}, dispatch)
   };
 }
 

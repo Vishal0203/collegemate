@@ -1,23 +1,22 @@
 import React from 'react';
 import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
-import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
 import RichTextEditor from 'react-rte';
+import Formsy from 'formsy-react';
+import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
-    this.handleChange = this.handleChange.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
 
     this.state = {
-      value: null,
-      content: RichTextEditor.createEmptyValue()
+      content: RichTextEditor.createEmptyValue(),
+      canSubmit: false
     };
   }
 
@@ -44,23 +43,36 @@ class AnnouncementForm extends React.Component {
     }
   }
 
-  handleAnnouncementSubmit() {
+  handleAnnouncementSubmit(data) {
     const formData = {
+      ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      notificationHeader: this.refs.notificationHeader.getValue(),
       notificationBody: this.state.content.toString('html'),
-      notificationCategory: this.refs.notificationCategory.props.value,
       notificationAttachments: this.refs.notificationAttachments.files
     };
-    this.parentProps.actions.createAnnouncementRequest(formData);
+
+    if (formData.notificationBody == '<p><br></p>') {
+      this.parentProps.actions.toggleSnackbar('Announcement body can\'t be left empty.')
+    } else {
+      this.parentProps.actions.createAnnouncementRequest(formData);
+    }
   }
 
-  handleChange(event, index, value) {
-    this.setState({value});
+  enableButton() {
+    this.setState({
+      ...this.state,
+      canSubmit: true
+    })
+  }
+
+  disableButton() {
+    this.setState({
+      ...this.state,
+      canSubmit: false
+    })
   }
 
   onFileSelect(e) {
-    console.log(e.target.files);
     if (e.target.files.length == 0) {
       this.refs.chosenFiles.innerHTML = '<i style="color: #c6c6c6">No file Chosen</i>';
       return
@@ -68,8 +80,8 @@ class AnnouncementForm extends React.Component {
 
     this.refs.chosenFiles.innerHTML = '';
     let text = '';
-    for (let i = 0; i < e.target.files.length ; i++ ) {
-      text += `${e.target.files[i].name}${i+1 == e.target.files.length? '': ', '}`;
+    for (let i = 0; i < e.target.files.length; i++) {
+      text += `${e.target.files[i].name}${i + 1 == e.target.files.length ? '' : ', '}`;
     }
     this.refs.chosenFiles.innerHTML += `<i>${text}</i>`;
   }
@@ -96,38 +108,68 @@ class AnnouncementForm extends React.Component {
     };
 
     return (
-      <Card style={{marginTop: 15, marginBottom: 200}}>
-        <CardTitle titleStyle={{fontSize: 20}} style={this.styles.notificationTitle}
-                   title="Make an Announcement" subtitle="All fields are required"/>
-        <CardText style={this.styles.notificationDescription}>
-          <Col xs={12}>
-            <TextField ref="notificationHeader" hintText="Heading" fullWidth={true}
-                       style={{paddingTop: 15, fontWeight: 400, marginBottom: 6}} autoFocus/>
-            <RichTextEditor className="rte-container"
-                            editorClassName="rte-editor"
-                            toolbarConfig={toolbarConfig}
-                            value={this.state.content} onChange={this.onTextChange}/>
+      <Formsy.Form
+        onValid={this.enableButton.bind(this)}
+        onInvalid={this.disableButton.bind(this)}
+        onValidSubmit={(data) => this.handleAnnouncementSubmit(data)}
+      >
+        <Card style={{marginTop: 15, marginBottom: 200}}>
+          <CardTitle titleStyle={{fontSize: 20}} style={this.styles.notificationTitle}
+                     title="Make an Announcement" subtitle="All fields are required"/>
+          <CardText style={this.styles.notificationDescription}>
+            <Col xs={12}>
+              <FormsyText
+                name="notificationHeader"
+                hintText="Heading"
+                fullWidth={true}
+                style={{paddingTop: 15, fontWeight: 400, marginBottom: 6}}
+                required
+                autoFocus
+                autoComplete="off"
+              />
 
-            <SelectField ref="notificationCategory" value={this.state.value} onChange={this.handleChange}
-                         hintText="Choose Category">
-              {notifying_categories.map((category, i) => <MenuItem key={i}
-                                                         value={category.category_guid}
-                                                         primaryText={category.category_type}/>)}
-            </SelectField>
+              <RichTextEditor
+                className="rte-container"
+                editorClassName="rte-editor"
+                toolbarConfig={toolbarConfig}
+                value={this.state.content}
+                onChange={this.onTextChange}
+              />
 
-            <br/>
-            <br/>
-            <RaisedButton className="attach-btn" secondary={true} containerElement="label" label="Attach Files (optional)">
-              <input ref="notificationAttachments" type="file" multiple style={this.styles.chooseButton} onChange={(e) => this.onFileSelect(e)}/>
-            </RaisedButton>
-            <label style={{paddingLeft:10, fontSize: 12}} ref="chosenFiles"><i style={{color: '#c6c6c6'}}>No file Chosen</i></label>
-          </Col>
-        </CardText>
-        <CardActions style={{textAlign: 'right'}}>
-          <FlatButton label="Cancel" secondary={true} onClick={onCancelClick}/>
-          <FlatButton label="Announce" primary={true} onClick={() => this.handleAnnouncementSubmit()}/>
-        </CardActions>
-      </Card>
+              <FormsySelect name="notificationCategory" hintText="Choose Category" required>
+                {notifying_categories.map((category, i) =>
+                  <MenuItem key={i} value={category.category_guid} primaryText={category.category_type}/>)}
+              </FormsySelect>
+
+              <br/>
+              <br/>
+              <RaisedButton className="attach-btn" secondary={true} containerElement="label" label="Attach Files (optional)">
+                <input ref="notificationAttachments"
+                       type="file"
+                       style={this.styles.chooseButton}
+                       onChange={(e) => this.onFileSelect(e)}
+                       multiple />
+              </RaisedButton>
+              <label style={{paddingLeft: 10, fontSize: 12}} ref="chosenFiles">
+                <i style={{color: '#c6c6c6'}}>No fileChosen</i>
+              </label>
+            </Col>
+          </CardText>
+          <CardActions style={{textAlign: 'right'}}>
+            <FlatButton
+              label="Cancel"
+              secondary={true}
+              onClick={onCancelClick}
+            />
+            <FlatButton
+              label="Announce"
+              primary={true}
+              type="submit"
+              disabled={!this.state.canSubmit}
+            />
+          </CardActions>
+        </Card>
+      </Formsy.Form>
     );
   }
 }

@@ -13,7 +13,7 @@ use Schema;
 
 class InstituteController extends Controller
 {
-    
+
     public function __construct()
     {
         $this->middleware('auth', ['except' => 'index']);
@@ -77,7 +77,7 @@ class InstituteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -130,7 +130,7 @@ class InstituteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -141,7 +141,7 @@ class InstituteController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -152,8 +152,8 @@ class InstituteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -164,7 +164,7 @@ class InstituteController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  string  $institute_guid
+     * @param  string $institute_guid
      * @return \Illuminate\Http\Response
      */
     public function destroy($institute_guid)
@@ -206,12 +206,17 @@ class InstituteController extends Controller
         $institute_id = $institute->id;
         $user = \Auth::user();
 
-        $user_inst = UserInstitute::create([
-            'user_id' => $user['id'],
-            'institute_id' => $institute_id,
-            'role' => 'inst_student',
-            'invitation_status' => 'accepted',
-        ]);
+        $user_inst = UserInstitute::where('user_id', $user['id'])
+            ->where('institute_id', $institute_id)->first()->get();
+
+        if (is_null($user_inst)) {
+            $user_inst = UserInstitute::create([
+                'user_id' => $user['id'],
+                'institute_id' => $institute_id,
+                'role' => 'inst_student',
+                'invitation_status' => 'accepted',
+            ]);
+        }
 
         $user->update(['default_institute' => $institute_id]);
 

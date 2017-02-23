@@ -33,7 +33,9 @@ function *watchOnSocketEvents(params) {
   while (true) {
     const payload = yield take(socketChannel);
     yield put(params.nextAction(payload));
-    yield call(showSnackbar, payload.message)
+    if (!payload.type) {
+      yield call(showSnackbar, payload.message)
+    }
   }
 }
 
@@ -43,7 +45,7 @@ function *unsubscribeSocketChannel(params) {
 }
 
 /*
-Watchers
+ Watchers
  */
 
 function *watchChannelSubscription() {

@@ -2,14 +2,18 @@ import React, {Component, PropTypes} from 'react';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import Toggle from 'material-ui/Toggle';
 import Subheader from 'material-ui/Subheader';
-import TextField from 'material-ui/TextField';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
+import {FormsyText} from 'formsy-material-ui/lib';
 
 
 class SubscriptionForm extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      canSubmit: false
+    }
   }
 
   get styles() {
@@ -30,13 +34,20 @@ class SubscriptionForm extends Component {
     }
   }
 
-  handleCategoryCreate() {
-    const categoryData = {
-      category_type: this.refs.category_type.getValue(),
-      category_desc: this.refs.category_desc.getValue(),
-    };
+  handleCategoryCreate(data) {
+    this.props.parentProps.actions.createAnnouncementCategoryRequest(data)
+  }
 
-    this.props.parentProps.actions.createAnnouncementCategoryRequest(categoryData)
+  enableButton() {
+    this.setState({
+      canSubmit: true
+    })
+  }
+
+  disableButton() {
+    this.setState({
+      canSubmit: false
+    })
   }
 
   renderCreateCategoryForm() {
@@ -44,32 +55,43 @@ class SubscriptionForm extends Component {
       return (
         <div>
           <Subheader>Create Announcement Category</Subheader>
-          <Row style={{padding: '0 16px 16px'}}>
-            <Col xs={4}>
-              <TextField
-                hintText="* Category Type"
-                ref="category_type"
-                style={this.styles.formField}
-              />
-            </Col>
-            <Col xs={6}>
-              <TextField
-                hintText="* Category Description"
-                ref="category_desc"
-                style={this.styles.formField}
-              />
-            </Col>
-            <Col xs={2}>
-              <RaisedButton
-                onClick={() => this.handleCategoryCreate()}
-                label="Create"
-                fullWidth={true}
-                buttonStyle={{height: '30px', lineHeight: '30px'}}
-                labelStyle={{fontSize: 11}}
-                style={{marginTop: 12}}
-                primary={true}/>
-            </Col>
-          </Row>
+          <Formsy.Form
+            onValid={this.enableButton.bind(this)}
+            onInvalid={this.disableButton.bind(this)}
+            onValidSubmit={(data) => this.handleCategoryCreate(data)}
+          >
+            <Row style={{padding: '0 16px 16px'}}>
+              <Col xs={4}>
+                <FormsyText
+                  hintText="* Category Type"
+                  name="category_type"
+                  style={this.styles.formField}
+                  required
+                  autoComplete="off"
+                />
+              </Col>
+              <Col xs={6}>
+                <FormsyText
+                  hintText="* Category Description"
+                  name="category_desc"
+                  style={this.styles.formField}
+                  required
+                  autoComplete="off"
+                />
+              </Col>
+              <Col xs={2}>
+                <RaisedButton
+                  type="submit"
+                  label="Create"
+                  disabled={!this.state.canSubmit}
+                  fullWidth={true}
+                  buttonStyle={{height: '30px', lineHeight: '30px'}}
+                  labelStyle={{fontSize: 11}}
+                  style={{marginTop: 12}}
+                  primary={true}/>
+              </Col>
+            </Row>
+          </Formsy.Form>
         </div>
       )
     }
