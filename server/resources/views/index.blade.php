@@ -21,6 +21,6 @@
     s.parentNode.insertBefore(wf, s);
   })();
 </script>
-<script src="./dist/bundle.js"></script>
+<script src="./dist/bundle.js?{{ $version }}"></script>
 </body>
 </html>

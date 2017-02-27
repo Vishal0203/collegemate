@@ -55,7 +55,7 @@ class CreateInstituteForm extends React.Component {
           <Col xs={2}>
             <FormsyText
               name="institute_code"
-              hintText="Institue Code"
+              hintText="Institute Code"
               fullWidth={true}
               style={{paddingTop: '15px', fontWeight: 400}}
               required
@@ -65,7 +65,7 @@ class CreateInstituteForm extends React.Component {
           <Col xs={10}>
             <FormsyText
               name="institute_name"
-              hintText="Institue Name"
+              hintText="Institute Name"
               fullWidth={true}
               style={{paddingTop: '15px', fontWeight: 400}}
               required
@@ -77,7 +77,7 @@ class CreateInstituteForm extends React.Component {
           <Col xs={12}>
             <FormsyText
               name="institute_description"
-              hintText="Institue Description"
+              hintText="Institute Description"
               multiLine={true}
               fullWidth={true}
               rowsMax={4}
