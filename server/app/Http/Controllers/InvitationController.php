@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UserInstitute;
 use Illuminate\Http\Request;
 
 use App\Helper\UploadDataValidator;
@@ -12,6 +13,7 @@ use App\User;
 use App\UserProfile;
 use Faker;
 use App\Institute;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InvitationController extends Controller
 {
@@ -42,12 +44,11 @@ class InvitationController extends Controller
     {
         $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
         $file = $request->file('bulk_invite_file');
-
-        $uploaded_data = Excel::load($file, function ($reader) {
+        $uploaded_data = Excel::load($file->path(), function ($reader) {
             $reader->ignoreEmpty();
         })->get()->toArray();
 
-        $required_keys = ["member_id", "email", "role"];
+        $required_keys = ["employeeid", "email", "designation"];
 
         if ($request->get('for') == 'member') {
             array_pop($required_keys);
@@ -57,7 +58,6 @@ class InvitationController extends Controller
         $refined_data = $validator->validateAndRefineUploadedExcel($required_keys);
 
         $internals = Faker\Factory::create('en_US');
-        $roles = ['Administrator' => 'inst_admin', 'Staff' => 'inst_staff', 'Student' => 'inst_student'];
 
         $users_data = ['success' => [], 'error' => []];
         foreach ($refined_data["success"] as $input) {
@@ -75,10 +75,11 @@ class InvitationController extends Controller
                 ]);
             }
 
-            $role = $roles[array_key_exists("role", $input) ? $input['role'] : 'Member'];
+            $role = 'inst_staff';
             $data = [
-                'member_id' => $input['member_id'],
-                'role' => $role
+                'member_id' => $input['employeeid'],
+                'role' => $role,
+                'designation' => $input['designation'],
             ];
 
             $response = $this->addUserInstitute($institute, $user, $data);
@@ -97,11 +98,17 @@ class InvitationController extends Controller
     public static function addUserInstitute(Institute $institute, User $user_data, array $request)
     {
         try {
-            $institute->users()->attach($user_data, ['member_id' => $request['member_id'], 'role' => $request['role']]);
+            $institute->users()->attach($user_data, [
+                'member_id' => $request['member_id'],
+                'role' => $request['role'],
+                'designation' => $request['designation']
+            ]);
+
             $t = time();
             $user_data['pivot'] = [
                 'role' => $request['role'],
                 'invitation_status' => 'pending',
+                'designation' => $request['designation'],
                 'member_id' => $request['member_id'],
                 'created_at' => date("Y-m-d H:i:s", $t),
                 'updated_at' => date("Y-m-d H:i:s", $t)
@@ -112,7 +119,7 @@ class InvitationController extends Controller
 
         if (env('APP_ENV') == 'production' || env('APP_ENV') == 'test') {
             $verification_url =
-                env('HOST_URL'). "invite/" . $institute['inst_profile_guid'] . "?u=" . $user_data['user_guid'];
+                env('HOST_URL') . "invite/" . $institute['inst_profile_guid'] . "?u=" . $user_data['user_guid'];
 
             $data = [
                 "email" => $user_data['email'],
@@ -127,6 +134,32 @@ class InvitationController extends Controller
         }
 
         return $user_data;
+    }
+
+    public function studentRequestAction(Request $request, $institute_guid)
+    {
+        $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
+        $user = User::where('user_guid', $request->get('user_guid'))->get()->first();
+
+        if ($request['status'] == 'accepted') {
+            UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
+                'invitation_status' => $request->get('status')
+            ]);
+
+            //Todo: Send approved mail
+            return response()->json([
+                "message" => "You have approved " . $user['first_name'] . "'s request."
+            ], 201);
+        } else {
+            UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->forceDelete();
+            $user->default_institute = null;
+            $user->save();
+
+            //Todo: Send declined mail
+            return response()->json([
+                "message" => "You have declined " . $user['first_name'] . "'s request."
+            ], 201);
+        }
     }
 
     public function show($institute_guid, $user_guid)

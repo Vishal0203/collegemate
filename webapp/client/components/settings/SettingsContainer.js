@@ -4,13 +4,13 @@ import Avatar from 'material-ui/Avatar';
 import {bindActionCreators} from 'redux';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {grey600} from 'material-ui/styles/colors';
-import {Card, CardTitle} from 'material-ui/Card/index';
+import {Card, CardTitle, CardText} from 'material-ui/Card/index';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
 import moment from 'moment';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
-
 import Header from '../Header';
 import SubscriptionForm from './SubscriptionForm'
 
@@ -32,6 +32,13 @@ class SettingsContainer extends Component {
       },
       floatingLabelStyle: {
         fontSize: 16
+      },
+      alert: {
+        backgroundColor: 'transparent',
+        textAlign: 'center',
+        color: 'rgb(167, 26, 26)',
+        fontSize: 'large',
+        fontWeight: '500'
       }
     }
   }
@@ -55,6 +62,29 @@ class SettingsContainer extends Component {
     };
 
     this.props.actions.updateUserProfileRequest(profileData)
+  }
+
+  renderSubscriptionForm() {
+    const {invitation_status} = this.props.auth_user.selectedInstitute.user_institute_info[0];
+    if (invitation_status === 'accepted') {
+      return (
+        <Card style={{padding: 16, marginBottom: 40, marginTop: 20}}>
+          <CardTitle title="Announcement Settings"/>
+          <SubscriptionForm parentProps={this.props} showOptions={true}/>
+        </Card>
+      )
+    }
+
+    if (this.props.auth_user.approvalAlert) {
+      return (
+        <Paper zDepth={0} style={this.styles.alert}>
+          <div style={{marginTop: 30}}>
+            <p>&#9432; Your account needs approval from your insitute. <br/><br/>
+              You will be notified via email, when your account is approved.</p>
+          </div>
+        </Paper>
+      )
+    }
   }
 
   render() {
@@ -136,6 +166,7 @@ class SettingsContainer extends Component {
                           floatingLabelStyle={this.styles.floatingLabelStyle}
                           fullWidth={true}
                           defaultValue={member_id}
+                          disabled={member_id !== null}
                           required
                           autoComplete="off"
                         />
@@ -196,10 +227,7 @@ class SettingsContainer extends Component {
                 </Row>
               </Card>
 
-              <Card style={{padding: 16, marginBottom: 40, marginTop: 20}}>
-                <CardTitle title="Announcement Settings"/>
-                <SubscriptionForm parentProps={this.props} showOptions={true}/>
-              </Card>
+              {this.renderSubscriptionForm()}
             </div>
           </Grid>
         </div>

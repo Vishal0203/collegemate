@@ -14,12 +14,23 @@ import {toggleSnackbar} from '../../actions/commons/index';
 import Paper from 'material-ui/Paper';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
+import {hashHistory} from 'react-router';
 
 class InteractionsContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.props.actions.fetchTags({type: 'posts'});
+  }
+
+  componentWillMount() {
+    const {invitation_status} = this.props.auth_user.selectedInstitute.user_institute_info[0];
+
+    if (invitation_status === 'pending') {
+      hashHistory.replace('/settings');
+      this.props.actions.toggleSnackbar('Your account is pending approval from your institute.')
+    } else {
+      this.props.actions.fetchTags({type: 'posts'});
+    }
   }
 
   get styles() {

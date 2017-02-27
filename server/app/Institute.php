@@ -29,6 +29,23 @@ class Institute extends Model
             ->withPivot('role', 'invitation_status', 'created_at', 'member_id')->withTimestamps();
     }
 
+    public function pendingStudents()
+    {
+        return $this->belongsToMany('App\User', 'users_institutes')
+            ->wherePivot('role', 'inst_student')
+            ->wherePivot('invitation_status', 'pending')
+            ->withPivot('role', 'invitation_status', 'member_id');
+    }
+
+    public function pendingStaff()
+    {
+        return $this->belongsToMany('App\User', 'users_institutes')
+            ->wherePivot('role', 'inst_staff')
+            ->wherePivot('invitation_status', 'pending')
+            ->where('is_verified', 1)
+            ->withPivot('role', 'invitation_status', 'member_id');
+    }
+
     public function dynamicTables()
     {
         return $this->hasMany('App\DynamicTables');

@@ -13,6 +13,7 @@ import {toggleSnackbar} from '../actions/commons/index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Notifications from './Notifications';
+import Divider from 'material-ui/Divider';
 
 class Navbar extends React.Component {
 
@@ -52,6 +53,14 @@ class Navbar extends React.Component {
   logoutUser() {
     this.props.actions.userLogout()
   };
+  renderAddStaffButton() {
+    const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
+    if (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff') {
+      return(
+        <MenuItem onClick={() => hashHistory.push('/institute_settings')} primaryText="Institute Settings"/>
+      );
+    }
+  }
 
   renderBrand() {
     const {auth_user} = this.props;
@@ -81,10 +90,9 @@ class Navbar extends React.Component {
   renderTabs(tabIndex) {  
     const {auth_user} = this.props;
     if (Object.keys(auth_user.selectedInstitute).length !== 0) {
-      const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
-      const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
+      const {member_id, designation, invitation_status} = auth_user.selectedInstitute.user_institute_info[0];
 
-      if (member_id && designation) {
+      if (member_id && designation && invitation_status === 'accepted') {
         return (
           <ToolbarGroup className="tab-container">
             <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} value={tabIndex}>
@@ -130,7 +138,9 @@ class Navbar extends React.Component {
                       }
                       anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
                       targetOrigin={{horizontal: 'right', vertical: 'top'}} >
-              <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="Settings"/>
+              {this.renderAddStaffButton()}
+              <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="User Settings"/>
+              <Divider/>
               <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
             </IconMenu>
           </div>

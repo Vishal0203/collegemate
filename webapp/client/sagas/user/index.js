@@ -1,14 +1,10 @@
-import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
+import {takeLatest} from 'redux-saga';
 import {put, call, select, fork} from 'redux-saga/effects';
-
 import * as userActions from '../../actions/users/index';
 import * as announcementActions from '../../actions/announcements/index';
 import * as interactionsActions from '../../actions/interactions/index';
 import * as notificationActions from '../../actions/notifications/index';
-import {toggleErrorDialog, toggleSnackbar} from '../../actions/commons/index';
-
-import {FEEDBACK_SUBMIT_REQUEST} from '../../actions/commons/index';
-
+import {toggleErrorDialog, toggleSnackbar, FEEDBACK_SUBMIT_REQUEST} from '../../actions/commons/index';
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
 import {hashHistory} from 'react-router';
@@ -30,11 +26,14 @@ function *handleAuthResponse(response) {
     const institute_guid = response.data.user.default_institute.inst_profile_guid;
     yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
 
-    const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
-    const designation = response.data.user.default_institute.user_institute_info[0].designation;
+    const {member_id, designation, invitation_status} = response.data.user.default_institute.user_institute_info[0];
     if (!(member_id && designation)) {
       hashHistory.replace('/settings');
       yield put(toggleSnackbar('Please update your member id and designation.'));
+    }
+    if (invitation_status === 'pending') {
+      hashHistory.replace('/settings');
+      yield put(toggleSnackbar('Your account is pending approval from your institute.'));
     }
   }
   else {
@@ -64,12 +63,18 @@ function *updateUserProfile(params) {
   const selected_institute = yield select(selectors.selected_institute);
   const formData = {...params.profileData, institute_guid: selected_institute.inst_profile_guid};
   const response = yield call(HttpHelper, 'update_profile', 'POST', formData, null);
-  if (response.status === 200) {
-    yield put(userActions.updateUserProfileResponse(response.data.user));
-    yield put(toggleSnackbar('Your profile has been updated.'));
-  }
-  else {
-    yield put(toggleErrorDialog());
+
+  switch (response.status) {
+    case 200:
+      yield put(userActions.updateUserProfileResponse(response.data.user));
+      yield put(toggleSnackbar('Your profile has been updated.'));
+      break;
+    case 403:
+      yield put(toggleSnackbar(response.data.error));
+      break;
+    default:
+      yield put(toggleErrorDialog());
+      break;
   }
 }
 
@@ -140,6 +145,23 @@ function *handleFeedbackSubmit(params) {
   }
 }
 
+function *inviteStaffMember(params) {
+  let selected_institute = yield select(selectors.selected_institute);
+  const institute_guid = selected_institute.inst_profile_guid;
+  const formData = {...params.staffMembers};
+  let response;
+  if (formData.hasFile === true) {
+    let data = new FormData();
+    data.append('bulk_invite_file', formData.bulk_invite_file);
+    response = yield call(HttpHelper, `institute/${institute_guid}/invitation/bulk_invite`, 'POST', data, null);
+  } else {
+    response = yield call(HttpHelper, `institute/${institute_guid}/staff/add_staff`, 'POST', formData.invite_data, null);
+  }
+  if (response.status === 200) {
+    yield put(toggleSnackbar('Your request is successfully submitted'));
+  }
+}
+
 /*
  Watchers
  */
@@ -172,6 +194,12 @@ function *watchFeedbackSubmit() {
   yield *takeLatest(FEEDBACK_SUBMIT_REQUEST, handleFeedbackSubmit)
 }
 
+
+function *watchInviteStaffMember() {
+  yield *takeLatest(userActions.STAFF_ADD_REQUEST, inviteStaffMember)
+}
+
+
 export default function *userSaga() {
   yield [
     fork(watchGoogleAuth),
@@ -180,6 +208,7 @@ export default function *userSaga() {
     fork(watchProfileUpdate),
     fork(watchCreateAnnouncementCategory),
     fork(watchDeleteAnnouncementCategory),
-    fork(watchFeedbackSubmit)
+    fork(watchFeedbackSubmit),
+    fork(watchInviteStaffMember)
   ]
 }

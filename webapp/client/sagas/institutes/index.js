@@ -1,7 +1,7 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
-import {put, call, fork} from 'redux-saga/effects';
+import {put, call, select, fork} from 'redux-saga/effects';
 
-import {toggleSnackbar} from '../../actions/commons/index';
+import {toggleErrorDialog, toggleSnackbar} from '../../actions/commons/index';
 import * as instituteActions from '../../actions/institutes/index';
 import * as userActions from '../../actions/users/index';
 import * as announcementActions from '../../actions/announcements/index';
@@ -10,6 +10,7 @@ import * as notificationActions from '../../actions/notifications/index';
 
 import {HttpHelper} from '../utils/apis';
 import {hashHistory} from 'react-router';
+import * as selectors from '../../reducers/selectors';
 
 function *fetchInstituteList() {
   const response = yield call(HttpHelper, 'institutes', 'GET', null, null);
@@ -58,7 +59,7 @@ function *registerToInstitute(params) {
 
 function *createInstitute(params) {
   const response = yield call(HttpHelper, 'institutes', 'POST', params.formData, null);
-  if(response.status === 200) {
+  if (response.status === 200) {
     yield put(userActions.setSelectedInstitute(response.data.user));
 
     const member_id = response.data.user.default_institute.user_institute_info[0].member_id;
@@ -73,9 +74,78 @@ function *createInstitute(params) {
   }
 }
 
+function *getStudentsApprovalRequests() {
+  const selected_institute = yield select(selectors.selected_institute);
+  const response = yield call(
+    HttpHelper,
+    `institute/${selected_institute.inst_profile_guid}/students_requests`,
+    'GET',
+    null,
+    null
+  );
+
+  if (response.status === 200) {
+    yield put(instituteActions.studentApprovalResponse(response.data.institute.pending_students))
+  }
+}
+
+function *studentApprovalAction(params) {
+  const selected_institute = yield select(selectors.selected_institute);
+  const data = {
+    user_guid: params.user_guid,
+    status: params.status
+  };
+  const response = yield call(
+    HttpHelper,
+    `institute/${selected_institute.inst_profile_guid}/students_requests`,
+    'POST',
+    data,
+    null
+  );
+
+  if (response.status === 201) {
+    yield put(instituteActions.studentApprovalActionResponse(data.user_guid));
+    yield put(toggleSnackbar(response.data.message));
+  }
+}
+
+function *getStaffApprovalRequests() {
+  const selected_institute = yield select(selectors.selected_institute);
+  const response = yield call(
+    HttpHelper,
+    `institute/${selected_institute.inst_profile_guid}/staff_requests`,
+    'GET',
+    null,
+    null
+  );
+
+  if (response.status === 200) {
+    yield put(instituteActions.staffApprovalResponse(response.data.institute.pending_staff))
+  }
+}
+
+function *staffApprovalAction(params) {
+  const selected_institute = yield select(selectors.selected_institute);
+  const data = {
+    user_guid: params.user_guid,
+    status: params.status
+  };
+  const response = yield call(
+    HttpHelper,
+    `institute/${selected_institute.inst_profile_guid}/staff_requests`,
+    'POST',
+    data,
+    null
+  );
+
+  if (response.status === 201) {
+    yield put(instituteActions.staffApprovalActionResponse(data.user_guid));
+    yield put(toggleSnackbar(response.data.message));
+  }
+}
 /*
-Watchers
-*/
+ Watchers
+ */
 
 function *watchFetchInstituteListRequest() {
   yield *takeLatest(instituteActions.FETCH_INSTITUTE_LIST_REQUEST, fetchInstituteList)
@@ -89,10 +159,30 @@ function *watchCreateInstituteRequest() {
   yield *takeLatest(instituteActions.CREATE_INSTITUTE_REQUEST, createInstitute)
 }
 
+function *watchStudentsApprovalRequest() {
+  yield *takeLatest(instituteActions.STUDENT_APPROVAL_REQUEST, getStudentsApprovalRequests)
+}
+
+function *watchStudentsApprovalAction() {
+  yield *takeLatest(instituteActions.STUDENT_APPROVAL_ACTION, studentApprovalAction)
+}
+
+function *watchStaffApprovalRequest() {
+  yield *takeLatest(instituteActions.STAFF_APPROVAL_REQUEST, getStaffApprovalRequests)
+}
+
+function *watchStaffApprovalAction() {
+  yield *takeLatest(instituteActions.STAFF_APPROVAL_ACTION, staffApprovalAction)
+}
+
 export default function *instituteSaga() {
   yield [
     fork(watchFetchInstituteListRequest),
     fork(watchSelectInstituteRequest),
-    fork(watchCreateInstituteRequest)
+    fork(watchCreateInstituteRequest),
+    fork(watchStudentsApprovalRequest),
+    fork(watchStudentsApprovalAction),
+    fork(watchStaffApprovalRequest),
+    fork(watchStaffApprovalAction)
   ]
 }

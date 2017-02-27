@@ -25,6 +25,7 @@ import {
   createAnnouncementCategoryRequest
 } from '../../actions/users/index';
 import {toggleSnackbar} from '../../actions/commons/index'
+import {hashHistory} from 'react-router';
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
@@ -38,6 +39,15 @@ class AnnouncementsContainer extends Component {
       },
       showCategorySettings: false
     };
+  }
+
+  componentWillMount() {
+    const {invitation_status} = this.props.auth_user.selectedInstitute.user_institute_info[0];
+
+    if (invitation_status === 'pending') {
+      hashHistory.replace('/settings');
+      this.props.actions.toggleSnackbar('Your account is pending approval from your institute.')
+    }
   }
 
   get styles() {

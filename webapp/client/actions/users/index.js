@@ -30,6 +30,8 @@ export const REMOVE_VALIDATED_NOTIFIER = 'CLEAR_VALIDATED_NOTIFIER';
 export const ADD_NOTIFIERS_REQUEST = 'ADD_NOTIFIERS_REQUEST';
 export const REMOVE_NOTIFIER_REQUEST = 'REMOVE_NOTIFIER_REQUEST';
 export const REMOVE_NOTIFIER_RESPONSE = 'REMOVE_NOTIFIER_RESPONSE';
+export const STAFF_ADD_REQUEST = 'STAFF_ADD_REQUEST';
+export const STAFF_ADD_RESPONSE = 'STAFF_ADD_RESPONSE';
 
 export function userLogin() {
   return {
@@ -218,5 +220,19 @@ export function removeNotifierResponse(user_guid) {
   return {
     type: REMOVE_NOTIFIER_RESPONSE,
     user_guid
+  }
+}
+
+export function submitStaffAdditionRequest(staffMembers) {
+  return {
+    type: STAFF_ADD_REQUEST,
+    staffMembers
+  }
+}
+
+export function submitStaffAdditionResponse(response) {
+  return {
+    type: STAFF_ADD_RESPONSE,
+    response
   }
 }

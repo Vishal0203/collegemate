@@ -64,7 +64,7 @@ class Main extends React.Component {
   renderMainContent() {
     if (Object.keys(this.props.auth_user.user).length !== 0) {
       const actions = [
-        <FlatButton label="Okay!" primary={true} onTouchTap={this.props.actions.toggleErrorDialog}/>
+        <FlatButton label="Okay" primary={true} onTouchTap={this.props.actions.toggleErrorDialog}/>
       ];
 
       return (

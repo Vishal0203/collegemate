@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Helper\DynamicSchema;
 use App\Institute;
@@ -18,6 +19,7 @@ class InstituteController extends Controller
     {
         $this->middleware('auth', ['except' => 'index']);
         $this->middleware('inst_super', ['only' => 'destroy']);
+        $this->middleware('inst_admin', ['only' => 'getPendingStudentsRequests']);
     }
 
     /**
@@ -214,7 +216,7 @@ class InstituteController extends Controller
                 'user_id' => $user['id'],
                 'institute_id' => $institute_id,
                 'role' => 'inst_student',
-                'invitation_status' => 'accepted',
+                'invitation_status' => 'pending',
             ]);
         }
 
@@ -248,6 +250,15 @@ class InstituteController extends Controller
         } else {
             return response()->json(["error" => "Some thing went wrong"], 500);
         }
+    }
+
+
+    public function getPendingStudentsRequests($institute_guid)
+    {
+        $institute = Institute::where('inst_profile_guid', $institute_guid)
+            ->with('pendingStudents.userProfile')->get()->first();
+
+        return response()->json(compact('institute'));
     }
 
     private function createDynamicTable(array $schema, $table_name)
@@ -300,5 +311,13 @@ class InstituteController extends Controller
             ],
             "foreign_keys" => null
         ];
+    }
+
+    public function getPendingStaffMembers($institute_guid)
+    {
+        $institute = Institute::where('inst_profile_guid', $institute_guid)
+            ->with('pendingStaff.userProfile')->get()->first();
+
+        return response()->json(compact('institute'));
     }
 }

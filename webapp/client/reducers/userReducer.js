@@ -1,8 +1,10 @@
 import * as actions from '../actions/users/index';
 import * as notificationActions from '../actions/notifications/index';
+import * as instituteActions from '../actions/institutes/index';
 
 const initialState = {
   user: {},
+  approvalAlert: false,
   selectedInstitute: {},
   categoryNotifiers: {
     loading: false,
@@ -11,7 +13,7 @@ const initialState = {
   }
 };
 
-export default function userReducer(state=initialState, action) {
+export default function userReducer(state = initialState, action) {
   switch (action.type) {
     case actions.USER_LOGIN_RESPONSE: {
       let selectedInstitute = {};
@@ -109,6 +111,7 @@ export default function userReducer(state=initialState, action) {
     case actions.UPDATE_USER_PROFILE_RESPONSE: {
       return {
         ...state,
+        approvalAlert: true,
         user: {
           ...state.user,
           user_profile: {...action.response.user_profile}
@@ -177,9 +180,9 @@ export default function userReducer(state=initialState, action) {
       }
     }
     case actions.TOGGLE_NOTIFIERS_DIALOG: {
-      const categoryNotifiers = state.categoryNotifiers.notifiersDialogOpen? {
+      const categoryNotifiers = state.categoryNotifiers.notifiersDialogOpen ? {
         notifiersDialogOpen: false
-      }: {
+      } : {
         ...state.categoryNotifiers,
         notifiersDialogOpen: true,
         validatedUsers: []
@@ -275,6 +278,46 @@ export default function userReducer(state=initialState, action) {
           ...state.categoryNotifiers,
           notifiers,
           loading: false,
+        }
+      }
+    }
+    case instituteActions.STUDENT_APPROVAL_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          pending_students: action.students
+        }
+      }
+    }
+    case instituteActions.STUDENT_APPROVAL_ACTION_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          pending_students: state.selectedInstitute.pending_students.filter((student) =>
+            student.user_guid !== action.user_guid
+          )
+        }
+      }
+    }
+    case instituteActions.STAFF_APPROVAL_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          pending_staffs: action.staffs
+        }
+      }
+    }
+    case instituteActions.STAFF_APPROVAL_ACTION_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          pending_staffs: state.selectedInstitute.pending_staffs.filter((staff) =>
+            staff.user_guid !== action.user_guid
+          )
         }
       }
     }

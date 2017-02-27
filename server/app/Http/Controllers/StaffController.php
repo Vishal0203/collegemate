@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Institute;
+use App\UserInstitute;
 use App\User;
 use App\UserProfile;
 use App\Category;
@@ -24,7 +25,7 @@ class StaffController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  string  $institute_guid
+     * @param  string $institute_guid
      * @return \Illuminate\Http\Response
      */
     public function index($institute_guid)
@@ -41,7 +42,7 @@ class StaffController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -83,9 +84,9 @@ class StaffController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  string  $institute_guid
-     * @param  string  $user_guid
-     * @param  \Illuminate\Http\Request  $request
+     * @param  string $institute_guid
+     * @param  string $user_guid
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function update($institute_guid, $user_guid, Request $request)
@@ -117,9 +118,9 @@ class StaffController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  string  $institute_guid
-     * @param  string  $user_guid
-     * @param  \Illuminate\Http\Request  $request
+     * @param  string $institute_guid
+     * @param  string $user_guid
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function destroy($institute_guid, $user_guid, Request $request)
@@ -132,7 +133,8 @@ class StaffController extends Controller
         }
 
         if ($rank[$request->get('auth_user_role')] < $rank[$institute['users'][0]['pivot']['role']] &&
-            $institute->users()->detach($institute['users'][0]['id'])) {
+            $institute->users()->detach($institute['users'][0]['id'])
+        ) {
             return response()->json(['user_guid' => $institute['users'][0]['user_guid']], 202);
         } else {
             return response()->json(['Error' => 'Not Authorized.'], 403);
@@ -141,8 +143,8 @@ class StaffController extends Controller
 
     public function getCategoriesForNotifier($institute_guid)
     {
-        $user_guid=\Auth::user()->user_guid;
-        $categories=Category::wherehas('institutes', function ($q) use ($institute_guid) {
+        $user_guid = \Auth::user()->user_guid;
+        $categories = Category::wherehas('institutes', function ($q) use ($institute_guid) {
             $q->where('inst_profile_guid', '=', $institute_guid);
         })->wherehas('notifiers', function ($q) use ($user_guid) {
             $q->where('user_guid', '=', $user_guid);
@@ -171,5 +173,58 @@ class StaffController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'role' => 'required'
         ], $messages);
+    }
+
+    public function validateStaffProfile(Request $request, $institute_guid)
+    {
+        $user = User::where('email', $request['email'])->with(['institutes' => function ($inst) use ($institute_guid) {
+            $inst->where('inst_profile_guid', $institute_guid)->first();
+        }])->first();
+        if (!is_null($user)) {
+            $userInfo = $user['institutes'];
+            if (count($userInfo) > 0) {
+                $role = $userInfo[0]['pivot']['role'];
+                if ($role == 'inst_staff' || $role == 'inst_superuser' || $role == 'inst_admin') {
+                    return response()->json(['validationFlag' => 'STAFF'], 200);
+                } else {
+                    return response()->json([
+                        'memberId' => $user['institutes'][0]['pivot']['member_id'],
+                        'validationFlag' => 'STUDENT'], 200);
+                }
+            } else {
+                return response()->json(['validationFlag' => 'NOROLE'], 200);
+            }
+        } else {
+            return response()->json(['validationFlag' => 'NONE'], 200);
+        }
+    }
+
+    public function getStaffTemplateSheet()
+    {
+        $file= public_path(). "/StaffTemplate.xlsx";
+        return response()->download($file);
+    }
+
+    public function addStaffMember(Request $request, $institute_guid)
+    {
+        $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
+        $internals = Faker\Factory::create('en_US');
+        $user = User::create([
+            'user_guid' => $internals->uuid,
+            'email' => $request['email'],
+            'hash' => $internals->md5
+        ]);
+        UserProfile::create([
+            'user_profile_guid' => $internals->uuid,
+            'user_id' => $user['id']
+        ]);
+        $data = [
+            'member_id' => $request['memberId'],
+            'designation' => $request['designation'],
+            'role' => 'inst_staff'
+        ];
+
+        $respo = InvitationController::addUserInstitute($institute, $user, $data);
+        return response()->json(compact('user'));
     }
 }
