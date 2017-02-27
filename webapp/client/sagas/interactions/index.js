@@ -126,6 +126,7 @@ function *handleTabChange(params) {
   if (!params.payload.pathname.match(/\/interactions\/.+/)) {
     const post = yield select(selectors.getSelectedPost);
     if (post) {
+      yield put(interactionsActions.clearSelectedPost());
       yield put(userActions.unsubscribeChannel(`post_${post.post_guid}:post-update`));
     }
   }

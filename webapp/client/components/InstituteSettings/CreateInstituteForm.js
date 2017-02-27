@@ -52,7 +52,7 @@ class CreateInstituteForm extends React.Component {
         onValidSubmit={(data) => this.onCreate(data)}
       >
         <Row>
-          <Col xs={2}>
+          <Col xs={3}>
             <FormsyText
               name="institute_code"
               hintText="Institute Code"
@@ -62,7 +62,7 @@ class CreateInstituteForm extends React.Component {
               autoComplete="off"
             />
           </Col>
-          <Col xs={10}>
+          <Col xs={9}>
             <FormsyText
               name="institute_name"
               hintText="Institute Name"

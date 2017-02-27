@@ -40,8 +40,10 @@ function *watchOnSocketEvents(params) {
 }
 
 function *unsubscribeSocketChannel(params) {
-  subscribedChannels[params.channelName].close();
-  delete subscribedChannels[params.channelName]
+  if (subscribedChannels[params.channelName]) {
+    subscribedChannels[params.channelName].close();
+    delete subscribedChannels[params.channelName];
+  }
 }
 
 /*

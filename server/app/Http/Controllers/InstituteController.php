@@ -207,7 +207,7 @@ class InstituteController extends Controller
         $user = \Auth::user();
 
         $user_inst = UserInstitute::where('user_id', $user['id'])
-            ->where('institute_id', $institute_id)->first()->get();
+            ->where('institute_id', $institute_id)->get()->first();
 
         if (is_null($user_inst)) {
             $user_inst = UserInstitute::create([
@@ -221,7 +221,11 @@ class InstituteController extends Controller
         $user->update(['default_institute' => $institute_id]);
 
         if (!is_null($user_inst)) {
-            $user->load(['institutes', 'defaultInstitute.categories',
+            $user->load(['institutes',
+                'defaultInstitute.categories' =>
+                    function ($category) {
+                        $category->with('creator');
+                    },
                 'defaultInstitute.subscriptions' =>
                     function ($categories) use ($user) {
                         $categories->whereHas('subscribers', function ($subscribers) use ($user) {
