@@ -21,7 +21,7 @@ class CategoryController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('inst_super', ['only' => ['destroy']]);
-        $this->middleware('inst_admin', ['except' => ['destroy', 'getCategoryNotifiers']]);
+        $this->middleware('inst_admin', ['except' => ['destroy', 'getNotifiers']]);
     }
 
     /**
@@ -58,6 +58,7 @@ class CategoryController extends Controller
         ]);
 
         $this->addNotifierToCategory($category, Auth::user());
+        $category->load('creator');
         return response()->json(compact('category'), 200);
     }
 

@@ -31,9 +31,10 @@ class InteractionSingle extends Component {
       },
       showConfirmation: false
     };
+  }
+  componentWillMount() {
     this.fetchPost(this.props.params.postGuid);
   }
-
   get styles() {
     return {
       postTitle: {
@@ -115,10 +116,6 @@ class InteractionSingle extends Component {
       }
     }
   }
-
-  createMarkup(postContent) {
-    return {__html: postContent};
-  };
 
   fetchPost(postGuid) {
     if (Object.keys(this.props.auth_user.user).length != 0) {

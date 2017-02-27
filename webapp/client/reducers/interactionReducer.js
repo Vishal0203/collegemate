@@ -116,6 +116,13 @@ export default function interactionReducer(state = initialState, action) {
       }
       return {...state, selectedPost:action.response.post, postLoading: false}
     }
+    //Need to refactor later
+    case actions.CLEAR_SELECTED_POST: {
+      return {
+        ...state,
+        selectedPost: null
+      }
+    }
     case actions.TOGGLE_POST_UPVOTE_RESPONSE: {
       if(action.response.error) {
         return {...state, postLoading: false}

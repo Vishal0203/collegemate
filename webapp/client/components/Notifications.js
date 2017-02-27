@@ -97,7 +97,7 @@ class Notifications extends React.Component {
 
   openNotification(notification) {
     this.closeNotificationMenu();
-    if (notification.type == POST_NOTIFICATION) {
+    if (notification.type == POST_NOTIFICATION || notification.type == COMMENT_UPVOTE_NOTIFICATION) {
       hashHistory.push(`interactions/${notification.post_guid}`);
     }
     else {

@@ -52,20 +52,20 @@ class CreateInstituteForm extends React.Component {
         onValidSubmit={(data) => this.onCreate(data)}
       >
         <Row>
-          <Col xs={2}>
+          <Col xs={3}>
             <FormsyText
               name="institute_code"
-              hintText="Institue Code"
+              hintText="Institute Code"
               fullWidth={true}
               style={{paddingTop: '15px', fontWeight: 400}}
               required
               autoComplete="off"
             />
           </Col>
-          <Col xs={10}>
+          <Col xs={9}>
             <FormsyText
               name="institute_name"
-              hintText="Institue Name"
+              hintText="Institute Name"
               fullWidth={true}
               style={{paddingTop: '15px', fontWeight: 400}}
               required
@@ -76,8 +76,8 @@ class CreateInstituteForm extends React.Component {
         <Row>
           <Col xs={12}>
             <FormsyText
-              name="institute_descripton"
-              hintText="Institue Description"
+              name="institute_description"
+              hintText="Institute Description"
               multiLine={true}
               fullWidth={true}
               rowsMax={4}

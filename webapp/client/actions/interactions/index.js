@@ -39,6 +39,8 @@ export const EDIT_COMMENT_RESPONSE = 'EDIT_COMMENT_RESPONSE';
 export const ADD_TAG_FILTER = 'ADD_TAG_FILTER';
 export const REMOVE_TAG_FILTER = 'REMOVE_TAG_FILTER';
 
+export const CLEAR_SELECTED_POST = 'CLEAR_SELECTED_POST';
+
 export function postFormToggle() {
   return {
     type: CREATE_POST_TOGGLE
@@ -239,5 +241,11 @@ export function removeTagFilter(filter) {
   return {
     type: REMOVE_TAG_FILTER,
     filter
+  }
+}
+
+export function clearSelectedPost() {
+  return {
+    type: CLEAR_SELECTED_POST
   }
 }
