@@ -76,7 +76,7 @@ class CreateInstituteForm extends React.Component {
         <Row>
           <Col xs={12}>
             <FormsyText
-              name="institute_descripton"
+              name="institute_description"
               hintText="Institue Description"
               multiLine={true}
               fullWidth={true}
