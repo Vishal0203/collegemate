@@ -34,13 +34,13 @@ function *handleAuthResponse(response) {
       hashHistory.replace('/settings');
       yield put(toggleSnackbar('Please update your member id and designation.'));
     }
-  }  
+  }
   else {
     hashHistory.replace('/institute');
     yield put(toggleSnackbar('Please Select an Institute'));
   }
-  
-  yield put(userActions.userLoginResponse(response.data)); 
+
+  yield put(userActions.userLoginResponse(response.data));
 }
 
 function *userAuthentication() {
@@ -95,8 +95,27 @@ function *createAnnouncementCategory(params) {
   }
 }
 
+function *removeAnnouncementCategory(params) {
+  let selected_institute = yield select(selectors.selected_institute);
+  const institute_guid = selected_institute.inst_profile_guid;
+  const response = yield call(
+    HttpHelper,
+    `institute/${institute_guid}/category/${params.category_guid}`,
+    'DELETE',
+    null,
+    null
+  );
+
+  if (response.status == 200) {
+    yield put(userActions.removeAnnouncementCategoryResponse(params.category_guid));
+    selected_institute = yield select(selectors.selected_institute);
+    yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
+  }
+  yield put(toggleSnackbar(response.data.message))
+}
+
 /*
-Watchers
+ Watchers
  */
 
 function *userAuthenticationRequest() {
@@ -119,6 +138,10 @@ function *watchCreateAnnouncementCategory() {
   yield *takeLatest(userActions.CREATE_ANNOUNCEMENT_CATEGORY_REQUEST, createAnnouncementCategory)
 }
 
+function *watchDeleteAnnouncementCategory() {
+  yield *takeLatest(userActions.REMOVE_ANNOUNCEMENT_CATEGORY_REQUEST, removeAnnouncementCategory)
+}
+
 export default function *userSaga() {
   yield [
     fork(watchGoogleAuth),
@@ -126,5 +149,6 @@ export default function *userSaga() {
     fork(userAuthenticationRequest),
     fork(watchProfileUpdate),
     fork(watchCreateAnnouncementCategory),
+    fork(watchDeleteAnnouncementCategory),
   ]
 }

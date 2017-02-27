@@ -47,7 +47,7 @@ class AnnouncementForm extends React.Component {
     const formData = {
       ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      notificationBody: this.state.content.toString('html'),
+      notificationBody: this.state.content.toString('markdown'),
       notificationAttachments: this.refs.notificationAttachments.files
     };
 
@@ -98,8 +98,7 @@ class AnnouncementForm extends React.Component {
       display: ['INLINE_STYLE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_BUTTONS'],
       INLINE_STYLE_BUTTONS: [
         {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'}
+        {label: 'Italic', style: 'ITALIC'}
       ],
       BLOCK_TYPE_BUTTONS: [
         {label: 'UL', style: 'unordered-list-item'},

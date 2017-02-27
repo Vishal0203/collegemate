@@ -20,8 +20,6 @@ Route::group(['prefix' => 'todevs/king/api/v1_0'], function () {
     Route::post('login', 'Auth\AuthController@postLogin');
 });
 
-Route::get('avatar/{filename}', 'UserProfileController@getAvatar');
-
 Route::group(['prefix' => 'api/v1_0'], function () {
     Route::post('register', 'Auth\AuthControllerGeneral@postRegister');
     Route::post('login', 'Auth\AuthControllerGeneral@postLogin');
@@ -61,9 +59,11 @@ Route::group(['prefix' => 'api/v1_0'], function () {
             ['only' => ['index', 'store', 'destroy']]
         );
 
-        Route::post('category/assign_staff', 'CategoryController@assignStaff');
-        Route::delete('category/remove_staff', 'CategoryController@removeStaff');
+        Route::post('category/assign_notifier', 'CategoryController@assignNotifier');
+        Route::delete('category/remove_notifier', 'CategoryController@removeNotifier');
         Route::get('category/notifiers', 'CategoryController@getNotifiers');
+        Route::get('category/validate_notifier', 'CategoryController@validateNotifier');
+
         Route::resource(
             'category',
             'CategoryController',

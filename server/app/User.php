@@ -24,7 +24,8 @@ class User extends Model implements
     protected $fillable = ['google_id', 'is_verified', 'first_name', 'last_name', 'email', 'password',
         'hash', 'user_guid', 'todevs_superuser', 'default_institute'];
 
-    protected $hidden = ['google_id', 'password', 'remember_token', 'id', 'created_at', 'updated_at', 'hash'];
+    protected $hidden = ['google_id', 'password', 'remember_token', 'id', 'created_at', 'updated_at', 'hash',
+        'default_institute'];
 
     protected $dates = ['created_at', 'updated_at'];
 

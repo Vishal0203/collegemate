@@ -36,7 +36,7 @@ class AnnouncementsContainer extends Component {
         show: false,
         label: ''
       },
-      showConfirmation: false
+      showCategorySettings: false
     };
   }
 
@@ -64,7 +64,7 @@ class AnnouncementsContainer extends Component {
   }
 
   toggleAnnouncementSettings(visibility) {
-    this.setState({showConfirmation: visibility});
+    this.setState({showCategorySettings: visibility});
   }
 
 
@@ -183,11 +183,11 @@ class AnnouncementsContainer extends Component {
         title="Category Settings"
         actions={actions}
         modal={false}
-        open={this.state.showConfirmation}
+        open={this.state.showCategorySettings}
         onRequestClose={() => this.toggleAnnouncementSettings(false)}
         autoScrollBodyContent={true}
       >
-        <SubscriptionForm parentProps={this.props}/>
+        <SubscriptionForm parentProps={this.props} showOptions={false}/>
       </Dialog>
 
     );

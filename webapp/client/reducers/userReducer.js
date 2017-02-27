@@ -3,7 +3,12 @@ import * as notificationActions from '../actions/notifications/index';
 
 const initialState = {
   user: {},
-  selectedInstitute: {}
+  selectedInstitute: {},
+  categoryNotifiers: {
+    loading: false,
+    notifiersDialogOpen: false,
+    validatedUsers: []
+  }
 };
 
 export default function userReducer(state=initialState, action) {
@@ -67,6 +72,23 @@ export default function userReducer(state=initialState, action) {
           subscriptions: [...state.selectedInstitute.subscriptions, action.category],
           categories: [...state.selectedInstitute.categories, action.category],
           notifying_categories: [...state.selectedInstitute.notifying_categories, action.category]
+        }
+      }
+    }
+    case actions.REMOVE_ANNOUNCEMENT_CATEGORY_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          subscriptions: state.selectedInstitute.subscriptions.filter(
+            (category) => category.category_guid != action.category_guid
+          ),
+          categories: state.selectedInstitute.categories.filter(
+            (category) => category.category_guid != action.category_guid
+          ),
+          notifying_categories: state.selectedInstitute.notifying_categories.filter(
+            (category) => category.category_guid != action.category_guid
+          ),
         }
       }
     }
@@ -151,6 +173,108 @@ export default function userReducer(state=initialState, action) {
         user: {
           ...state.user,
           unread_notifications: [...state.user.unread_notifications, action.notification]
+        }
+      }
+    }
+    case actions.TOGGLE_NOTIFIERS_DIALOG: {
+      const categoryNotifiers = state.categoryNotifiers.notifiersDialogOpen? {
+        notifiersDialogOpen: false
+      }: {
+        ...state.categoryNotifiers,
+        notifiersDialogOpen: true,
+        validatedUsers: []
+      };
+      return {
+        ...state,
+        categoryNotifiers
+      }
+    }
+    case actions.FETCH_CATEGORY_NOTIFIERS_REQUEST: {
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          loading: true,
+          validatedUsers: []
+        }
+      }
+    }
+    case actions.FETCH_CATEGORY_NOTIFIERS_RESPONSE: {
+      const notifiers = action.data.category_users.notifiers;
+      const category = action.data.category_users;
+      delete category.notifiers;
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          category,
+          notifiers,
+          loading: false
+        }
+
+      }
+    }
+    case actions.NOTIFIER_VALIDATION_RESPONSE: {
+      let validatedUsers = state.categoryNotifiers.validatedUsers;
+      if (action.data.user) {
+        const existingUser = state.categoryNotifiers.validatedUsers.filter(function (validatedUser) {
+          return validatedUser.user_guid === action.data.user.user_guid
+        });
+        validatedUsers = existingUser.length == 0 ?
+          [...state.categoryNotifiers.validatedUsers, action.data.user] :
+          validatedUsers;
+      }
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          validatedUsers,
+        }
+      }
+    }
+    case actions.REMOVE_VALIDATED_NOTIFIER: {
+      const validatedUsers = state.categoryNotifiers.validatedUsers.filter(function (validatedUser) {
+        return validatedUser.user_guid != action.user_guid
+      });
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          validatedUsers
+        }
+      }
+    }
+    case actions.ADD_NOTIFIERS_REQUEST: {
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          loading: true,
+        }
+      }
+    }
+    case actions.REMOVE_NOTIFIER_REQUEST: {
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          loading: true,
+        }
+      }
+    }
+    case actions.REMOVE_NOTIFIER_RESPONSE: {
+      let notifiers = action.error ?
+        state.categoryNotifiers.notifiers :
+        state.categoryNotifiers.notifiers.filter((notifier) =>
+          notifier.user_guid != action.user_guid
+        );
+
+      return {
+        ...state,
+        categoryNotifiers: {
+          ...state.categoryNotifiers,
+          notifiers,
+          loading: false,
         }
       }
     }

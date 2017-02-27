@@ -24,7 +24,11 @@ class AuthControllerGeneral extends Controller
 
     private function buildUserReturnable(User $user)
     {
-        $user->load(['userProfile', 'institutes', 'unreadNotifications', 'defaultInstitute.categories',
+        $user->load(['userProfile', 'institutes', 'unreadNotifications',
+            'defaultInstitute.categories' =>
+                function ($category) {
+                    $category->with('creator');
+                },
             'defaultInstitute.subscriptions' =>
                 function ($categories) use ($user) {
                     $categories->whereHas('subscribers', function ($subscribers) use ($user) {

@@ -131,7 +131,7 @@ class SettingsContainer extends Component {
                         <FormsyText
                           style={this.styles.formField}
                           name="memberId"
-                          floatingLabelText="* Member ID"
+                          floatingLabelText="Member ID"
                           floatingLabelStyle={this.styles.floatingLabelStyle}
                           fullWidth={true}
                           defaultValue={member_id}
@@ -141,7 +141,7 @@ class SettingsContainer extends Component {
                         <FormsyText
                           style={this.styles.formField}
                           name="designation"
-                          floatingLabelText="* Designation"
+                          floatingLabelText="Designation"
                           floatingLabelStyle={this.styles.floatingLabelStyle}
                           hintText="ex: CSE Student, CSE Staff etc"
                           fullWidth={true}
@@ -195,7 +195,7 @@ class SettingsContainer extends Component {
 
               <Card style={{padding: 16, marginBottom: 40, marginTop: 20}}>
                 <CardTitle title="Announcement Settings"/>
-                <SubscriptionForm parentProps={this.props}/>
+                <SubscriptionForm parentProps={this.props} showOptions={true}/>
               </Card>
             </div>
           </Grid>
