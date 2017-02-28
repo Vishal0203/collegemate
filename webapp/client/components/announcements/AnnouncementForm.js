@@ -48,7 +48,9 @@ class AnnouncementForm extends React.Component {
       ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
       notificationBody: this.state.content.toString('markdown'),
-      notificationAttachments: this.refs.notificationAttachments.files
+      // notificationAttachments: this.refs.notificationAttachments.files
+      // changing this temporarily
+      notificationAttachments: []
     };
 
     if (formData.notificationBody == '<p><br></p>') {
@@ -142,16 +144,16 @@ class AnnouncementForm extends React.Component {
 
               <br/>
               <br/>
-              <RaisedButton className="attach-btn" secondary={true} containerElement="label" label="Attach Files (optional)">
-                <input ref="notificationAttachments"
-                       type="file"
-                       style={this.styles.chooseButton}
-                       onChange={(e) => this.onFileSelect(e)}
-                       multiple />
-              </RaisedButton>
-              <label style={{paddingLeft: 10, fontSize: 12}} ref="chosenFiles">
-                <i style={{color: '#c6c6c6'}}>No fileChosen</i>
-              </label>
+              {/*<RaisedButton className="attach-btn" secondary={true} containerElement="label" label="Attach Files (optional)">*/}
+                {/*<input ref="notificationAttachments"*/}
+                       {/*type="file"*/}
+                       {/*style={this.styles.chooseButton}*/}
+                       {/*onChange={(e) => this.onFileSelect(e)}*/}
+                       {/*multiple />*/}
+              {/*</RaisedButton>*/}
+              {/*<label style={{paddingLeft: 10, fontSize: 12}} ref="chosenFiles">*/}
+                {/*<i style={{color: '#c6c6c6'}}>No fileChosen</i>*/}
+              {/*</label>*/}
             </Col>
           </CardText>
           <CardActions style={{textAlign: 'right'}}>
