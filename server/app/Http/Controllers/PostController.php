@@ -121,10 +121,10 @@ class PostController extends Controller
         $post->isEditable = ($post->user->user_guid == $user->user_guid);
 
         foreach ($post->comments as $comment) {
-            $upvote = Upvote::where('upvotable_id', $comment['id'])->where('user_id', $user['id'])->first();
+            $upvote = $comment->upvotes()->where('user_id', $user['id'])->first();
             $comment->upvoted = $upvote ? true: false;
         }
-        $upvote = Upvote::where('upvotable_id', $post['id'])->where('user_id', $user['id'])->first();
+        $upvote = $post->upvotes()->where('user_id', $user['id'])->first();
         $post->upvoted = $upvote ? true: false;
 
         if ($post['is_anonymous']) {
@@ -213,7 +213,7 @@ class PostController extends Controller
             return response()->json(['error' => 'You cannot upvote your own question']);
         }
 
-        $upvote = Upvote::where('upvotable_id', $post['id'])->where('user_id', $user['id'])->first();
+        $upvote = $post->upvotes()->where('user_id', $user['id'])->first();
         if ($upvote) {
             $upvote->delete();
         } else {

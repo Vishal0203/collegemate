@@ -131,7 +131,7 @@ class SettingsContainer extends Component {
                         <FormsyText
                           style={this.styles.formField}
                           name="memberId"
-                          floatingLabelText="Member ID"
+                          floatingLabelText="Hallticket Number (Students / Alumni) or Employee ID (Staff)"
                           floatingLabelStyle={this.styles.floatingLabelStyle}
                           fullWidth={true}
                           defaultValue={member_id}
