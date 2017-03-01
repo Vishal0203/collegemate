@@ -128,7 +128,7 @@ class CommentController extends Controller
             return response()->json(['error' => 'You cannot upvote your own comment']);
         }
 
-        $upvote = Upvote::where('upvotable_id', $comment['id'])->where('user_id', $user['id'])->first();
+        $upvote = $comment->upvotes()->where('user_id', $user['id'])->first();
         if ($upvote) {
             $upvote->delete();
         } else {

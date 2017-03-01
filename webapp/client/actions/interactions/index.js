@@ -39,7 +39,7 @@ export const EDIT_COMMENT_RESPONSE = 'EDIT_COMMENT_RESPONSE';
 export const ADD_TAG_FILTER = 'ADD_TAG_FILTER';
 export const REMOVE_TAG_FILTER = 'REMOVE_TAG_FILTER';
 
-export const CLEAR_SELECTED_POST = 'CLEAR_SELECTED_POST';
+export const POST_UPDATE = 'POST_UPDATE';
 
 export function postFormToggle() {
   return {
@@ -244,8 +244,9 @@ export function removeTagFilter(filter) {
   }
 }
 
-export function clearSelectedPost() {
+export function postUpdate(response) {
   return {
-    type: CLEAR_SELECTED_POST
+    type: POST_UPDATE,
+    response
   }
 }

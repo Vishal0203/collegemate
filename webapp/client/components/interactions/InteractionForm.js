@@ -69,6 +69,10 @@ class InteractionForm extends React.Component {
   }
 
   handlePostSubmit(data) {
+    if(!this.state.tags.length) {
+      this.parentProps.actions.toggleSnackbar('Post should have atleast one tag.');
+      return;
+    }
     const tags = this.state.tags.map(function (a) {
       return a.tag_guid
     });

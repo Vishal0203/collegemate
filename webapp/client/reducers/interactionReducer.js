@@ -100,27 +100,19 @@ export default function interactionReducer(state = initialState, action) {
       return {...state, postLoading: true}
     }
     case actions.FETCH_SINGLE_POST_RESPONSE: {
-      if (state.selectedPost)
-      {
-        return {
-          ...state,
-          selectedPost: {
-            ...action.response,
-            isEditable: state.selectedPost.isEditable
-          },
-          postLoading: false
-        }
-      }
       if(action.response.error) {
         return {...state, postLoading: false}
       }
       return {...state, selectedPost:action.response.post, postLoading: false}
     }
-    //Need to refactor later
-    case actions.CLEAR_SELECTED_POST: {
+    case actions.POST_UPDATE: {
       return {
         ...state,
-        selectedPost: null
+        selectedPost: {
+          ...action.response,
+          isEditable: state.selectedPost.isEditable
+        },
+        postLoading: false
       }
     }
     case actions.TOGGLE_POST_UPVOTE_RESPONSE: {
