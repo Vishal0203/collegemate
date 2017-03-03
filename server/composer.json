@@ -18,7 +18,8 @@
     "google/apiclient": "^2.1",
     "doctrine/dbal": "^2.5",
     "barryvdh/laravel-ide-helper": "^2.1",
-    "league/flysystem-aws-s3-v3": "~1.0"
+    "league/flysystem-aws-s3-v3": "~1.0",
+    "guzzlehttp/guzzle": "^6.2"
   },
   "require-dev": {
     "mockery/mockery": "0.9.*",
