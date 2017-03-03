@@ -21,7 +21,7 @@ class CategoryController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('inst_super', ['only' => ['destroy']]);
-        $this->middleware('inst_admin', ['except' => ['destroy', 'getNotifiers']]);
+        $this->middleware('inst_admin', ['except' => ['store', 'destroy', 'getNotifiers']]);
     }
 
     /**
