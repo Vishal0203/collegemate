@@ -149,7 +149,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+        Aws\Laravel\AwsServiceProvider::class,
     ],
 
     /*
@@ -199,6 +200,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
         'Excel' => 'Maatwebsite\Excel\Facades\Excel',
+        'AWS' => Aws\Laravel\AwsFacade::class,
         Illuminate\Support\Facades\Notification::class
     ],
 
