@@ -8,7 +8,7 @@ use App\NotificationFiles;
 use App\Institute;
 use App\NotificationData;
 use Input;
-use Storage;
+use AWS;
 use App\Category;
 use Faker;
 use Event;
@@ -72,17 +72,21 @@ class NotificationController extends Controller
                     'url_code' => uniqid()
                 ]);
 
-                Storage::put(
-                    'notification_files/' . $notification['notification_guid'] . '/' . $file->getClientOriginalName(),
-                    file_get_contents($file->getRealPath())
-                );
+                $object_key = 'notification_files/' .
+                    $notification['notification_guid'] . '/' . $file->getClientOriginalName();
+
+                $s3 = AWS::createClient('s3');
+                $s3->putObject(array(
+                    'Bucket'     => 'collegemate',
+                    'Key'        => $object_key,
+                    'Body' => file_get_contents($file->getRealPath()),
+                ));
                 array_push($notification_files, $newFile);
             }
             $notification->notificationFiles()->saveMany($notification_files);
         }
 
         Event::fire(new NewAnnouncement($notification, $institute_guid));
-
         Notification::send($category->subscribers, new AnnouncementNotification($category, $notification));
 
         return response()->json(['message' => 'Announcement published in ' . $category['category_type']], 200);

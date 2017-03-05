@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\NotificationFiles;
 use Illuminate\Http\Request;
-use Illuminate\Session\Store;
 use ZipArchive;
-use Storage;
+use AWS;
 
 class FilesController extends Controller
 {
+    private $s3;
 
     public function __construct()
     {
         $this->middleware(['auth', 'belongs_to_institute']);
+        $this->s3 = AWS::createClient('s3');
     }
 
     public function getFile(Request $request)
@@ -60,45 +61,41 @@ class FilesController extends Controller
             return response()->json(['error' => 'You are not authorized'], 403);
         }
 
-        $filePath = 'notification_files/' . $notification_guid . '/attachments.zip';
-        if (!Storage::exists($filePath)) {
-            $this->createZip($notification_guid, $category->notifications[0]->notificationFiles);
-        }
+        $zipFilePath = tempnam(storage_path() . '/app', '');
+        $this->createZip(
+            $notification_guid,
+            $category->notifications[0]->notificationFiles,
+            $zipFilePath
+        );
 
-        $response = response(Storage::get($filePath), 200, [
+        $response = response(file_get_contents($zipFilePath), 200, [
             'Content-Type' => 'application/zip',
-            'Content-Length' => Storage::size($filePath),
+            'Content-Length' => filesize($zipFilePath),
             'Content-Description' => 'File Transfer',
             'Content-Disposition' => "attachment; filename=attachments.zip",
             'Content-Transfer-Encoding' => 'binary',
         ]);
 
         ob_end_clean();
+        unlink($zipFilePath);
 
         return $response;
     }
 
-    private function createZip($notification_guid, $files)
+    private function createZip($notification_guid, $files, $zipFilePath)
     {
-        $zipFilePath = tempnam(storage_path() . '/app', '');
         $zip = new ZipArchive;
         if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
             foreach ($files as $file) {
                 $zip->addFromString(
                     $file['file'],
-                    Storage::get('notification_files/' . $notification_guid . '/' . $file['file'])
+                    $this->s3->getObject([
+                        'Bucket' => 'collegemate',
+                        'Key' => 'notification_files/' . $notification_guid . '/' . $file['file']
+                    ])['Body']
                 );
             }
             $zip->close();
         }
-
-        // upload zip to s3
-        Storage::put(
-            'notification_files/' . $notification_guid . '/attachments.zip',
-            file_get_contents($zipFilePath)
-        );
-
-        // delete the temp zip
-        unlink($zipFilePath);
     }
 }
