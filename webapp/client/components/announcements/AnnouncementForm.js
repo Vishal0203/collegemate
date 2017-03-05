@@ -150,7 +150,7 @@ class AnnouncementForm extends React.Component {
                        multiple />
               </RaisedButton>
               <label style={{paddingLeft: 10, fontSize: 12}} ref="chosenFiles">
-                <i style={{color: '#c6c6c6'}}>No fileChosen</i>
+                <i style={{color: '#c6c6c6'}}>No file chosen</i>
               </label>
             </Col>
           </CardText>

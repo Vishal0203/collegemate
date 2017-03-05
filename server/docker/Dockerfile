@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 MAINTAINER Vishal Sharma "vish.sharma0203@gmail.com"
 
 WORKDIR /var/www/collegemate
-RUN apt-get update && apt-get install -y python python-pip nginx php-fpm php-mysql php-mbstring supervisor
+RUN apt-get update && apt-get install -y python python-pip nginx php-fpm php-mysql php-mbstring php-zip supervisor
 RUN mkdir -p /var/run/php
 
 COPY . /var/www/collegemate
