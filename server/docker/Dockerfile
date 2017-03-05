@@ -12,7 +12,6 @@ COPY ./supervisor_config/supervisor_prod.conf /etc/supervisor/conf.d/supervisord
 
 RUN php artisan key:generate --force
 RUN php artisan migrate --force
-RUN php artisan config:cache
 RUN php artisan route:cache
 
 RUN chown -R www-data:www-data /var/www/collegemate
