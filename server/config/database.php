@@ -127,9 +127,9 @@ return [
 
         'client' => 'predis',
         'default' => [
-            'host' => env('REDIS_HOST', 'localhost'),
+            'host' => env('REDIS_PORT_6379_TCP_ADDR', 'localhost'),
             'password' => env('REDIS_PASSWORD', null),
-            'port' => env('REDIS_PORT', 6379),
+            'port' => env('REDIS_PORT_6379_TCP_PORT', 6379),
             'database' => 0,
         ],
 

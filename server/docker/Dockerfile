@@ -10,6 +10,9 @@ RUN rm /etc/nginx/sites-available/default
 COPY ./configurations/collegemate /etc/nginx/sites-available/default
 COPY ./supervisor_config/supervisor_prod.conf /etc/supervisor/conf.d/supervisord.conf
 
+RUN mkdir -p /var/www/collegemate/creds
+COPY ./creds/* /var/www/collegemate/creds/
+
 RUN php artisan key:generate --force
 RUN php artisan migrate --force
 RUN php artisan route:cache
@@ -18,6 +21,6 @@ RUN chown -R www-data:www-data /var/www/collegemate
 RUN chmod -R 775 /var/www/collegemate/storage
 RUN chmod -R 775 /var/www/collegemate/bootstrap/cache
 
-EXPOSE 80
+EXPOSE 443
 
 CMD ["/usr/bin/supervisord", "-n"]
