@@ -1,17 +1,24 @@
 require('dotenv').config();
-var app = require('http').createServer(handler);
-var io = require('socket.io')(app);
-
 var Redis = require('ioredis');
-var redis;
+var fs = require('fs');
+var redis, app;
+
 const NOTIFICATION_EVENT = "Illuminate\\Notifications\\Events\\BroadcastNotificationCreated";
 
 if (process.env.APP_ENV == "production") {
+  var options = {
+    key: fs.readFileSync('/var/www/collegemate/creds/cert.key'),
+    cert: fs.readFileSync('/var/www/collegemate/creds/cert.pem')
+  };
+
+  app = require('https').createServer(options, handler);
   redis = new Redis(6379, process.env.REDIS_HOST);
 } else {
+  app = require('http').createServer(handler);
   redis = new Redis();
 }
 
+var io = require('socket.io')(app);
 app.listen(6001, function() {
   console.log('Server is running!');
 });

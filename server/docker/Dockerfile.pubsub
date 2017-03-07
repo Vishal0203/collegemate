@@ -7,6 +7,9 @@ RUN mv /usr/bin/nodejs /usr/bin/node
 WORKDIR /var/www/collegemate
 COPY . /var/www/collegemate
 
+RUN mkdir -p /var/www/collegemate/creds
+COPY ./creds/* /var/www/collegemate/creds/
+
 EXPOSE 6001
 
 CMD ["/usr/bin/node", "pubsub-server.js"]
