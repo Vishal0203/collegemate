@@ -3,7 +3,6 @@ import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
 import MenuItem from 'material-ui/MenuItem';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 import RichTextEditor from 'react-rte';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
@@ -142,14 +141,19 @@ class AnnouncementForm extends React.Component {
 
               <br/>
               <br/>
-              <RaisedButton className="attach-btn" secondary={true} containerElement="label" label="Attach Files (optional)">
+              <FlatButton
+                className="attach-btn"
+                secondary={true}
+                containerElement="label"
+                label="Attach Files">
                 <input ref="notificationAttachments"
                        type="file"
                        style={this.styles.chooseButton}
                        onChange={(e) => this.onFileSelect(e)}
-                       multiple />
-              </RaisedButton>
-              <label style={{paddingLeft: 10, fontSize: 12}} ref="chosenFiles">
+                       multiple/>
+              </FlatButton>
+              <label style={{paddingLeft: 10, fontSize: 12, display: 'table-cell', verticalAlign: 'middle'}}
+                     ref="chosenFiles">
                 <i style={{color: '#c6c6c6'}}>No file chosen</i>
               </label>
             </Col>

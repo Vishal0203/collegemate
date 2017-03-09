@@ -92,8 +92,19 @@ body {
     font-size: smaller !important;
 }
 
-.attach-btn > label > div > div > span {
+.attach-btn {
+    height: 30px !important;
+    line-height: 30px !important;
+    display: table-cell !important;
+    color: rgb(97, 97, 97) !important;
+    background-color: rgba(236, 236, 236, 0.5) !important;
+    border: thin solid rgba(185, 185, 185, 0.6) !important;
+}
+
+.attach-btn > div > span {
     text-transform: capitalize !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
 }
 
 .right-content {
