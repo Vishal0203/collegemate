@@ -16,7 +16,7 @@ class InteractionForm extends React.Component {
       const post = props.parentProps.interactions.selectedPost;
       this.state = {
         tags: post.tags,
-        value: RichTextEditor.createValueFromString(post.post_description, 'markdown')
+        value: RichTextEditor.createValueFromString(post.post_description, 'html')
       };
     }
     else {
@@ -80,7 +80,7 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: this.state.value.toString('markdown'),
+      post_description: this.state.value.toString('html'),
       tags
     };
 
@@ -95,7 +95,7 @@ class InteractionForm extends React.Component {
     const postGuid = this.parentProps.interactions.selectedPost.post_guid;
     const formData = {
       institute_guid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      comment: this.state.value.toString('markdown')
+      comment: this.state.value.toString('html')
     };
 
     if (formData.comment == '<p><br></p>') {
@@ -113,7 +113,7 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: this.state.value.toString('markdown'),
+      post_description: this.state.value.toString('html'),
       tags
     };
 

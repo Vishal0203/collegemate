@@ -19,7 +19,6 @@ import Dialog from 'material-ui/Dialog';
 import PostUpdateDialog from './PostUpdateDialog';
 import {toggleSnackbar} from '../../actions/snackbar';
 import Avatar from 'material-ui/Avatar';
-import ReactMarkdown from 'react-markdown';
 
 class InteractionSingle extends Component {
   constructor(props) {
@@ -116,6 +115,10 @@ class InteractionSingle extends Component {
       }
     }
   }
+
+  createMarkup(content) {
+    return {__html: content};
+  };
 
   fetchPost(postGuid) {
     if (Object.keys(this.props.auth_user.user).length != 0) {
@@ -302,9 +305,7 @@ class InteractionSingle extends Component {
               </div>
               <div style={{width: '85%', flexBasis: '85%', textAlign: 'justify'}}>
                 <CardText style={{paddingLeft: 0, paddingBottom: 10}}>
-                  <div className="post-content">
-                    <ReactMarkdown source={post.post_description}/>
-                  </div>
+                  <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(post.post_description)}/>
                 </CardText>
                 <PostUpdateDialog
                   parentProps={this.props}
