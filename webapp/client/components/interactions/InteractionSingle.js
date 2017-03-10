@@ -19,6 +19,8 @@ import Dialog from 'material-ui/Dialog';
 import PostUpdateDialog from './PostUpdateDialog';
 import {toggleSnackbar} from '../../actions/snackbar';
 import Avatar from 'material-ui/Avatar';
+import MobileTearSheet from '../extras/MobileTearSheet';
+import Branding from '../Branding';
 
 class InteractionSingle extends Component {
   constructor(props) {
@@ -386,8 +388,33 @@ class InteractionSingle extends Component {
                   {this.renderInteraction()}
                 </Col>
                 <Col xs={4}>
-                  <StickyDiv offsetTop={65}>
-                    <div className="right-content">
+                  <StickyDiv zIndex={1} offsetTop={65}>
+                    <div style={{marginTop: 0}} className="right-content">
+                      <MobileTearSheet height={300}>
+                        <div>
+                          <h4 style={{marginBottom: 5}}>How to answer?</h4>
+                          <ul className="how-to-list" style={{fontSize: 14}}>
+                            <li>It is recommended to use formal language while answering the questions.</li>
+                            <li>Avoid using short forms and extra full stops.</li>
+                            <li><span>Use </span>
+                              <button type="button" className="IconButton__root___3tqZW Button__root___1gz0c">
+                                <span className="IconButton__icon-bold___2zl9t IconButton__icon___3YgOS"/>
+                              </button>
+                              as stressor.
+                            </li>
+                            <li><span>Use </span>
+                              <button type="button" className="IconButton__root___3tqZW Button__root___1gz0c">
+                                <span className="IconButton__icon-blockquote___17VSX IconButton__icon___3YgOS"/>
+                              </button>
+                              tool to refer something in question.
+                            </li>
+                            <li>
+                              Use <code>shift+enter</code> to continue typing in code block.
+                            </li>
+                          </ul>
+                        </div>
+                      </MobileTearSheet>
+                      <Branding />
                     </div>
                   </StickyDiv>
                 </Col>

@@ -175,3 +175,18 @@ body {
 .notification-popover {
     top: 56px !important;
 }
+
+.how-to-list li {
+    margin-top: 6px;
+}
+
+.how-to-list li button {
+    width: 24px;
+    height: 24px;
+}
+
+.how-to-list li button > span {
+    width: 16px;
+    height: 16px;
+    background-size: 16px;
+}
