@@ -46,7 +46,7 @@ class AnnouncementForm extends React.Component {
     const formData = {
       ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      notificationBody: this.state.content.toString('markdown'),
+      notificationBody: this.state.content.toString('html'),
       notificationAttachments: this.refs.notificationAttachments.files
     };
 
