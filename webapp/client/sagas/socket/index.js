@@ -1,6 +1,6 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {fork, put, call, take} from 'redux-saga/effects';
-import {toggleSnackbar} from '../../actions/snackbar/index'
+import {toggleSnackbar} from '../../actions/commons/index'
 import createWebSocketConnection from './SocketConnection'
 import * as userActions from '../../actions/users/index';
 

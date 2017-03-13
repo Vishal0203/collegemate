@@ -1,7 +1,7 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {put, call, fork} from 'redux-saga/effects';
 
-import {toggleSnackbar} from '../../actions/snackbar/index';
+import {toggleSnackbar} from '../../actions/commons/index';
 import * as instituteActions from '../../actions/institutes/index';
 import * as userActions from '../../actions/users/index';
 import * as announcementActions from '../../actions/announcements/index';
@@ -15,6 +15,9 @@ function *fetchInstituteList() {
   const response = yield call(HttpHelper, 'institutes', 'GET', null, null);
   if (response.status === 200) {
     yield put(instituteActions.fetchInstituteResponse(response.data.institutes))
+  }
+  else {
+    yield put(toggleErrorDialog());
   }
 }
 
@@ -48,6 +51,9 @@ function *registerToInstitute(params) {
       hashHistory.replace('/');
     }
   }
+  else {
+    yield put(toggleErrorDialog());
+  }
 }
 
 function *createInstitute(params) {
@@ -61,6 +67,9 @@ function *createInstitute(params) {
       hashHistory.replace('/settings');
       yield put(toggleSnackbar('Please update your member id and designation.'));
     }
+  }
+  else {
+    yield put(toggleErrorDialog());
   }
 }
 

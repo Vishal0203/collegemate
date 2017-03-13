@@ -1,4 +1,4 @@
-import {TOGGLE_SNACKBAR} from '../actions/snackbar/index';
+import {TOGGLE_SNACKBAR} from '../actions/commons/index';
 
 const initialState = {
   open: false,

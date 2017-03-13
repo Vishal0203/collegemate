@@ -2,6 +2,7 @@ import {combineReducers} from 'redux';
 import announcements from './announcementReducer';
 import auth_user from './userReducer';
 import snackbar from './snackbarReducer';
+import errorDialog from './errorDialogReducer';
 import interactions from './interactionReducer';
 import institutes from './instituteReducer';
 import {routerReducer} from 'react-router-redux';
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   institutes,
   auth_user,
   snackbar,
+  errorDialog,
   routing: routerReducer
 });
 

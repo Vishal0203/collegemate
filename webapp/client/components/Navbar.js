@@ -9,7 +9,7 @@ import IconButton from 'material-ui/IconButton/IconButton';
 import MenuItem from 'material-ui/MenuItem';
 import {hashHistory} from 'react-router';
 import {userLogout} from '../actions/users/index'
-import {toggleSnackbar} from '../actions/snackbar/index';
+import {toggleSnackbar} from '../actions/commons/index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Notifications from './Notifications';

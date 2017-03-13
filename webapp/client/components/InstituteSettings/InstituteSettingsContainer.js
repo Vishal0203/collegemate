@@ -6,7 +6,7 @@ import {List, ListItem} from 'material-ui/List';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
 import * as instituteActions  from '../../actions/institutes/index';
-import * as snackbarActions  from '../../actions/snackbar/index';
+import * as snackbarActions  from '../../actions/commons/index';
 import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import AutoComplete from 'material-ui/AutoComplete';

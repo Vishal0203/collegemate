@@ -74,6 +74,11 @@ class User extends Model implements
         return new Channel('users_'. $this->user_guid);
     }
 
+    public function feedbacks()
+    {
+        return $this->hasMany('App\Feedback');
+    }
+
     public function toArray()
     {
         $attributes = $this->attributesToArray();

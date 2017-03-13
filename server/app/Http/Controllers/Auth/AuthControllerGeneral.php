@@ -170,6 +170,7 @@ class AuthControllerGeneral extends Controller
         $user = User::create([
             'user_guid' => $internals->uuid,
             'email' => $data['email'],
+            'password' => bcrypt($data['password']),
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'hash' => $internals->md5
