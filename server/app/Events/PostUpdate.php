@@ -40,21 +40,15 @@ class PostUpdate extends Event implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        if (!$this->post['is_anonymous']) {
-            $this->post->load(['user', 'user.userProfile']);
-        }
-        $this->post->load('tags');
-        $this->post->load(['comments' => function ($comment) {
-            $comment->orderBy('created_at', 'DESC');
-        },'comments.user.userProfile']);
-        foreach ($this->post->comments as $comment) {
-            $comment['upvotes_count'] = $comment->upvotesCount();
-        }
-        $this->post['upvotes_count'] = $this->post->upvotesCount();
-        $this->post['comments_count'] = $this->post->commentsCount();
-        return array_merge(
-            $this->post->toArray(),
-            ['message' => 'Post was updated']
-        );
+        $this->post->load('user', 'user.userProfile')->get();
+        return [
+            'post_guid' => $this->post['post_guid'],
+            'post_heading' => $this->post['post_heading'],
+            'post_description' => $this->post['post_description'],
+            'is_anonymous' => $this->post['is_anonymous'],
+            'poster' => ($this->post['is_anonymous'] == 1 ? null: $this->post->user),
+            'message' => 'Post was updated',
+            'snackbar' => false
+        ];
     }
 }

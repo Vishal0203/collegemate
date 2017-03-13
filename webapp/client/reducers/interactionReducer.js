@@ -15,7 +15,7 @@ const initialState = {
   commentLoading: false,
   selectedPost: null,
   toggleCommentForm: false,
-  togglePostUpdateForm: false
+  togglePostUpdateForm: false,
 };
 
 export default function interactionReducer(state = initialState, action) {
@@ -106,13 +106,74 @@ export default function interactionReducer(state = initialState, action) {
       return {...state, selectedPost:action.response.post, postLoading: false}
     }
     case actions.POST_UPDATE: {
+      let newComments = [...state.selectedPost.comments];
+      if (action.response.is_anonymous) {
+        newComments.forEach((comment) => {
+          if (comment.user &&
+            state.selectedPost.user &&
+            comment.user.user_guid == state.selectedPost.user.user_guid) {
+            delete(comment.user);
+          }
+        });
+      } else {
+        newComments.forEach((comment) => {
+          if (!comment.user) {
+            comment.user = action.response.poster;
+          }
+        });
+      }
+
+      let newPost = {
+        ...state.selectedPost,
+        post_heading: action.response.post_heading,
+        post_description: action.response.post_description,
+        is_anonymous: action.response.is_anonymous,
+        user: action.response.poster,
+        comments: newComments
+      };
+      if (newPost.user == null) {
+        delete(newPost.user);
+      }
+
+      return {
+        ...state,
+        selectedPost: newPost
+      }
+    }
+    case actions.COMMENT_UPDATE: {
+      const {comment_guid, type} = action.commentUpdates;
+      if(type == 'deleted-comment') {
+        return {
+          ...state,
+          selectedPost: {
+            ...state.selectedPost,
+            comments: state.selectedPost.comments.filter((comment) => comment.comment_guid != comment_guid)
+          }
+        }
+      }
+      return state;
+    }
+    case actions.FETCH_SINGLE_COMMENT_RESPONSE: {
+      let newComments = [...state.selectedPost.comments];
+      let commentGuids = newComments.map((comment) => comment.comment_guid);
+      const index = commentGuids.indexOf(action.comment.comment_guid);
+      if (index != -1) {
+        const updatedComment = {
+          ...newComments[index],
+          comment: action.comment.comment,
+          updated_at: action.comment.updated_at
+        };
+        newComments.splice(index, 1, updatedComment);
+      }
+      else {
+        newComments.unshift(action.comment)
+      }
       return {
         ...state,
         selectedPost: {
-          ...action.response,
-          isEditable: state.selectedPost.isEditable
-        },
-        postLoading: false
+          ...state.selectedPost,
+          comments: newComments
+        }
       }
     }
     case actions.TOGGLE_POST_UPVOTE_RESPONSE: {
@@ -141,26 +202,8 @@ export default function interactionReducer(state = initialState, action) {
       return {...state, postLoading: true}
     }
     case actions.UPDATE_POST_RESPONSE: {
-      const postResponse = action.response.post;
-      const updatedPost = {
-        ...state.selectedPost,
-        visibility: postResponse.visibility,
-        is_anonymous: postResponse.is_anonymous,
-        post_heading: postResponse.post_heading,
-        post_description: postResponse.post_description,
-        tags: postResponse.tags
-      };
-
-      if (state.selectedPost.user && !postResponse.user) {
-        delete updatedPost.user;
-      }
-
-      if(!state.selectedPost.user && postResponse.user ) {
-        updatedPost.user = postResponse.user;
-      }
       return {
         ...state,
-        selectedPost: updatedPost,
         togglePostUpdateForm: false,
         postLoading: false
       }
@@ -178,12 +221,7 @@ export default function interactionReducer(state = initialState, action) {
       return {
         ...state,
         toggleCommentForm: !state.toggleCommentForm,
-        commentLoading: false,
-        selectedPost: {
-          ...state.selectedPost,
-          comments: [action.response, ...state.selectedPost.comments],
-          comments_count: state.selectedPost.comments_count + 1
-        }
+        commentLoading: false
       }
     }
     case actions.TOGGLE_COMMENT_UPVOTE_RESPONSE: {
@@ -207,57 +245,16 @@ export default function interactionReducer(state = initialState, action) {
       }
     }
     case actions.DELETE_COMMENT_REQUEST: {
-      return {
-        ...state,
-        commentLoading: true
-      }
+      return {...state, commentLoading: true}
     }
     case actions.DELETE_COMMENT_RESPONSE: {
-      if(action.response.error) {
-        return {
-          ...state,
-          commentLoading: false
-        }
-      }
-      let newComments = [...state.selectedPost.comments];
-      const index = newComments.indexOf(action.comment);
-      newComments.splice(index, 1);
-      return {
-        ...state,
-        selectedPost: {
-          ...state.selectedPost,
-          comments: newComments,
-          comments_count: state.selectedPost.comments_count-1
-        },
-        commentLoading: false
-      }
+      return {...state, commentLoading: false}
     }
     case actions.EDIT_COMMENT_REQUEST: {
-      return {
-        ...state,
-        commentLoading: true
-      }
+      return {...state, commentLoading: true}
     }
     case actions.EDIT_COMMENT_RESPONSE: {
-      if(action.response.error) {
-        return {...state, commentLoading: false}
-      }
-      let newComments = [...state.selectedPost.comments];
-      const index = newComments.indexOf(action.comment);
-      const updatedComment = {
-        ...newComments[index],
-        comment: action.response.comment.comment,
-        updated_at: action.response.comment.updated_at
-      };
-      newComments.splice(index, 1, updatedComment);
-      return {
-        ...state,
-        selectedPost: {
-          ...state.selectedPost,
-          comments: newComments
-        },
-        commentLoading: false
-      }
+      return {...state, commentLoading: false}
     }
 
     case '@@router/LOCATION_CHANGE': {

@@ -40,6 +40,8 @@ export const ADD_TAG_FILTER = 'ADD_TAG_FILTER';
 export const REMOVE_TAG_FILTER = 'REMOVE_TAG_FILTER';
 
 export const POST_UPDATE = 'POST_UPDATE';
+export const COMMENT_UPDATE = 'COMMENT_UPDATE';
+export const FETCH_SINGLE_COMMENT_RESPONSE = 'FETCH_SINGLE_COMMENT_RESPONSE';
 
 export function postFormToggle() {
   return {
@@ -97,12 +99,11 @@ export function createPostResponse(post) {
   }
 }
 
-export function fetchSinglePostRequest(instituteGuid, postGuid,url_params) {
+export function fetchSinglePostRequest(instituteGuid, postGuid) {
   return {
     type: FETCH_SINGLE_POST_REQUEST,
     instituteGuid,
-    postGuid,
-    url_params
+    postGuid
   }
 }
 
@@ -143,10 +144,9 @@ export function updatePostRequest(instituteGuid, postGuid, formData) {
   }
 }
 
-export function updatePostResponse(response) {
+export function updatePostResponse() {
   return {
-    type: UPDATE_POST_RESPONSE,
-    response
+    type: UPDATE_POST_RESPONSE
   }
 }
 
@@ -172,10 +172,9 @@ export function addCommentRequest(postGuid, formData) {
     formData
   }
 }
-export function addCommentResponse(response) {
+export function addCommentResponse() {
   return {
-    type: ADD_COMMENT_RESPONSE,
-    response
+    type: ADD_COMMENT_RESPONSE
   }
 }
 
@@ -248,5 +247,19 @@ export function postUpdate(response) {
   return {
     type: POST_UPDATE,
     response
+  }
+}
+
+export function commentUpdate(commentUpdates) {
+  return {
+    type: COMMENT_UPDATE,
+    commentUpdates
+  }
+}
+
+export function fetchSingleCommentResponse(comment) {
+  return {
+    type: FETCH_SINGLE_COMMENT_RESPONSE,
+    comment
   }
 }

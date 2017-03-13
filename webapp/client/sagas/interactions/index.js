@@ -40,7 +40,11 @@ function *fetchSinglePostRequest(params) {
   }
   yield put(interactionsActions.fetchSinglePostResponse(response.data));
   if (!response.data.error) {
-    yield put(userActions.subscribeChannel(`post_${postGuid}:post-update`, interactionsActions.postUpdate))
+    yield put(userActions.subscribeChannel(`post_${postGuid}:post-update`,
+      interactionsActions.postUpdate));
+    yield put(userActions.subscribeChannel(`post_${postGuid}:comment-update`,
+      interactionsActions.commentUpdate));
+
   }
 }
 
@@ -51,7 +55,7 @@ function *addComment(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(interactionsActions.addCommentResponse(response.data.comment));
+  yield put(interactionsActions.addCommentResponse());
 
 }
 
@@ -73,9 +77,6 @@ function *removeComment(params) {
     yield put(toggleSnackbar(response.data.error));
   }
   yield put(interactionsActions.deleteCommentResponse(params.comment, response.data));
-  if (response.data.success) {
-    yield put(toggleSnackbar(response.data.success));
-  }
 }
 
 function *editComment(params) {
@@ -86,6 +87,18 @@ function *editComment(params) {
     yield put(toggleSnackbar(response.data.error));
   }
   yield put(interactionsActions.editCommentResponse(params.comment, response.data));
+}
+
+function *commentUpdate(params) {
+  if (params.commentUpdates.type != 'deleted-comment') {
+    const institute_guid = {institute_guid: params.commentUpdates.institute_guid};
+    const response = yield call(
+      HttpHelper,
+      `post/${params.commentUpdates.post_guid}/comment/${params.commentUpdates.comment_guid}`,
+      'GET', null, institute_guid
+    );
+    yield put(interactionsActions.fetchSingleCommentResponse(response.data.comment));
+  }
 }
 
 function *togglePostUpvote(params) {
@@ -105,7 +118,7 @@ function *editPost(params) {
   if (response.data.error) {
     yield put(toggleSnackbar(response.data.error));
   }
-  yield put(interactionsActions.updatePostResponse(response.data));
+  yield put(interactionsActions.updatePostResponse());
 }
 
 function *deletePost(params) {
@@ -179,6 +192,10 @@ function *watchDeletePost() {
   yield *takeLatest(interactionsActions.DELETE_POST_REQUEST, deletePost);
 }
 
+function *watchCommentUpdate() {
+  yield *takeEvery(interactionsActions.COMMENT_UPDATE, commentUpdate);
+}
+
 function *watchTabChange() {
   yield *takeLatest('@@router/LOCATION_CHANGE', handleTabChange);
 }
@@ -196,6 +213,7 @@ export default function *interactionSaga() {
     fork(watchEditPost),
     fork(watchEditComment),
     fork(watchDeletePost),
+    fork(watchCommentUpdate),
     fork(watchTabChange)
   ]
 }

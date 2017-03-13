@@ -51,7 +51,10 @@ class NewAnnouncement extends Event implements ShouldBroadcast
         }, 'notificationFiles', 'category']);
         return array_merge(
             $this->notification->toArray(),
-            ['message' => 'Announcement published in ' . $this->notification['category']['category_type']]
+            [
+                'message' => 'Announcement published in ' . $this->notification['category']['category_type'],
+                'snackbar' => true
+            ]
         );
     }
 }
