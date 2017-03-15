@@ -396,17 +396,17 @@ class InteractionSingle extends Component {
                           <ul className="how-to-list" style={{fontSize: 14}}>
                             <li>It is recommended to use formal language while answering the questions.</li>
                             <li>Avoid using short forms and extra full stops.</li>
-                            <li><span>Use </span>
-                              <button type="button" className="IconButton__root___3tqZW Button__root___1gz0c">
-                                <span className="IconButton__icon-bold___2zl9t IconButton__icon___3YgOS"/>
-                              </button>
+                            <li><span>Use</span>
+                              <i className="material-icons" style={{position: 'relative', fontSize: 20, top: '5px'}}>
+                                format_bold
+                              </i>
                               as stressor.
                             </li>
                             <li><span>Use </span>
-                              <button type="button" className="IconButton__root___3tqZW Button__root___1gz0c">
-                                <span className="IconButton__icon-blockquote___17VSX IconButton__icon___3YgOS"/>
-                              </button>
-                              tool to refer something in question.
+                              <i className="material-icons" style={{position: 'relative', fontSize: 20, top: '2px'}}>
+                                format_quote
+                              </i>
+                              <span> tool to refer something in question.</span>
                             </li>
                             <li>
                               Use <code>shift+enter</code> to continue typing in code block.

@@ -2,31 +2,44 @@ import React from 'react';
 import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
-import RichTextEditor from 'react-rte';
 import ChipInput from 'material-ui-chip-input';
 import Chip from 'material-ui/Chip';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
+import RichEditor from '../rte/RichEditor';
+import {EditorState, CompositeDecorator} from 'draft-js';
+import {stateToHTML} from 'draft-js-export-html';
+import {stateFromHTML} from 'draft-js-import-html';
+import {Link, findLinkEntities} from '../rte/CommonUtils';
 
 class InteractionForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
+
+    const decorator = new CompositeDecorator([
+      {
+        strategy: findLinkEntities,
+        component: Link,
+      },
+    ]);
+
     if (props.type == 'PostUpdate') {
       const post = props.parentProps.interactions.selectedPost;
       this.state = {
         tags: post.tags,
-        value: RichTextEditor.createValueFromString(post.post_description, 'html')
+        editorState: EditorState.createWithContent(stateFromHTML(post.post_description), decorator)
       };
     }
     else {
       this.state = {
         tags: [],
-        value: RichTextEditor.createEmptyValue(),
+        editorState: EditorState.createEmpty(decorator),
         canSubmit: true
       };
     }
-    this.onTextChange = this.onTextChange.bind(this);
+
+    this.onChange = (editorState) => this.setState({editorState});
   }
 
   get styles() {
@@ -80,7 +93,7 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: this.state.value.toString('html'),
+      post_description: stateToHTML(this.state.editorState.getCurrentContent()),
       tags
     };
 
@@ -95,7 +108,7 @@ class InteractionForm extends React.Component {
     const postGuid = this.parentProps.interactions.selectedPost.post_guid;
     const formData = {
       institute_guid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      comment: this.state.value.toString('html')
+      comment: stateToHTML(this.state.editorState.getCurrentContent())
     };
 
     if (formData.comment == '<p><br></p>') {
@@ -113,7 +126,7 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: this.state.value.toString('html'),
+      post_description: stateToHTML(this.state.editorState.getCurrentContent()),
       tags
     };
 
@@ -139,10 +152,6 @@ class InteractionForm extends React.Component {
         break;
     }
   }
-
-  onTextChange(value) {
-    this.setState({tag: this.state.tag, value});
-  };
 
   handleTagAdd(tag) {
     if (this.state.tags.length == 5) {
@@ -173,24 +182,6 @@ class InteractionForm extends React.Component {
 
   render() {
     const {onCancelClick, type} = this.props;
-
-    const toolbarConfig = {
-      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
-      INLINE_STYLE_BUTTONS: [
-        {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Monospace', style: 'CODE'},
-      ],
-      BLOCK_TYPE_DROPDOWN: [
-        {label: 'Normal', style: 'unstyled'},
-        {label: 'Code Block', style: 'code-block'},
-      ],
-      BLOCK_TYPE_BUTTONS: [
-        {label: 'UL', style: 'unordered-list-item'},
-        {label: 'OL', style: 'ordered-list-item'},
-        {label: 'Blockquote', style: 'blockquote'}
-      ]
-    };
 
     let title = null;
     let confirmText = null;
@@ -277,10 +268,11 @@ class InteractionForm extends React.Component {
       <CardText style={this.styles.formDescription} key='content'>
         <Col xs={12}>
           {postHeader}
-          <RichTextEditor className="rte-container"
-                          editorClassName="rte-editor"
-                          toolbarConfig={toolbarConfig}
-                          value={this.state.value} onChange={this.onTextChange}/>
+
+          <RichEditor
+            editorState={this.state.editorState}
+            onChange={this.onChange}
+          />
 
           {anonymousToggle}
 

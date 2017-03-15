@@ -3,20 +3,31 @@ import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
 import MenuItem from 'material-ui/MenuItem';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
-import RichTextEditor from 'react-rte';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
+import RichEditor from '../rte/RichEditor';
+import {EditorState, CompositeDecorator} from 'draft-js';
+import {stateToHTML} from 'draft-js-export-html';
+import {Link, findLinkEntities} from '../rte/CommonUtils';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
-    this.onTextChange = this.onTextChange.bind(this);
+
+    const decorator = new CompositeDecorator([
+      {
+        strategy: findLinkEntities,
+        component: Link,
+      },
+    ]);
 
     this.state = {
-      content: RichTextEditor.createEmptyValue(),
+      editorState: EditorState.createEmpty(decorator),
       canSubmit: false
     };
+
+    this.onChange = (editorState) => this.setState({editorState});
   }
 
   get styles() {
@@ -46,7 +57,7 @@ class AnnouncementForm extends React.Component {
     const formData = {
       ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      notificationBody: this.state.content.toString('html'),
+      notificationBody: stateToHTML(this.state.editorState.getCurrentContent()),
       notificationAttachments: this.refs.notificationAttachments.files
     };
 
@@ -85,25 +96,9 @@ class AnnouncementForm extends React.Component {
     this.refs.chosenFiles.innerHTML += `<i>${text}</i>`;
   }
 
-  onTextChange(content) {
-    this.setState({value: this.state.value, content});
-  };
-
   render() {
     const {notifying_categories} = this.parentProps.auth_user.selectedInstitute;
     const {onCancelClick} = this.props;
-
-    const toolbarConfig = {
-      display: ['INLINE_STYLE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_BUTTONS'],
-      INLINE_STYLE_BUTTONS: [
-        {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'}
-      ],
-      BLOCK_TYPE_BUTTONS: [
-        {label: 'UL', style: 'unordered-list-item'},
-        {label: 'OL', style: 'ordered-list-item'},
-      ]
-    };
 
     return (
       <Formsy.Form
@@ -126,15 +121,12 @@ class AnnouncementForm extends React.Component {
                 autoComplete="off"
               />
 
-              <RichTextEditor
-                className="rte-container"
-                editorClassName="rte-editor"
-                toolbarConfig={toolbarConfig}
-                value={this.state.content}
-                onChange={this.onTextChange}
+              <RichEditor
+                editorState={this.state.editorState}
+                onChange={this.onChange}
               />
 
-              <FormsySelect name="notificationCategory" hintText="Choose Category" required>
+              <FormsySelect style={{marginTop: 10}} name="notificationCategory" hintText="Choose Category" required>
                 {notifying_categories.map((category, i) =>
                   <MenuItem key={i} value={category.category_guid} primaryText={category.category_type}/>)}
               </FormsySelect>
@@ -143,7 +135,6 @@ class AnnouncementForm extends React.Component {
               <br/>
               <FlatButton
                 className="attach-btn"
-                secondary={true}
                 containerElement="label"
                 label="Attach Files">
                 <input ref="notificationAttachments"

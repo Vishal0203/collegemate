@@ -7,24 +7,36 @@ import {grey500, grey600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {renderVotes} from './InteractionSingle'
 import FlatButton from 'material-ui/FlatButton';
-import RichTextEditor from 'react-rte';
 import Dialog from 'material-ui/Dialog';
-import Avatar from 'material-ui/Avatar';
+import RichEditor from '../rte/RichEditor';
+import {EditorState, CompositeDecorator} from 'draft-js';
+import {stateToHTML} from 'draft-js-export-html';
+import {stateFromHTML} from 'draft-js-import-html';
+import {Link, findLinkEntities} from '../rte/CommonUtils';
 
 
 class Comment extends Component {
   constructor(props) {
     super(props);
+
+    const decorator = new CompositeDecorator([
+      {
+        strategy: findLinkEntities,
+        component: Link,
+      },
+    ]);
+
     this.state = {
       timeTooltip: {
         show: false,
         label: ''
       },
-      value: RichTextEditor.createValueFromString(props.comment.comment, 'html'),
+      editorState: EditorState.createWithContent(stateFromHTML(props.comment.comment), decorator),
       edit: false,
       showConfirmation: false
     };
-    this.onTextChange = this.onTextChange.bind(this);
+
+    this.onChange = (editorState) => this.setState({editorState});
   }
   get styles() {
     return {
@@ -75,7 +87,9 @@ class Comment extends Component {
     }
   }
 
-  createMarkup(commentContent) { return {__html: commentContent}; };
+  createMarkup(commentContent) {
+    return {__html: commentContent};
+  };
 
   timeTooltipMouseEnter(timezone, time) {
     this.setState({
@@ -106,10 +120,6 @@ class Comment extends Component {
     this.toggleConfirmation();
   }
 
-  onTextChange(value) {
-    this.setState({value});
-  };
-
   editComment(operation) {
     const comment = this.props.comment;
     switch(operation) {
@@ -122,7 +132,7 @@ class Comment extends Component {
         const postGuid = this.props.parentProps.interactions.selectedPost.post_guid;
         const formData = {
           institute_guid: instituteGuid,
-          comment: this.state.value.toString('html'),
+          comment: stateToHTML(this.state.editorState.getCurrentContent()),
         };
         this.props.parentProps.actions.editCommentRequest(postGuid, comment, formData);
         this.setState({edit: false});
@@ -167,29 +177,11 @@ class Comment extends Component {
   }
 
   renderEditComment() {
-    const toolbarConfig = {
-      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
-      INLINE_STYLE_BUTTONS: [
-        {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'},
-        {label: 'Monospace', style: 'CODE'},
-      ],
-      BLOCK_TYPE_DROPDOWN: [
-        {label: 'Normal', style: 'unstyled'},
-        {label: 'Code Block', style: 'code-block'},
-      ],
-      BLOCK_TYPE_BUTTONS: [
-        {label: 'UL', style: 'unordered-list-item'},
-        {label: 'OL', style: 'ordered-list-item'},
-        {label: 'Blockquote', style: 'blockquote'}
-      ]
-    };
     return (
-      <RichTextEditor className="rte-container"
-                    editorClassName="rte-editor"
-                    toolbarConfig={toolbarConfig}
-                    value={this.state.value} onChange={this.onTextChange}/>
+      <RichEditor
+        editorState={this.state.editorState}
+        onChange={this.onChange}
+      />
     );
   }
 
