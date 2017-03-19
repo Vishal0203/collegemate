@@ -12,6 +12,7 @@ import * as interactionActions  from '../../actions/interactions/index';
 import InteractionPost from './InteractionPost';
 import {toggleSnackbar} from '../../actions/snackbar';
 import Paper from 'material-ui/Paper';
+import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
 
 class InteractionsContainer extends Component {
@@ -151,6 +152,25 @@ class InteractionsContainer extends Component {
                 <Col xs={4}>
                   <StickyDiv zIndex={1} offsetTop={65}>
                     <div className="right-content">
+                      <MobileTearSheet height={260}>
+                        <div>
+                          <h4 style={{marginBottom: 5}}>How to ask question?</h4>
+                          <ul className="how-to-list" style={{fontSize: 14}}>
+                            <li>It is recommended to use formal language while asking a question.</li>
+                            <li>Avoid using short forms and extra full stops.</li>
+                            <li><span>Use</span>
+                              <i className="material-icons" style={{position: 'relative', fontSize: 20, top: '5px'}}>
+                                format_bold
+                              </i>
+                              as stressor.
+                            </li>
+                            <li>Try to explain your question as much as possible to get answers quickly.</li>
+                            <li>
+                              Use <code>shift+enter</code> to continue typing in code block.
+                            </li>
+                          </ul>
+                        </div>
+                      </MobileTearSheet>
                       <label>Currently Showing</label>
                       <Divider style={{marginTop: 2, marginBottom: 2}}/>
                       <div style={this.styles.wrapper}>
