@@ -193,7 +193,7 @@ export default class RichEditor extends React.Component {
       const currentStyle = props.editorState.getCurrentInlineStyle();
       return (
         <div className="RichEditor-controls RichEditor-divider">
-          {INLINE_STYLES.map(type =>
+          {INLINE_STYLES.map((type) =>
             <StyleButton
               key={type.label}
               active={currentStyle.has(type.style)}

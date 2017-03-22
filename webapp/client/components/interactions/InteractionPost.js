@@ -70,6 +70,12 @@ class InteractionPost extends React.Component {
         textTransform: 'capitalize',
         color: '#757575',
         fontSize: 13
+      },
+      chipLabelNotApproved: {
+        lineHeight: '24px',
+        color: '#bababa',
+        textTransform: 'lowercase',
+        fontSize: 8
       }
     }
   }
@@ -89,7 +95,8 @@ class InteractionPost extends React.Component {
 
   renderChips(post) {
     return post.tags.map((tag, i) =>
-      <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}</Chip>
+      <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}
+        {tag.is_approved== false && <label style={this.styles.chipLabelNotApproved}> (custom)</label>} </Chip>
     )
   }
 
