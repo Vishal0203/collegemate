@@ -73,48 +73,51 @@ class SubscriptionForm extends Component {
   }
 
   renderCreateCategoryForm() {
-    return (
-      <div>
-        <Subheader>Create Announcement Category</Subheader>
-        <Formsy.Form
-          onValid={this.enableButton.bind(this)}
-          onInvalid={this.disableButton.bind(this)}
-          onValidSubmit={(data) => this.handleCategoryCreate(data)}
-        >
-          <Row style={{padding: '0 16px 16px'}}>
-            <Col xs={4}>
-              <FormsyText
-                hintText="Category Type"
-                name="category_type"
-                style={this.styles.formField}
-                required
-                autoComplete="off"
-              />
-            </Col>
-            <Col xs={6}>
-              <FormsyText
-                hintText="Category Description"
-                name="category_desc"
-                style={this.styles.formField}
-                required
-                autoComplete="off"
-              />
-            </Col>
-            <Col xs={2}>
-              <RaisedButton
-                type="submit"
-                label="Create"
-                disabled={!this.state.canSubmit}
-                fullWidth={true}
-                buttonStyle={{height: '30px', lineHeight: '30px'}}
-                labelStyle={{fontSize: 11}}
-                style={{marginTop: 12}}
-                primary={true}/>
-            </Col>
-          </Row>
-        </Formsy.Form>
-      </div>
-    )
+    const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
+    if (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff') {
+      return (
+        <div>
+          <Subheader>Create Announcement Category</Subheader>
+          <Formsy.Form
+            onValid={this.enableButton.bind(this)}
+            onInvalid={this.disableButton.bind(this)}
+            onValidSubmit={(data) => this.handleCategoryCreate(data)}
+          >
+            <Row style={{padding: '0 16px 16px'}}>
+              <Col xs={4}>
+                <FormsyText
+                  hintText="Category Type"
+                  name="category_type"
+                  style={this.styles.formField}
+                  required
+                  autoComplete="off"
+                />
+              </Col>
+              <Col xs={6}>
+                <FormsyText
+                  hintText="Category Description"
+                  name="category_desc"
+                  style={this.styles.formField}
+                  required
+                  autoComplete="off"
+                />
+              </Col>
+              <Col xs={2}>
+                <RaisedButton
+                  type="submit"
+                  label="Create"
+                  disabled={!this.state.canSubmit}
+                  fullWidth={true}
+                  buttonStyle={{height: '30px', lineHeight: '30px'}}
+                  labelStyle={{fontSize: 11}}
+                  style={{marginTop: 12}}
+                  primary={true}/>
+              </Col>
+            </Row>
+          </Formsy.Form>
+        </div>
+      )
+    }
   }
 
   toggleDeletionConfirmationDialog(deletionCategory) {
