@@ -19,6 +19,12 @@ function *fetchTags(params) {
   yield put(interactionsActions.fetchTagsResponse(response.data.tags))
 }
 
+function *addTags(params) {
+  const response = yield call(
+    HttpHelper, 'tags', 'POST', params.formData, null
+  );
+}
+
 function *createPost(params) {
   const response = yield call(
     HttpHelper, `institute/${params.instituteGuid}/post`, 'POST', params.formData, null
@@ -156,6 +162,10 @@ function *watchTagsRequest() {
   yield *takeLatest(interactionsActions.TAGS_FETCH, fetchTags);
 }
 
+function *watchAddCustomTag() {
+  yield *takeLatest(interactionsActions.TAG_ADD, addTags);
+}
+
 function *watchCreatePostRequest() {
   yield *takeLatest(interactionsActions.CREATE_POST_REQUEST, createPost);
 }
@@ -205,6 +215,7 @@ export default function *interactionSaga() {
     fork(watchCreatePostRequest),
     fork(watchPostsFetch),
     fork(watchTagsRequest),
+    fork(watchAddCustomTag),
     fork(watchSinglePostFetch),
     fork(watchAddComment),
     fork(watchToggleCommentUpvote),

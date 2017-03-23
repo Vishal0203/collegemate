@@ -35,7 +35,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         'InstituteController',
         ['only' => ['index', 'store', 'destroy']]
     );
-
+    
     Route::resource(
         'tags',
         'TagsController',

@@ -82,7 +82,7 @@ class InteractionForm extends React.Component {
   }
 
   handlePostSubmit(data) {
-    if(!this.state.tags.length) {
+    if (!this.state.tags.length) {
       this.parentProps.actions.toggleSnackbar('Post should have atleast one tag.');
       return;
     }
@@ -159,13 +159,13 @@ class InteractionForm extends React.Component {
       return
     }
 
-    if (this.parentProps.interactions.tags.indexOf(tag) != -1) {
-      this.setState({
-        tags: [...this.state.tags, tag]
-      })
-    } else {
-      this.parentProps.actions.toggleSnackbar('You cannot add custom tags right now.')
+    if (this.parentProps.interactions.tags.indexOf(tag) == -1) {
+      this.parentProps.actions.toggleSnackbar('Custom tags will be shown after approval.');
     }
+
+    this.setState({
+      tags: [...this.state.tags, tag]
+    });
   }
 
   handleTagDelete(deletedTag) {

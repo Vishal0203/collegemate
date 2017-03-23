@@ -7,6 +7,7 @@ export const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST';
 export const FETCH_POSTS_RESPONSE = 'FETCH_POSTS_RESPONSE';
 
 export const TAGS_FETCH = 'TAGS_FETCH';
+export const TAG_ADD = 'TAG_ADD';
 export const TAGS_RESPONSE = 'TAGS_RESPONSE';
 
 export const FETCH_SINGLE_POST_REQUEST = 'FETCH_SINGLE_POST_REQUEST';
@@ -66,6 +67,13 @@ export function fetchTagsResponse(tags) {
   return {
     type: TAGS_RESPONSE,
     tags
+  }
+}
+
+export function addCustomTagsRequest(formData) {
+  return {
+    type: TAG_ADD,
+    formData
   }
 }
 

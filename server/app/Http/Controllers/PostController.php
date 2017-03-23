@@ -91,6 +91,9 @@ class PostController extends Controller
         ]);
         foreach ($request['tags'] as $tag_guid) {
             $tag = Tag::where('tag_guid', $tag_guid)->where('type', 'posts')->first();
+            if (!$tag) {
+                $tag = TagsController::store(['name' => $tag_guid]);
+            }
             $post->tags()->attach($tag);
         }
 
@@ -129,7 +132,7 @@ class PostController extends Controller
             }
         }
         $upvote = $post->upvotes()->where('user_id', $user['id'])->first();
-        $post->upvoted = $upvote ? true: false;
+        $post->upvoted = $upvote ? true : false;
 
         if ($post['is_anonymous']) {
             unset($post['user']);
