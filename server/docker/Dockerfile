@@ -10,6 +10,9 @@ RUN rm /etc/nginx/sites-available/default
 COPY ./configurations/collegemate /etc/nginx/sites-available/default
 COPY ./supervisor_config/supervisor_prod.conf /etc/supervisor/conf.d/supervisord.conf
 
+RUN sed -i '/upload_max_filesize/c\upload_max_filesize = 100M' /etc/php/7.0/cli/php.ini
+RUN sed -i '/post_max_size/c\post_max_size = 120M' /etc/php/7.0/cli/php.ini
+
 RUN mkdir -p /var/www/collegemate/creds
 COPY ./creds/* /var/www/collegemate/creds/
 
