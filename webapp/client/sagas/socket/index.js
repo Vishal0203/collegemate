@@ -33,7 +33,7 @@ function *watchOnSocketEvents(params) {
   while (true) {
     const payload = yield take(socketChannel);
     yield put(params.nextAction(payload));
-    if (!payload.type) {
+    if (!payload.type && payload.snackbar) {
       yield call(showSnackbar, payload.message)
     }
   }

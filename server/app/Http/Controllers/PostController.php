@@ -123,6 +123,10 @@ class PostController extends Controller
         foreach ($post->comments as $comment) {
             $upvote = $comment->upvotes()->where('user_id', $user['id'])->first();
             $comment->upvoted = $upvote ? true: false;
+            $comment->canEdit = $comment->user['id'] == $user['id'];
+            if ($comment->user['id'] == $post->user['id'] && $post['is_anonymous']) {
+                unset($comment['user']);
+            }
         }
         $upvote = $post->upvotes()->where('user_id', $user['id'])->first();
         $post->upvoted = $upvote ? true: false;

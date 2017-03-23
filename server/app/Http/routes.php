@@ -112,7 +112,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::resource(
             'comment',
             'CommentController',
-            ['only' => ['index', 'store', 'update', 'destroy']]
+            ['only' => ['index', 'store', 'show', 'update', 'destroy']]
         );
     });
 });

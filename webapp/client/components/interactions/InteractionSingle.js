@@ -125,7 +125,7 @@ class InteractionSingle extends Component {
   fetchPost(postGuid) {
     if (Object.keys(this.props.auth_user.user).length != 0) {
       const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
-      this.props.actions.fetchSinglePostRequest(institute_guid, postGuid, null);
+      this.props.actions.fetchSinglePostRequest(institute_guid, postGuid);
     }
   }
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
-use App\Events\PostUpdate;
+use App\Events\CommentUpdates;
 use App\Notifications\CommentUpvoteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -57,13 +57,41 @@ class CommentController extends Controller
 
         $comment->load(['user','user.userProfile']);
         $comment['upvotes_count'] = $comment->upvotesCount();
-        Event::fire(new PostUpdate($post));
+        Event::fire(new CommentUpdates(
+            $post['post_guid'],
+            $comment['comment_guid'],
+            $request['institute_guid'],
+            'new-comment'
+        ));
 
         if ($post->user['id'] != $user['id']) {
             Notification::send($post->user, new PostCommentNotification($post, $user));
         }
 
         return response()->json(compact('comment'), 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param string $post_guid
+     * @param string $comment_guid
+     * @return \Illuminate\Http\Response
+     * @internal param int $id
+     */
+    public function show($post_guid, $comment_guid)
+    {
+        $comment = Comment::where('comment_guid', $comment_guid)
+            ->with('user', 'user.userProfile')->withCount('upvotes')->first();
+        $post = Post::where('post_guid', $post_guid)->with('user')->first();
+        $comment->canEdit = $comment->user['id'] == \Auth::user()['id'];
+        if (!$comment) {
+            return response()->json(['Error' => 'Comment not found.'], 400);
+        }
+        if ($post['is_anonymous'] && $comment->user['id'] === $post->user['id']) {
+            unset($comment->user);
+        }
+        return response()->json(compact('comment'));
     }
 
     /**
@@ -87,7 +115,12 @@ class CommentController extends Controller
             $comment->update([
                 'comment' => $request['comment'],
             ]);
-            Event::fire(new PostUpdate($post));
+            Event::fire(new CommentUpdates(
+                $post['post_guid'],
+                $comment['comment_guid'],
+                $request['institute_guid'],
+                'updated-comment'
+            ));
             return response()->json(compact('comment'), 202);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);
@@ -111,7 +144,12 @@ class CommentController extends Controller
         $user = \Auth::user();
         if ($request->attributes->get('auth_user_role') != 'inst_student' || $user['id'] == $commentUser['id']) {
             $comment->delete();
-            Event::fire(new PostUpdate($post));
+            Event::fire(new CommentUpdates(
+                $post['post_guid'],
+                $comment['comment_guid'],
+                $request['institute_guid'],
+                'deleted-comment'
+            ));
             return response()->json(['success' => 'Answer removed successfully'], 201);
         }
         return response()->json(['Error' => 'Not Authorized.'], 403);

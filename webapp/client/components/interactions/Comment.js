@@ -150,7 +150,7 @@ class Comment extends Component {
     const comment = this.props.comment;
     const auth_user = this.props.parentProps.auth_user.user;
     let disabled = false;
-    if (comment.user.user_guid == auth_user.user_guid) {
+    if (comment.canEdit) {
       disabled = true;
     }
     let upvotedColor = null;
@@ -220,7 +220,7 @@ class Comment extends Component {
     const timezone = moment.tz.guess();
     const time = moment.tz(comment.created_at, null).format();
     let edit = null;
-    if(comment.user.user_guid == auth_user.user_guid) {
+    if(comment.canEdit) {
       edit = (
         <label style={this.styles.actionButton}
                onClick={() => this.editComment('show')}>
@@ -229,7 +229,7 @@ class Comment extends Component {
       );
     }
     let deleteIcon = null;
-    if(comment.user.user_guid == auth_user.user_guid ||
+    if(comment.canEdit ||
       auth_user.todevs_superuser ||
       auth_user.todevs_staff) {
       deleteIcon = (
@@ -267,7 +267,7 @@ class Comment extends Component {
       ];
     }
     else {
-      const username = `${comment.user.first_name} ${comment.user.last_name}`;
+      const username = comment.user? `${comment.user.first_name} ${comment.user.last_name}` : 'Anonymous';
       actions = [
         (<Col xs={1} key={1}>
           {edit}

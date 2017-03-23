@@ -50,7 +50,10 @@ class NewPost extends Event implements ShouldBroadcast
 
         return array_merge(
             $this->post->toArray(),
-            ['message' => 'Question was asked in your institute']
+            [
+                'message' => 'Question was asked in your institute',
+                'snackbar' => true
+            ]
         );
     }
 }
