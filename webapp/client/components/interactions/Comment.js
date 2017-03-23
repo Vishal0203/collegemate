@@ -148,13 +148,12 @@ class Comment extends Component {
 
   renderVotes() {
     const comment = this.props.comment;
-    const auth_user = this.props.parentProps.auth_user.user;
     let disabled = false;
     if (comment.canEdit) {
       disabled = true;
     }
     let upvotedColor = null;
-    if (comment.upvoted == true) {
+    if (comment.upvoted === true) {
       upvotedColor = {color: 'rgb(18, 107, 111)'}
     }
     return (
@@ -241,7 +240,7 @@ class Comment extends Component {
     }
 
     let commentContent = null;
-    if(this.state.edit == false) {
+    if(this.state.edit === false) {
       commentContent = (
         <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(comment.comment)} />
       );
@@ -277,7 +276,7 @@ class Comment extends Component {
         </Col>),
         (<Col xsOffset={7} xs={3} key={3}>
           <Row end="xs">
-            <label style={{fontWeight: 400}}>{username}</label>
+            <label style={{fontWeight: 400, textTransform: 'capitalize'}}>{username}</label>
             <div style={this.styles.timeContainer}
                  onMouseEnter={() => this.timeTooltipMouseEnter(timezone, moment.tz(comment.created_at, null).format())}
                  onMouseLeave={() => {

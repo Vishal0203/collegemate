@@ -139,7 +139,8 @@ class Announcement extends React.Component {
         </CardText>
         {this.showAttachments(announcement)}
         <CardText style={this.styles.notificationPublisher}>
-          {announcement.publisher.first_name} {announcement.publisher.last_name}, {announcement.publisher.institutes[0].designation}
+          <span style={{textTransform: 'capitalize'}}>{announcement.publisher.first_name} {announcement.publisher.last_name}, </span>
+          {announcement.publisher.institutes[0].designation}
         </CardText>
       </Card>
     );
