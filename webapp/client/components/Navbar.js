@@ -34,6 +34,7 @@ class Navbar extends React.Component {
         color: 'rgba(255, 255, 255, 0.85)',
         cursor: 'default',
         textAlign: 'right',
+        textTransform: 'capitalize',
         marginBottom: 0
       },
 

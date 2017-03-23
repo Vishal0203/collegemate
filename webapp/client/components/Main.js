@@ -44,8 +44,21 @@ class Main extends React.Component {
     })
   }
 
+  renderQuote() {
+    const quotes = [
+      'You look amazing today!',
+      'How\'s the day going?',
+      'Starting our engines, hold tight!',
+      'You\'re the best human alive!',
+      'Bad days don\'t stay for long.',
+      'Improvise, Adapt, Overcome.'
+    ];
+
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  }
+
   renderMainContent() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       return (
         <MuiThemeProvider muiTheme={muiTheme}>
           <div>
@@ -64,6 +77,7 @@ class Main extends React.Component {
       return (
         <Row center="xs" className="initial-loader">
           <Loader color="#126B6F" size="16px" margin="5px"/>
+          <h3 style={{marginTop: 20}}>{this.renderQuote()}</h3>
         </Row>
       )
     }
