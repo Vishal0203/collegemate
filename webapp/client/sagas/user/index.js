@@ -62,7 +62,7 @@ function *updateUserProfile(params) {
   const selected_institute = yield select(selectors.selected_institute);
   const formData = {...params.profileData, institute_guid: selected_institute.inst_profile_guid};
   const response = yield call(HttpHelper, 'update_profile', 'POST', formData, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.updateUserProfileResponse(response.data.user));
     yield put(toggleSnackbar('Your profile has been updated.'));
   }
@@ -70,7 +70,7 @@ function *updateUserProfile(params) {
 
 function *logoutUser() {
   const response = yield call(HttpHelper, 'logout', 'GET', null, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     const GoogleAuth = window.gapi.auth2.getAuthInstance();
     GoogleAuth.signOut();
     yield put(userActions.userLogoutResponse());
@@ -82,7 +82,7 @@ function *createAnnouncementCategory(params) {
   const selected_institute = yield select(selectors.selected_institute);
   const institute_guid = selected_institute.inst_profile_guid;
   const response = yield call(HttpHelper, `institute/${institute_guid}/category`, 'POST', params.category, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.createAnnouncementCategoryResponse(response.data.category));
     const selected_institute = yield select(selectors.selected_institute);
     yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
@@ -106,7 +106,7 @@ function *removeAnnouncementCategory(params) {
     null
   );
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.removeAnnouncementCategoryResponse(params.category_guid));
     selected_institute = yield select(selectors.selected_institute);
     yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));

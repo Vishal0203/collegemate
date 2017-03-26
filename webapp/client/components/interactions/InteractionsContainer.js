@@ -46,7 +46,7 @@ class InteractionsContainer extends Component {
   }
 
   loadMore() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
       let url = `institute/${institute_guid}/post`;
       let tags = null;
@@ -78,7 +78,7 @@ class InteractionsContainer extends Component {
       );
     }
 
-    if (this.props.interactions.items.posts.length == 0 && this.props.interactions.loadingMore == false) {
+    if (this.props.interactions.items.posts.length === 0 && this.props.interactions.loadingMore === false) {
       return [
         <Paper className="paper-style" zDepth={0} key={0}>
           <p>There are no interactions to show.</p>
@@ -88,9 +88,9 @@ class InteractionsContainer extends Component {
   }
 
   renderTagChips() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       const tags = this.props.interactions.tags;
-      if (Object.keys(this.props.auth_user.user).length != 0) {
+      if (Object.keys(this.props.auth_user.user).length !== 0) {
         return tags.map((tag, i) =>
           <Chip key={i} className="chip" onTouchTap={() => this.handleFilterSelect(tag)}
                 labelStyle={this.styles.chipLabel}>
@@ -102,9 +102,9 @@ class InteractionsContainer extends Component {
   }
 
   renderSelectedTags() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
-      const {tags, filters} = this.props.interactions;
-      if (filters.length == 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
+      const {filters} = this.props.interactions;
+      if (filters.length === 0) {
         return (
           <label style={this.styles.selectedFilterLabel}>All Posts</label>
         )

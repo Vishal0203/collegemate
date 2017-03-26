@@ -34,7 +34,7 @@ function *fetchAnnouncements(params) {
 
 function *subscribeAnnouncement(params) {
   const response = yield call(HttpHelper, `category/${params.category}/subscribe`, 'POST', null, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.subscribeAnnouncementResponse(response.data.category));
     const selected_institute = yield select(selectors.selected_institute);
     yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
@@ -49,7 +49,7 @@ function *subscribeAnnouncement(params) {
 
 function *unsubscribeAnnouncement(params) {
   const response = yield call(HttpHelper, `category/${params.category}/unsubscribe`, 'POST', null, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.unsubscribeAnnouncementResponse(response.data.category));
     const selected_institute = yield select(selectors.selected_institute);
     yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));

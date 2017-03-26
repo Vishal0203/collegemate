@@ -26,7 +26,7 @@ class InstituteSettingsContainer extends Component {
   };
 
   componentWillMount() {
-    if (this.props.auth_user.user.default_institute != null) {
+    if (this.props.auth_user.user.default_institute !== null) {
       hashHistory.replace('/');
     }
   }
@@ -68,7 +68,7 @@ class InstituteSettingsContainer extends Component {
   };
 
   handleNewRequest(chosenRequest) {
-    if (this.state.searchText == chosenRequest.institute_name) {
+    if (this.state.searchText === chosenRequest.institute_name) {
       this.setState({
         value: this.state.value,
         searchText: this.state.searchText,

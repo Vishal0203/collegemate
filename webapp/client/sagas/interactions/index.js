@@ -30,7 +30,7 @@ function *createPost(params) {
     HttpHelper, `institute/${params.instituteGuid}/post`, 'POST', params.formData, null
   );
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(interactionsActions.postFormToggle())
   }
 }
@@ -96,7 +96,7 @@ function *editComment(params) {
 }
 
 function *commentUpdate(params) {
-  if (params.commentUpdates.type != 'deleted-comment') {
+  if (params.commentUpdates.type !== 'deleted-comment') {
     const institute_guid = {institute_guid: params.commentUpdates.institute_guid};
     const response = yield call(
       HttpHelper,

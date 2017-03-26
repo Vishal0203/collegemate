@@ -7,7 +7,7 @@ import DoneIcon from 'material-ui/svg-icons/action/done';
 import {grey600, grey400} from 'material-ui/styles/colors';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
-import {CardText} from 'material-ui/Card';
+import {CardText} from 'material-ui/Card/index';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton/IconButton';
 import {readNotificationRequest, readAllNotificationsRequest, openCategoryAnnouncements} from '../actions/notifications/index';
@@ -97,7 +97,7 @@ class Notifications extends React.Component {
 
   openNotification(notification) {
     this.closeNotificationMenu();
-    if (notification.type == POST_NOTIFICATION || notification.type == COMMENT_UPVOTE_NOTIFICATION) {
+    if (notification.type === POST_NOTIFICATION || notification.type === COMMENT_UPVOTE_NOTIFICATION) {
       hashHistory.push(`interactions/${notification.post_guid}`);
     }
     else {
@@ -200,7 +200,7 @@ class Notifications extends React.Component {
           <Row>
             <Col xs={1}>
               <i className="material-icons" style={{height: 50, lineHeight: '50px', color:grey600}} >
-                {notifications[key].type == ANNOUNCEMENT_NOTIFICATION? 'announcement' : 'question_answer'}
+                {notifications[key].type === ANNOUNCEMENT_NOTIFICATION ? 'announcement' : 'question_answer'}
               </i>
             </Col>
             <Col xs={9} style={this.styles.notificationText} onTouchTap={() => this.openNotification(notifications[key])}>
@@ -226,7 +226,7 @@ class Notifications extends React.Component {
   renderNotificationIcon(notifications, notificationMenuContent) {
     let badgeVisibility = null;
     let notificationIconColor = '#FAFAFB';
-    if(Object.keys(notifications).length == 0) {
+    if(Object.keys(notifications).length === 0) {
       badgeVisibility = {display: 'none'};
       notificationIconColor = 'rgba(255, 255, 255, 0.4)';
     }

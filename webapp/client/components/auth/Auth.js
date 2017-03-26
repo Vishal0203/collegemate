@@ -8,7 +8,7 @@ import Paper from 'material-ui/Paper';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import muiTheme from '../../styles/theme/collegemate.theme';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar/index';
 import FlatButton from 'material-ui/FlatButton';
 
 class Auth extends React.Component {
@@ -76,7 +76,7 @@ class Auth extends React.Component {
       return (
         <MuiThemeProvider muiTheme={muiTheme}>
           <div>
-            <div className="auth-background"></div>
+            <div className="auth-background"/>
             <Paper className="fixed-top bg-transparent">
               <Toolbar className="bg-transparent" style={{height: 80, padding: '0 7px 0 40px'}}>
                 <ToolbarGroup>

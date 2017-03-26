@@ -78,7 +78,7 @@ class AnnouncementsContainer extends Component {
   }
 
   loadMore() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       const categories = this.props.announcements.filters.map(function (a) {
         return a.category_guid
       }).join(',');
@@ -109,7 +109,7 @@ class AnnouncementsContainer extends Component {
       )
     }
 
-    if (this.props.announcements.items.data.length == 0 && this.props.announcements.loadingMore == false) {
+    if (this.props.announcements.items.data.length === 0 && this.props.announcements.loadingMore === false) {
       return [
         <Paper className="paper-style" zDepth={0} key={0}>
           <p>There are no announcements to show.</p>
@@ -136,9 +136,9 @@ class AnnouncementsContainer extends Component {
   }
 
   renderFilterChips() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       const categories = this.props.announcements.categories;
-      if (Object.keys(this.props.auth_user.user).length != 0) {
+      if (Object.keys(this.props.auth_user.user).length !== 0) {
         return categories.map((category, i) =>
           <Chip key={i} className="chip" onTouchTap={() => this.handleFilterSelect(category)}
                 labelStyle={this.styles.chipLabel}>
@@ -150,9 +150,9 @@ class AnnouncementsContainer extends Component {
   }
 
   renderSelectedFilters() {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       const {categories, filters} = this.props.announcements;
-      if (filters.length == categories.length) {
+      if (filters.length === categories.length) {
         return (
           <label style={this.styles.selectedFilterLabel}>All Categories</label>
         )

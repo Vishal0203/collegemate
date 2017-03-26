@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
+import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card/index';
 import MenuItem from 'material-ui/MenuItem';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
@@ -61,7 +61,7 @@ class AnnouncementForm extends React.Component {
       notificationAttachments: this.refs.notificationAttachments.files
     };
 
-    if (formData.notificationBody == '<p><br></p>') {
+    if (formData.notificationBody === '<p><br></p>') {
       this.parentProps.actions.toggleSnackbar('Announcement body can\'t be left empty.')
     } else {
       this.parentProps.actions.createAnnouncementRequest(formData);
@@ -83,7 +83,7 @@ class AnnouncementForm extends React.Component {
   }
 
   onFileSelect(e) {
-    if (e.target.files.length == 0) {
+    if (e.target.files.length === 0) {
       this.refs.chosenFiles.innerHTML = '<i style="color: #c6c6c6">No file Chosen</i>';
       return
     }
@@ -91,7 +91,7 @@ class AnnouncementForm extends React.Component {
     this.refs.chosenFiles.innerHTML = '';
     let text = '';
     for (let i = 0; i < e.target.files.length; i++) {
-      text += `${e.target.files[i].name}${i + 1 == e.target.files.length ? '' : ', '}`;
+      text += `${e.target.files[i].name}${i + 1 === e.target.files.length ? '' : ', '}`;
     }
     this.refs.chosenFiles.innerHTML += `<i>${text}</i>`;
   }

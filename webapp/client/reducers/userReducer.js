@@ -36,7 +36,7 @@ export default function userReducer(state=initialState, action) {
         selectedInstitute: {
           ...state.selectedInstitute,
           categories: state.selectedInstitute.categories.map((category) => {
-            return category.category_guid == action.category ? {...category, disabled: true} : category
+            return category.category_guid === action.category ? {...category, disabled: true} : category
           })
         }
       }
@@ -48,7 +48,7 @@ export default function userReducer(state=initialState, action) {
           ...state.selectedInstitute,
           subscriptions: [...state.selectedInstitute.subscriptions, action.category],
           categories: state.selectedInstitute.categories.map((category) => {
-            return category.category_guid == action.category.category_guid ? {...category, disabled: false} : category
+            return category.category_guid === action.category.category_guid ? {...category, disabled: false} : category
           })
         }
       }
@@ -59,7 +59,7 @@ export default function userReducer(state=initialState, action) {
         selectedInstitute: {
           ...state.selectedInstitute,
           categories: state.selectedInstitute.categories.map((category) => {
-            return category.category_guid == action.category ? {...category, disabled: true} : category
+            return category.category_guid === action.category ? {...category, disabled: true} : category
           })
         }
       }
@@ -81,13 +81,13 @@ export default function userReducer(state=initialState, action) {
         selectedInstitute: {
           ...state.selectedInstitute,
           subscriptions: state.selectedInstitute.subscriptions.filter(
-            (category) => category.category_guid != action.category_guid
+            (category) => category.category_guid !== action.category_guid
           ),
           categories: state.selectedInstitute.categories.filter(
-            (category) => category.category_guid != action.category_guid
+            (category) => category.category_guid !== action.category_guid
           ),
           notifying_categories: state.selectedInstitute.notifying_categories.filter(
-            (category) => category.category_guid != action.category_guid
+            (category) => category.category_guid !== action.category_guid
           ),
         }
       }
@@ -98,10 +98,10 @@ export default function userReducer(state=initialState, action) {
         selectedInstitute: {
           ...state.selectedInstitute,
           subscriptions: state.selectedInstitute.subscriptions.filter(
-            (category) => category.category_guid != action.category.category_guid
+            (category) => category.category_guid !== action.category.category_guid
           ),
           categories: state.selectedInstitute.categories.map((category) => {
-            return category.category_guid == action.category.category_guid ? {...category, disabled: false} : category
+            return category.category_guid === action.category.category_guid ? {...category, disabled: false} : category
           })
         }
       }
@@ -146,7 +146,7 @@ export default function userReducer(state=initialState, action) {
     case notificationActions.READ_NOTIFICATION_RESPONSE: {
       let updatedNotifications = [...state.user.unread_notifications];
       updatedNotifications = updatedNotifications.filter(function (notification) {
-        return action.notificationIds.indexOf(notification.id) == -1
+        return action.notificationIds.indexOf(notification.id) === -1
       });
 
       return {
@@ -220,7 +220,7 @@ export default function userReducer(state=initialState, action) {
         const existingUser = state.categoryNotifiers.validatedUsers.filter(function (validatedUser) {
           return validatedUser.user_guid === action.data.user.user_guid
         });
-        validatedUsers = existingUser.length == 0 ?
+        validatedUsers = existingUser.length === 0 ?
           [...state.categoryNotifiers.validatedUsers, action.data.user] :
           validatedUsers;
       }
@@ -234,7 +234,7 @@ export default function userReducer(state=initialState, action) {
     }
     case actions.REMOVE_VALIDATED_NOTIFIER: {
       const validatedUsers = state.categoryNotifiers.validatedUsers.filter(function (validatedUser) {
-        return validatedUser.user_guid != action.user_guid
+        return validatedUser.user_guid !== action.user_guid
       });
       return {
         ...state,
@@ -266,7 +266,7 @@ export default function userReducer(state=initialState, action) {
       let notifiers = action.error ?
         state.categoryNotifiers.notifiers :
         state.categoryNotifiers.notifiers.filter((notifier) =>
-          notifier.user_guid != action.user_guid
+          notifier.user_guid !== action.user_guid
         );
 
       return {

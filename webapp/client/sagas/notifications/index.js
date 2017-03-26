@@ -32,7 +32,7 @@ function *readAllNotifications(params) {
 function *openCategoryAnnouncements(params) {
   const announcement_categories = yield select(selectors.announcement_categories);
   const newFilters = announcement_categories.filter((category) => {
-    return category.category_guid == params.announcementGuid.category_guid
+    return category.category_guid === params.announcementGuid.category_guid
   });
 
   if (!newFilters.length) {

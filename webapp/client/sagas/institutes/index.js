@@ -13,14 +13,14 @@ import {hashHistory} from 'react-router';
 
 function *fetchInstituteList() {
   const response = yield call(HttpHelper, 'institutes', 'GET', null, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(instituteActions.fetchInstituteResponse(response.data.institutes))
   }
 }
 
 function *registerToInstitute(params) {
   const response = yield call(HttpHelper, `institute/${params.institute_guid}/register`, 'POST', null, null);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.setSelectedInstitute(response.data.user));
 
     const subscribed_categories = response.data.user.default_institute.subscriptions;
@@ -52,7 +52,7 @@ function *registerToInstitute(params) {
 
 function *createInstitute(params) {
   const response = yield call(HttpHelper, 'institutes', 'POST', params.formData, null);
-  if(response.status == 200) {
+  if(response.status === 200) {
     yield put(userActions.setSelectedInstitute(response.data.user));
 
     const member_id = response.data.user.default_institute.user_institute_info[0].member_id;

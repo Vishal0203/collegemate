@@ -6,7 +6,7 @@ import * as userActions from '../../actions/users/index';
 
 function *fetchCategoryNotifiers(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.data);
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(userActions.fetchCategoryNotifersResponse(response.data));
   }
   else {
@@ -17,7 +17,7 @@ function *fetchCategoryNotifiers(params) {
 
 function *validateNotifier(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.data);
-  if (response.status == 200 && !response.data.error) {
+  if (response.status === 200 && !response.data.error) {
     yield put(userActions.notifierValidationResponse(response.data));
   }
   else {
@@ -30,7 +30,7 @@ function *addNotifiers(params) {
   let url = `institute/${params.institute_guid}/category/assign_notifier`;
   const response = yield call(HttpHelper, url, 'POST', params.data, null);
 
-  if (response.status == 200 && !response.data.error) {
+  if (response.status === 200 && !response.data.error) {
     url = `institute/${params.institute_guid}/category/notifiers`;
     const data = {category_guid: params.data.category_guid};
     yield put(userActions.fetchCategoryNotifersRequest(data, url));
@@ -44,7 +44,7 @@ function *addNotifiers(params) {
 function *removeNotifier(params) {
   const response = yield call(HttpHelper, params.url, 'DELETE', params.data, null);
   let message = null;
-  if (response.status != 200 || response.data.error) {
+  if (response.status !== 200 || response.data.error) {
     message = response.data.error ? response.data.error : 'Something went wrong. Please try again after sometime';
   } else {
     message = response.data.success;
