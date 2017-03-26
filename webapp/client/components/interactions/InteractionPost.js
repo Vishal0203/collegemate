@@ -1,6 +1,6 @@
 import React from 'react';
 import {hashHistory} from 'react-router';
-import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
+import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card/index';
 import moment from 'moment';
 import Chip from 'material-ui/Chip';
 import {Grid, Row, Col} from 'react-flexbox-grid';
@@ -96,7 +96,7 @@ class InteractionPost extends React.Component {
   renderChips(post) {
     return post.tags.map((tag, i) =>
       <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}
-        {tag.is_approved== false && <label style={this.styles.chipLabelNotApproved}> (custom)</label>} </Chip>
+        {tag.is_approved === false && <label style={this.styles.chipLabelNotApproved}> (custom)</label>} </Chip>
     )
   }
 

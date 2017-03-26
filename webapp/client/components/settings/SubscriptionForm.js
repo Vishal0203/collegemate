@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
 import Toggle from 'material-ui/Toggle';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
@@ -36,7 +36,7 @@ class SubscriptionForm extends Component {
   }
 
   handleToggle(evt, category_guid) {
-    if (evt.target.getAttribute('data-toggled') == 'true') {
+    if (evt.target.getAttribute('data-toggled') === 'true') {
       this.props.parentProps.actions.unsubscribeAnnouncementRequest(category_guid)
     } else {
       this.props.parentProps.actions.subscribeAnnouncementRequest(category_guid)
@@ -167,7 +167,7 @@ class SubscriptionForm extends Component {
   renderOptions(category, subscribed_as) {
     const {user} = this.props.parentProps.auth_user;
 
-    if (category.creator.user_guid == user.user_guid || user.default_institute.user_institute_info[0].role == 'inst_superuser') {
+    if (category.creator.user_guid === user.user_guid || user.default_institute.user_institute_info[0].role === 'inst_superuser') {
       return (
         <IconMenu
           iconButtonElement={
@@ -226,7 +226,7 @@ class SubscriptionForm extends Component {
       let disabled = category.disabled;
       let toggle = false;
       for (let i = 0; i < subscriptions.length; i++) {
-        if (category.category_guid == subscriptions[i].category_guid) {
+        if (category.category_guid === subscriptions[i].category_guid) {
           subscribed_as = 'Recipient';
           toggle = true;
           break;
@@ -234,7 +234,7 @@ class SubscriptionForm extends Component {
       }
 
       for (let i = 0; i < notifying_categories.length; i++) {
-        if (category.category_guid == notifying_categories[i].category_guid) {
+        if (category.category_guid === notifying_categories[i].category_guid) {
           subscribed_as = 'Announcer';
           disabled = true;
           toggle = true;

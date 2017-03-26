@@ -4,7 +4,7 @@ import Avatar from 'material-ui/Avatar';
 import {bindActionCreators} from 'redux';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {grey600} from 'material-ui/styles/colors';
-import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
+import {Card, CardTitle} from 'material-ui/Card/index';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';

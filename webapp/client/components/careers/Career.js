@@ -45,9 +45,9 @@ class Career extends Component {
     return (
       <Card style={{height: 'inherit'}}>
         <CardTitle title="Software Engineer" subtitle="Microsoft" subtitleStyle={this.styles.JobSubtitle}/>
-        <center>
+        <div style="text-align: center;">
           <Divider style={this.styles.divider}/>
-        </center>
+        </div>
         <CardText>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.

@@ -2,8 +2,8 @@ import React from 'react';
 import {Link} from 'react-router';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import {Tabs, Tab} from 'material-ui/Tabs/index';
+import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar/index';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton/IconButton';
 import MenuItem from 'material-ui/MenuItem';
@@ -56,12 +56,12 @@ class Navbar extends React.Component {
   renderBrand() {
     const {auth_user} = this.props;
     let member_id, designation;
-    if (Object.keys(auth_user.selectedInstitute).length != 0) {
+    if (Object.keys(auth_user.selectedInstitute).length !== 0) {
       member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
       designation = auth_user.selectedInstitute.user_institute_info[0].designation;
     }
 
-    if (Object.keys(auth_user.selectedInstitute).length != 0 && member_id && designation) {
+    if (Object.keys(auth_user.selectedInstitute).length !== 0 && member_id && designation) {
       return (
         <Link to="/" style={{textDecoration: 'none'}}>
           <ToolbarTitle style={this.styles.title} text="College"/>
@@ -80,7 +80,7 @@ class Navbar extends React.Component {
 
   renderTabs(tabIndex) {  
     const {auth_user} = this.props;
-    if (Object.keys(auth_user.selectedInstitute).length != 0) {
+    if (Object.keys(auth_user.selectedInstitute).length !== 0) {
       const member_id = auth_user.selectedInstitute.user_institute_info[0].member_id;
       const designation = auth_user.selectedInstitute.user_institute_info[0].designation;
 
@@ -110,7 +110,7 @@ class Navbar extends React.Component {
   renderUserNav() {
     const {parentProps} = this.props;
     const {auth_user} = this.props;
-    if (Object.keys(auth_user.selectedInstitute).length != 0 && Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(auth_user.selectedInstitute).length !== 0 && Object.keys(this.props.auth_user.user).length !== 0) {
       const username = `${parentProps.auth_user.user.first_name} ${parentProps.auth_user.user.last_name}`;
       const instituteName = parentProps.auth_user.selectedInstitute.institute_name;
 
@@ -141,7 +141,7 @@ class Navbar extends React.Component {
 
   getTabIndex(pathname) {
     const INTERACTION_REGEX = /^\/interactions(\/.*)?/i;
-    if (pathname == '/') {
+    if (pathname === '/') {
       return 'announcements'
     }
     if (INTERACTION_REGEX.test(pathname)) {

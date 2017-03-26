@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
 import {Row, Col} from 'react-flexbox-grid';
 import {grey500} from 'material-ui/styles/colors';
 import {FormsyText} from 'formsy-material-ui/lib';
@@ -235,7 +235,7 @@ class CategoryNotifiersDialog extends Component {
     );
     let submitType = null;
     let notifierForm = null;
-    if (category.subscribed_as == 'Announcer') {
+    if (category.subscribed_as === 'Announcer') {
       notifierForm = (
         <div style={{padding: '16px 16px 0px 16px'}} key="notifier_form">
           <Subheader>Add announcers to category</Subheader>

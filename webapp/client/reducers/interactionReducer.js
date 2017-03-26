@@ -32,7 +32,7 @@ export default function interactionReducer(state = initialState, action) {
       } );
 
       for(; i < state.filters.length; i++) {
-        if (tag_guids.indexOf(state.filters[i].tag_guid) == -1)
+        if (tag_guids.indexOf(state.filters[i].tag_guid) === -1)
         {
           break;
         }
@@ -68,14 +68,14 @@ export default function interactionReducer(state = initialState, action) {
     }
     case actions.ADD_TAG_FILTER: {
       const {tags, filters} = state;
-      if (tags.length == filters.length) {
+      if (tags.length === filters.length) {
         return {
           ...initialState,
           tags,
           filters: [action.filter]
         }
       }
-      else if (tags.length != filters.length && filters.indexOf(action.filter) == -1) {
+      else if (tags.length !== filters.length && filters.indexOf(action.filter) === -1) {
         return {
           ...initialState,
           tags,
@@ -111,7 +111,7 @@ export default function interactionReducer(state = initialState, action) {
         newComments.forEach((comment) => {
           if (comment.user &&
             state.selectedPost.user &&
-            comment.user.user_guid == state.selectedPost.user.user_guid) {
+            comment.user.user_guid === state.selectedPost.user.user_guid) {
             delete(comment.user);
           }
         });
@@ -142,12 +142,12 @@ export default function interactionReducer(state = initialState, action) {
     }
     case actions.COMMENT_UPDATE: {
       const {comment_guid, type} = action.commentUpdates;
-      if(type == 'deleted-comment') {
+      if(type === 'deleted-comment') {
         return {
           ...state,
           selectedPost: {
             ...state.selectedPost,
-            comments: state.selectedPost.comments.filter((comment) => comment.comment_guid != comment_guid)
+            comments: state.selectedPost.comments.filter((comment) => comment.comment_guid !== comment_guid)
           }
         }
       }
@@ -157,7 +157,7 @@ export default function interactionReducer(state = initialState, action) {
       let newComments = [...state.selectedPost.comments];
       let commentGuids = newComments.map((comment) => comment.comment_guid);
       const index = commentGuids.indexOf(action.comment.comment_guid);
-      if (index != -1) {
+      if (index !== -1) {
         const updatedComment = {
           ...newComments[index],
           comment: action.comment.comment,
@@ -258,12 +258,14 @@ export default function interactionReducer(state = initialState, action) {
     }
 
     case '@@router/LOCATION_CHANGE': {
-      if (action.payload.pathname == '/interactions') {
+      if (action.payload.pathname === '/interactions') {
         return {
           ...initialState,
-          tags: state.tags
+          tags: state.tags,
+          filters: state.filters
         }
       }
+      return state
     }
     default: {
       return state

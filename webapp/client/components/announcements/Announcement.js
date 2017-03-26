@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
+import {Card, CardHeader, CardText} from 'material-ui/Card/index';
 import Avatar from 'material-ui/Avatar';
 import moment from 'moment';
 import FlatButton from 'material-ui/FlatButton';

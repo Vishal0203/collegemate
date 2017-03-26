@@ -24,7 +24,7 @@ class InteractionForm extends React.Component {
       },
     ]);
 
-    if (props.type == 'PostUpdate') {
+    if (props.type === 'PostUpdate') {
       const post = props.parentProps.interactions.selectedPost;
       this.state = {
         tags: post.tags,
@@ -97,7 +97,7 @@ class InteractionForm extends React.Component {
       tags
     };
 
-    if (formData.post_description == '<p><br></p>') {
+    if (formData.post_description === '<p><br></p>') {
       this.parentProps.actions.toggleSnackbar('Post description can\'t be left empty.')
     } else {
       this.parentProps.actions.createPostRequest(instituteGuid, formData);
@@ -111,7 +111,7 @@ class InteractionForm extends React.Component {
       comment: stateToHTML(this.state.editorState.getCurrentContent())
     };
 
-    if (formData.comment == '<p><br></p>') {
+    if (formData.comment === '<p><br></p>') {
       this.parentProps.actions.toggleSnackbar('Forgot to write the comment?')
     } else {
       this.parentProps.actions.addCommentRequest(postGuid, formData);
@@ -130,7 +130,7 @@ class InteractionForm extends React.Component {
       tags
     };
 
-    if (formData.post_description == '<p><br></p>') {
+    if (formData.post_description === '<p><br></p>') {
       this.parentProps.actions.toggleSnackbar('Post description can\'t be left empty.')
     } else {
       this.parentProps.actions.updatePostRequest(instituteGuid, postGuid, formData);
@@ -154,12 +154,12 @@ class InteractionForm extends React.Component {
   }
 
   handleTagAdd(tag) {
-    if (this.state.tags.length == 5) {
+    if (this.state.tags.length === 5) {
       this.parentProps.actions.toggleSnackbar('You can only add 5 tags to a post.');
       return
     }
 
-    if (this.parentProps.interactions.tags.indexOf(tag) == -1) {
+    if (this.parentProps.interactions.tags.indexOf(tag) === -1) {
       this.parentProps.actions.toggleSnackbar('Custom tags will be shown after approval.');
     }
 
@@ -169,7 +169,7 @@ class InteractionForm extends React.Component {
   }
 
   handleTagDelete(deletedTag) {
-    if (typeof deletedTag == 'object') {
+    if (typeof deletedTag === 'object') {
       this.setState({
         tags: this.state.tags.filter((c) => c !== deletedTag)
       })
@@ -207,9 +207,9 @@ class InteractionForm extends React.Component {
     let postHeader = null;
     let tags = null;
     let anonymousToggle = null;
-    if (type == 'Interactions' || type == 'PostUpdate') {
-      const defaultHeading = type == 'PostUpdate' ? this.parentProps.interactions.selectedPost.post_heading : '';
-      const toggleDefault = type == 'PostUpdate' ?
+    if (type === 'Interactions' || type === 'PostUpdate') {
+      const defaultHeading = type === 'PostUpdate' ? this.parentProps.interactions.selectedPost.post_heading : '';
+      const toggleDefault = type === 'PostUpdate' ?
         !this.parentProps.interactions.selectedPost.user :
         false;
       postHeader = (
@@ -224,7 +224,7 @@ class InteractionForm extends React.Component {
             autoFocus
             autoComplete="off"
           />
-          <div style={{marginTop: '5px'}}></div>
+          <div style={{marginTop: '5px'}}/>
         </div>
       );
 
@@ -307,7 +307,7 @@ class InteractionForm extends React.Component {
       </Card>
     );
 
-    if (type == 'PostUpdate') {
+    if (type === 'PostUpdate') {
       formContent = (
         <Formsy.Form
           onValid={this.enableButton.bind(this)}

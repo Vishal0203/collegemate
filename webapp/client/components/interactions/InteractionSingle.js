@@ -7,7 +7,7 @@ import {Grid, Row, Col} from 'react-flexbox-grid'
 import StickyDiv from 'react-stickydiv';
 import * as interactionActions from '../../actions/interactions/index'
 import Header from '../Header';
-import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
+import {Card, CardHeader, CardText} from 'material-ui/Card/index';
 import Comment from './Comment'
 import Chip from 'material-ui/Chip';
 import {grey500, grey600} from 'material-ui/styles/colors';
@@ -123,7 +123,7 @@ class InteractionSingle extends Component {
   };
 
   fetchPost(postGuid) {
-    if (Object.keys(this.props.auth_user.user).length != 0) {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
       const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
       this.props.actions.fetchSinglePostRequest(institute_guid, postGuid);
     }

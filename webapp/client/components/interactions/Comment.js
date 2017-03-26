@@ -266,7 +266,7 @@ class Comment extends Component {
       ];
     }
     else {
-      const username = comment.user? `${comment.user.first_name} ${comment.user.last_name}` : 'Anonymous';
+      const username = comment.user ?`${comment.user.first_name} ${comment.user.last_name}` : 'Anonymous';
       actions = [
         (<Col xs={1} key={1}>
           {edit}
