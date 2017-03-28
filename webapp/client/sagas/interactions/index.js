@@ -142,10 +142,13 @@ function *deletePost(params) {
 }
 
 function *handleTabChange(params) {
-  if (!params.payload.pathname.match(/\/interactions\/.+/)) {
-    const post = yield select(selectors.getSelectedPost);
-    if (post) {
+  const post = yield select(selectors.getSelectedPost);
+  if (post) {
+    if (!params.payload.pathname.match(`/\/interactions\/${post.post_guid}.+/`)
+      && params.payload.action !== 'REPLACE') {
       yield put(userActions.unsubscribeChannel(`post_${post.post_guid}:post-update`));
+      yield put(userActions.unsubscribeChannel(`post_${post.post_guid}:comment-update`));
+      yield put(interactionsActions.clearSinglePost(post.post_guid));
     }
   }
 }

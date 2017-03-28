@@ -44,6 +44,8 @@ export const POST_UPDATE = 'POST_UPDATE';
 export const COMMENT_UPDATE = 'COMMENT_UPDATE';
 export const FETCH_SINGLE_COMMENT_RESPONSE = 'FETCH_SINGLE_COMMENT_RESPONSE';
 
+export const CLEAR_SINGLE_POST = 'CLEAR_SINGLE_POST';
+
 export function postFormToggle() {
   return {
     type: CREATE_POST_TOGGLE
@@ -269,5 +271,12 @@ export function fetchSingleCommentResponse(comment) {
   return {
     type: FETCH_SINGLE_COMMENT_RESPONSE,
     comment
+  }
+}
+
+export function clearSinglePost(postGuid) {
+  return {
+    type: CLEAR_SINGLE_POST,
+    postGuid
   }
 }

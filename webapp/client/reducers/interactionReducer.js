@@ -97,7 +97,11 @@ export default function interactionReducer(state = initialState, action) {
       }
     }
     case actions.FETCH_SINGLE_POST_REQUEST: {
-      return {...state, postLoading: true}
+      return {
+        ...state,
+        selectedPost: null,
+        postLoading: true
+      }
     }
     case actions.FETCH_SINGLE_POST_RESPONSE: {
       if(action.response.error) {
@@ -208,6 +212,16 @@ export default function interactionReducer(state = initialState, action) {
         postLoading: false
       }
     }
+    case actions.CLEAR_SINGLE_POST: {
+      if(state.selectedPost && state.selectedPost.post_guid === action.postGuid)
+      {
+        return {
+          ...state,
+          selectedPost: null
+        }
+      }
+      return state;
+    }
     case actions.ADD_COMMENT_TOGGLE: {
       return {
         ...state,
@@ -262,7 +276,8 @@ export default function interactionReducer(state = initialState, action) {
         return {
           ...initialState,
           tags: state.tags,
-          filters: state.filters
+          filters: state.filters,
+          selectedPost: state.selectedPost
         }
       }
       return state

@@ -30,12 +30,23 @@ class InteractionSingle extends Component {
         show: false,
         label: ''
       },
-      showConfirmation: false
+      showConfirmation: false,
+      postGuid: null
     };
   }
   componentWillMount() {
+    this.setState({postGuid: this.props.params.postGuid})
     this.fetchPost(this.props.params.postGuid);
   }
+
+  componentWillUpdate() {
+    const newPostGuid = this.props.params.postGuid;
+    if (this.state.postGuid != newPostGuid) {
+      this.setState({postGuid: newPostGuid});
+      this.fetchPost(newPostGuid);
+    }
+  }
+
   get styles() {
     return {
       postTitle: {
