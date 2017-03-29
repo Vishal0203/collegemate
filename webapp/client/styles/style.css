@@ -137,7 +137,12 @@ body {
 }
 
 .post-content p {
-    margin: 0;
+    margin: 6px 0;
+    line-height: 18px;
+}
+
+.post-content li {
+    padding: 5px 0;
 }
 
 .post-content p code {

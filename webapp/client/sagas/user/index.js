@@ -1,11 +1,13 @@
 import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {put, call, select, fork} from 'redux-saga/effects';
 
-import {toggleSnackbar} from '../../actions/snackbar/index';
 import * as userActions from '../../actions/users/index';
 import * as announcementActions from '../../actions/announcements/index';
 import * as interactionsActions from '../../actions/interactions/index';
 import * as notificationActions from '../../actions/notifications/index';
+import {toggleErrorDialog, toggleSnackbar} from '../../actions/commons/index';
+
+import {FEEDBACK_SUBMIT_REQUEST} from '../../actions/commons/index';
 
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
@@ -66,6 +68,9 @@ function *updateUserProfile(params) {
     yield put(userActions.updateUserProfileResponse(response.data.user));
     yield put(toggleSnackbar('Your profile has been updated.'));
   }
+  else {
+    yield put(toggleErrorDialog());
+  }
 }
 
 function *logoutUser() {
@@ -75,6 +80,9 @@ function *logoutUser() {
     GoogleAuth.signOut();
     yield put(userActions.userLogoutResponse());
     hashHistory.push('/login');
+  }
+  else {
+    yield put(toggleErrorDialog());
   }
 }
 
@@ -92,6 +100,9 @@ function *createAnnouncementCategory(params) {
 
     yield put(announcementActions.reloadAnnouncements());
     yield put(toggleSnackbar(`New announcement category ${response.data.category.category_type} has been created.`));
+  }
+  else {
+    yield put(toggleErrorDialog());
   }
 }
 
@@ -111,7 +122,22 @@ function *removeAnnouncementCategory(params) {
     selected_institute = yield select(selectors.selected_institute);
     yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
   }
+  else {
+    yield put(toggleErrorDialog());
+  }
   yield put(toggleSnackbar(response.data.message))
+}
+
+function *handleFeedbackSubmit(params) {
+  let formData = new FormData();
+  formData.append('type', params.data.type);
+  formData.append('feedback_message', params.data.feedback_message);
+  formData.append('feedback_attachment', params.data.feedback_attachment[0]);
+
+  const response = yield call(HttpHelper, 'feedback', 'POST', formData, null);
+  if (response.status === 200) {
+    yield put(toggleSnackbar(response.data.success));
+  }
 }
 
 /*
@@ -142,6 +168,10 @@ function *watchDeleteAnnouncementCategory() {
   yield *takeLatest(userActions.REMOVE_ANNOUNCEMENT_CATEGORY_REQUEST, removeAnnouncementCategory)
 }
 
+function *watchFeedbackSubmit() {
+  yield *takeLatest(FEEDBACK_SUBMIT_REQUEST, handleFeedbackSubmit)
+}
+
 export default function *userSaga() {
   yield [
     fork(watchGoogleAuth),
@@ -150,5 +180,6 @@ export default function *userSaga() {
     fork(watchProfileUpdate),
     fork(watchCreateAnnouncementCategory),
     fork(watchDeleteAnnouncementCategory),
+    fork(watchFeedbackSubmit)
   ]
 }

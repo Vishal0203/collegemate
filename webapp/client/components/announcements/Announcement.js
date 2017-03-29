@@ -24,7 +24,7 @@ class Announcement extends React.Component {
   get styles() {
     return {
       notificationDescription: {
-        padding: '12px 18px 12px 18px',
+        padding: '0 18px',
         textAlign: 'justify'
       },
       notificationAttachment: {

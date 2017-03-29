@@ -10,7 +10,7 @@ import Divider from 'material-ui/Divider';
 import StickyDiv from 'react-stickydiv';
 import * as interactionActions  from '../../actions/interactions/index';
 import InteractionPost from './InteractionPost';
-import {toggleSnackbar} from '../../actions/snackbar';
+import {toggleSnackbar} from '../../actions/commons/index';
 import Paper from 'material-ui/Paper';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';

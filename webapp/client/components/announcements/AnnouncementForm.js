@@ -145,7 +145,7 @@ class AnnouncementForm extends React.Component {
               </FlatButton>
               <label style={{paddingLeft: 10, fontSize: 12, display: 'table-cell', verticalAlign: 'middle'}}
                      ref="chosenFiles">
-                <i style={{color: '#c6c6c6'}}>No file chosen</i>
+                <em style={{color: '#c6c6c6'}}>No file chosen</em>
               </label>
             </Col>
           </CardText>

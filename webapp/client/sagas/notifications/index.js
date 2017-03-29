@@ -1,7 +1,7 @@
 import {takeLatest} from 'redux-saga';
 import {put, call, select, fork} from 'redux-saga/effects';
 import * as notificationActions from '../../actions/notifications/index';
-import {toggleSnackbar} from '../../actions/snackbar/index';
+import {toggleSnackbar} from '../../actions/commons/index';
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
 

@@ -2,7 +2,8 @@ import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
 import {put, call, select, fork} from 'redux-saga/effects';
 
 import * as userActions from '../../actions/users/index';
-import {toggleSnackbar} from '../../actions/snackbar/index';
+import {toggleSnackbar} from '../../actions/commons/index';
+import {toggleErrorDialog} from '../../actions/commons/index';
 import * as announcementActions from '../../actions/announcements/index';
 
 import {HttpHelper} from '../utils/apis';
@@ -25,6 +26,9 @@ function *createAnnouncement(params) {
   if (response.status == 200) {
     yield put(announcementActions.announcementFormToggle())
   }
+  else {
+    yield put(toggleErrorDialog());
+  }
 }
 
 function *fetchAnnouncements(params) {
@@ -45,6 +49,9 @@ function *subscribeAnnouncement(params) {
     yield put(announcementActions.reloadAnnouncements());
     yield put(toggleSnackbar(`You are subscribed to ${response.data.category.category_type}`));
   }
+  else {
+    yield put(toggleErrorDialog());
+  }
 }
 
 function *unsubscribeAnnouncement(params) {
@@ -59,6 +66,9 @@ function *unsubscribeAnnouncement(params) {
 
     yield put(announcementActions.reloadAnnouncements());
     yield put(toggleSnackbar(`You unsubscribed to ${response.data.category.category_type}`));
+  }
+  else {
+    yield put(toggleErrorDialog());
   }
 }
 

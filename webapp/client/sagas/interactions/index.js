@@ -2,7 +2,7 @@ import {takeEvery, takeLatest} from 'redux-saga';
 import {fork, put, call, select} from 'redux-saga/effects';
 
 import * as userActions from '../../actions/users/index';
-import {toggleSnackbar} from '../../actions/snackbar/index';
+import {toggleSnackbar} from '../../actions/commons/index';
 import * as interactionsActions from '../../actions/interactions/index';
 
 import {HttpHelper} from '../utils/apis';
@@ -32,6 +32,9 @@ function *createPost(params) {
 
   if (response.status === 200) {
     yield put(interactionsActions.postFormToggle())
+  }
+  else {
+    yield put(toggleErrorDialog());
   }
 }
 

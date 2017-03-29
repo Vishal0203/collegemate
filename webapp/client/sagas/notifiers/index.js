@@ -1,6 +1,6 @@
 import {takeLatest} from 'redux-saga';
 import {put, call, fork} from 'redux-saga/effects';
-import {toggleSnackbar} from '../../actions/snackbar/index';
+import {toggleSnackbar} from '../../actions/commons/index';
 import {HttpHelper} from '../utils/apis';
 import * as userActions from '../../actions/users/index';
 

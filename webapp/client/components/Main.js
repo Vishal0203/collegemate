@@ -7,10 +7,12 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Snackbar from 'material-ui/Snackbar';
 import Navbar from './Navbar';
 import muiTheme from '../styles/theme/collegemate.theme';
-import {toggleSnackbar} from '../actions/snackbar'
+import {toggleSnackbar, toggleErrorDialog} from '../actions/commons/index';
 import {hashHistory} from 'react-router';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import Loader from 'halogen/ScaleLoader';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import tz from 'moment-timezone';
 
 class Main extends React.Component {
@@ -46,12 +48,14 @@ class Main extends React.Component {
 
   renderQuote() {
     const quotes = [
-      'You look amazing today!',
+      'You look amazing today.',
       'How\'s the day going?',
       'Starting our engines, hold tight!',
       'You\'re the best human alive!',
       'Bad days don\'t stay for long.',
-      'Improvise, Adapt, Overcome.'
+      'Improvise, Adapt, Overcome.',
+      'Have a great day ahead.',
+      'Make someone smile today.'
     ];
 
     return quotes[Math.floor(Math.random() * quotes.length)];
@@ -59,6 +63,10 @@ class Main extends React.Component {
 
   renderMainContent() {
     if (Object.keys(this.props.auth_user.user).length !== 0) {
+      const actions = [
+        <FlatButton label="Okay!" primary={true} onTouchTap={this.props.actions.toggleErrorDialog}/>
+      ];
+
       return (
         <MuiThemeProvider muiTheme={muiTheme}>
           <div>
@@ -70,6 +78,13 @@ class Main extends React.Component {
               autoHideDuration={4000}
               onRequestClose={() => this.props.actions.toggleSnackbar()}
             />
+            <Dialog
+              modal={true}
+              actions={actions}
+              open={this.props.errorDialog.open}
+              onRequestClose={() => this.props.actions.toggleErrorDialog()}>
+              Oops, something went wrong. We will have a look at it!
+            </Dialog>
           </div>
         </MuiThemeProvider>
       )
@@ -96,12 +111,13 @@ function mapStateToProps(state) {
   return {
     auth_user: state.auth_user,
     snackbar: state.snackbar,
+    errorDialog: state.errorDialog,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...userActions, toggleSnackbar}, dispatch)
+    actions: bindActionCreators({...userActions, toggleSnackbar, toggleErrorDialog}, dispatch)
   };
 }
 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import moment from 'moment';
 import {bindActionCreators} from 'redux';
+import moment from 'moment';
 import Loader from 'halogen/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import StickyDiv from 'react-stickydiv';
@@ -17,7 +17,7 @@ import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import Dialog from 'material-ui/Dialog';
 import PostUpdateDialog from './PostUpdateDialog';
-import {toggleSnackbar} from '../../actions/snackbar';
+import {toggleSnackbar} from '../../actions/commons/index';
 import Avatar from 'material-ui/Avatar';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
@@ -41,7 +41,7 @@ class InteractionSingle extends Component {
 
   componentWillUpdate() {
     const newPostGuid = this.props.params.postGuid;
-    if (this.state.postGuid != newPostGuid) {
+    if (this.state.postGuid !== newPostGuid) {
       this.setState({postGuid: newPostGuid});
       this.fetchPost(newPostGuid);
     }

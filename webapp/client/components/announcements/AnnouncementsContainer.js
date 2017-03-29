@@ -24,7 +24,7 @@ import {
   unsubscribeAnnouncementRequest,
   createAnnouncementCategoryRequest
 } from '../../actions/users/index';
-import {toggleSnackbar} from '../../actions/snackbar/index'
+import {toggleSnackbar} from '../../actions/commons/index'
 
 class AnnouncementsContainer extends Component {
   constructor(props) {

@@ -30,6 +30,8 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::put('read_notifications', 'UserProfileController@readNotifications');
     Route::put('read_all_notifications', 'UserProfileController@readAllNotifications');
 
+    Route::post('feedback', 'FeedbackController@create');
+
     Route::resource(
         'institutes',
         'InstituteController',
