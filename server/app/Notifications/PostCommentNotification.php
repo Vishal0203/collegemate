@@ -6,6 +6,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
+use App\Mail\NewCommentOnPost;
 
 class PostCommentNotification extends Notification implements ShouldQueue
 {
@@ -32,7 +34,7 @@ class PostCommentNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        return ['database', 'broadcast','mail'];
     }
 
     /**
@@ -58,5 +60,12 @@ class PostCommentNotification extends Notification implements ShouldQueue
             ],
             'message' => 'New answer on post "' . substr($this->post['post_heading'], 0, 40) .  '..."'
         ]);
+    }
+
+    public function toMail($notifiable)
+    {
+        $Line1 = "A new Comment in";
+        $Line1 = $Line1 ." ". $this->post['post_heading'];
+        return (new NewCommentOnPost($notifiable, $this->post))->to($notifiable->email);
     }
 }
