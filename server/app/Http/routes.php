@@ -86,6 +86,8 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::get('get_counts', 'DashboardController@getCounts');
         Route::get('get_countPerCategory', 'DashboardController@getCountPerCategory');
 
+        Route::get('get_next_events', 'NotificationController@getNextEvents');
+        Route::get('get_events_in_range', 'NotificationController@getEventsInRange');
         Route::get('category_notifications', 'NotificationController@categoryNotifications');
         Route::resource(
             'notification',

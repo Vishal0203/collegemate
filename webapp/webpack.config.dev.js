@@ -44,13 +44,7 @@ module.exports = {
       {
         test: /\.css$/,
         loader: 'style-loader!css-loader',
-        include: path.join(__dirname, 'client')
-      },
-      // CSS
-      {
-        test: /\.css$/,
-        loader: 'style!css?modules',
-        include: /flexboxgrid/
+        include: [path.join(__dirname, 'client'), /node_modules/]
       },
       // statics
       {

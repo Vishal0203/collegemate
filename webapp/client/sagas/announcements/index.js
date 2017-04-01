@@ -14,11 +14,13 @@ function *createAnnouncement(params) {
   let data = new FormData();
   data.append('category_guid', params.formData.notificationCategory);
   data.append('notification_head', params.formData.notificationHeader);
-  data.append('notification_body', params.formData.notificationBody,);
+  data.append('notification_body', params.formData.notificationBody);
+  if (params.formData.eventDate) {
+    data.append('event_date', params.formData.eventDate);
+  }
   for (let i = 0; i < params.formData.notificationAttachments.length; i++) {
     data.append('notification_files[]', params.formData.notificationAttachments[i]);
   }
-
   const response = yield call(
     HttpHelper, `institute/${params.formData.instituteGuid}/notification`, 'POST', data, null
   );
@@ -35,6 +37,17 @@ function *fetchAnnouncements(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
   yield put(announcementActions.fetchAnnouncementResponse(response.data));
 }
+
+function *fetchSingleAnnouncement(params) {
+  const response = yield call(HttpHelper, params.url, 'GET', null, null);
+  yield put(announcementActions.fetchSingleAnnouncementResponse(response.data));
+}
+
+function *fetchEvents(params) {
+  const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
+  yield put(announcementActions.fetchEventsResponse(response.data));
+}
+
 
 function *subscribeAnnouncement(params) {
   const response = yield call(HttpHelper, `category/${params.category}/subscribe`, 'POST', null, null);
@@ -84,6 +97,14 @@ function *watchAnnouncementFetch() {
   yield *takeLatest(announcementActions.FETCH_ANNOUNCEMENTS_REQUEST, fetchAnnouncements);
 }
 
+function *watchSingleAnnouncementFetch() {
+  yield *takeLatest(announcementActions.FETCH_SINGLE_ANNOUNCEMENT_REQUEST, fetchSingleAnnouncement)
+}
+
+function *watchEventsFetch() {
+  yield *takeLatest(announcementActions.FETCH_EVENTS_REQUEST, fetchEvents);
+}
+
 function *watchAnnouncementChannelSubscribe() {
   yield *takeEvery(userActions.SUBSCRIBE_ANNOUNCEMNET_REQUEST, subscribeAnnouncement)
 }
@@ -96,7 +117,9 @@ export default function *announcementSaga() {
   yield [
     fork(watchCreateAnnouncement),
     fork(watchAnnouncementFetch),
+    fork(watchEventsFetch),
     fork(watchAnnouncementChannelSubscribe),
     fork(watchAnnouncementChannelUnsubscribe),
+    fork(watchSingleAnnouncementFetch)
   ]
 }

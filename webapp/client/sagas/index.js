@@ -6,6 +6,7 @@ import socketSaga from './socket/index';
 import userSaga from './user/index';
 import notificationSaga from './notifications/index';
 import notifiersSaga from './notifiers/index';
+import eventsSaga from './events/index';
 
 export default function *rootSaga() {
   yield [
@@ -16,5 +17,6 @@ export default function *rootSaga() {
     fork(userSaga),
     fork(notificationSaga),
     fork(notifiersSaga),
+    fork(eventsSaga),
   ]
 }

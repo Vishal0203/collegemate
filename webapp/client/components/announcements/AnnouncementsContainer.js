@@ -15,8 +15,10 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import {grey500} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
 import Branding from '../Branding';
+import Events from './Events';
 
 import SubscriptionForm from '../settings/SubscriptionForm';
 import {
@@ -48,6 +50,7 @@ class AnnouncementsContainer extends Component {
       hashHistory.replace('/settings');
       this.props.actions.toggleSnackbar('Your account is pending approval from your institute.')
     }
+    this.fetchEvents();
   }
 
   get styles() {
@@ -71,6 +74,16 @@ class AnnouncementsContainer extends Component {
         color: '#9E9E9E'
       }
     }
+  }
+
+  fetchEvents() {
+    const category_guid = this.props.announcements.categories.map(function (category) {
+      return category.category_guid
+    }).join(',');
+    const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
+    let url = `institute/${institute_guid}/get_next_events`;
+
+    this.props.actions.fetchEventsRequest(url, {category_guid});
   }
 
   toggleAnnouncementSettings(visibility) {
@@ -227,8 +240,15 @@ class AnnouncementsContainer extends Component {
                   </InfiniteScroll>
                 </Col>
                 <Col xs={4}>
-                  <StickyDiv zIndex={1} offsetTop={65}>
-                    <div className="right-content">
+                  <div className="right-content">
+                    {
+                      this.props.announcements.eventsLoader ?
+                        loader :
+                        <Events style={{marginTop: 14}}
+                                events={this.props.announcements.events}
+                                auth_user={this.props.auth_user}/>
+                    }
+                    <StickyDiv zIndex={1} offsetTop={65}>
                       <label>Currently Showing</label>
                       <Divider style={{marginTop: 2, marginBottom: 2}}/>
                       <div style={this.styles.wrapper}>
@@ -242,15 +262,15 @@ class AnnouncementsContainer extends Component {
                           <IconButton iconStyle={{color: grey500, fontSize: 20}}
                                       style={{width: 29, height: 29, padding: 0}}
                                       tooltip="Subscriptions">
-                            <i className="material-icons" onTouchTap={() => this.toggleAnnouncementSettings(true)}>
+                            <FontIcon className="material-icons" onTouchTap={() => this.toggleAnnouncementSettings(true)}>
                               settings
-                            </i>
+                            </FontIcon>
                           </IconButton>
                         </div>
                       </div>
                       <Branding />
-                    </div>
-                  </StickyDiv>
+                    </StickyDiv>
+                  </div>
                 </Col>
               </Row>
             </div>

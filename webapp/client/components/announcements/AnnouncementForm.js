@@ -3,12 +3,16 @@ import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card/index';
 import MenuItem from 'material-ui/MenuItem';
 import {Col, Row} from 'react-flexbox-grid';
 import FlatButton from 'material-ui/FlatButton';
+import Checkbox from 'material-ui/Checkbox';
+import {grey600} from 'material-ui/styles/colors';
 import Formsy from 'formsy-react';
-import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
+import {FormsySelect, FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
 import RichEditor from '../rte/RichEditor';
 import {EditorState, CompositeDecorator} from 'draft-js';
 import {stateToHTML} from 'draft-js-export-html';
 import {Link, findLinkEntities} from '../rte/CommonUtils';
+import DatePicker from 'material-ui/DatePicker';
+import moment from 'moment';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {
@@ -24,7 +28,9 @@ class AnnouncementForm extends React.Component {
 
     this.state = {
       editorState: EditorState.createEmpty(decorator),
-      canSubmit: false
+      canSubmit: false,
+      eventChecked: false,
+      eventDate: moment()
     };
 
     this.onChange = (editorState) => this.setState({editorState});
@@ -49,18 +55,34 @@ class AnnouncementForm extends React.Component {
         left: 0,
         width: '100%',
         opacity: 0,
+      },
+      eventToggle: {
+        margin: '12px 0 8px 6px',
+        fontWeight: 300,
+        width: 170,
+        fontSize: 14
+      },
+      eventDatePicker: {
+        margin: '10px 0px 0px 50px',
+        display: 'inline',
+        position: 'relative'
       }
     }
   }
 
   handleAnnouncementSubmit(data) {
+    if (data.is_event && !this.refs.eventDate.state.date) {
+      this.parentProps.actions.toggleSnackbar('Please select the event Date');
+      return;
+    }
+
     const formData = {
       ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
+      eventDate: this.state.eventChecked ? moment(this.state.eventDate).format('YYYY-MM-DD') : null,
       notificationBody: stateToHTML(this.state.editorState.getCurrentContent()),
       notificationAttachments: this.refs.notificationAttachments.files
     };
-
     if (formData.notificationBody === '<p><br></p>') {
       this.parentProps.actions.toggleSnackbar('Announcement body can\'t be left empty.')
     } else {
@@ -80,6 +102,13 @@ class AnnouncementForm extends React.Component {
       ...this.state,
       canSubmit: false
     })
+  }
+
+  toggleEvent(isInputChecked) {
+    this.setState({eventChecked: isInputChecked});
+    if (isInputChecked) {
+      this.refs.eventDate.openDialog();
+    }
   }
 
   onFileSelect(e) {
@@ -126,13 +155,28 @@ class AnnouncementForm extends React.Component {
                 editorState={this.state.editorState}
                 onChange={this.onChange}
               />
-
-              <FormsySelect style={{marginTop: 10}} name="notificationCategory" hintText="Choose Category" required>
-                {notifying_categories.map((category, i) =>
-                  <MenuItem key={i} value={category.category_guid} primaryText={category.category_type}/>)}
-              </FormsySelect>
-
-              <br/>
+              <Row style={{paddingLeft: 10}}>
+                <FormsySelect style={{marginTop: 10}} name="notificationCategory" hintText="Choose Category" required>
+                  {notifying_categories.map((category, i) =>
+                    <MenuItem key={i} value={category.category_guid} primaryText={category.category_type}/>)}
+                </FormsySelect>
+                <DatePicker
+                  hintText="Event Date"
+                  name="event_date"
+                  ref="eventDate"
+                  style={{display: 'none'}}
+                  shouldDisableDate={(date) => {
+                    return (moment(date).diff(moment().startOf('day'), 'days') < 0)
+                  }}
+                  formatDate={new global.Intl.DateTimeFormat('en-US', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  }).format}
+                  onDismiss={() => this.setState({eventChecked: false})}
+                  onChange={(event, date) => this.setState({eventDate: date})}
+                />
+              </Row>
               <br/>
               <FlatButton
                 className="attach-btn"
@@ -148,9 +192,25 @@ class AnnouncementForm extends React.Component {
                      ref="chosenFiles">
                 <em style={{color: '#c6c6c6'}}>No file chosen</em>
               </label>
+              {this.state.eventChecked ?
+                <p style={{margin: '16px 0 0', fontSize: 12, color: grey600}}>
+                  This announcement will create an entry in events calendar on &nbsp;
+                  <a href="javascript:void(0);" onClick={() => this.refs.eventDate.openDialog()}>
+                    {moment(this.state.eventDate).format('MMMM Do YYYY')}
+                  </a>.
+                </p> : null}
             </Col>
           </CardText>
           <CardActions style={{textAlign: 'right'}}>
+            <Checkbox
+              className='event-checkbox'
+              checked={this.state.eventChecked}
+              iconStyle={{width: 22, height: 22, marginRight: 10}}
+              labelStyle={{fontSize: 14}}
+              style={{display: 'inline-block', width: 180, textAlign: 'left'}}
+              label="Make this an event"
+              onCheck={(event, isInputChecked) => this.toggleEvent(isInputChecked)}
+            />
             <FlatButton
               label="Cancel"
               secondary={true}

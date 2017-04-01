@@ -35,7 +35,7 @@ class Header extends Component {
     switch (type) {
       case 'Announcement': {
         if (hasButton && parentProps.announcements.toggleForm) {
-          headerHeight = {height: '320px'};
+          headerHeight = {height: '370px'};
           actionButton = '';
           form = (
             <Grid>
