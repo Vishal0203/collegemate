@@ -6,7 +6,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
-import {FormsyText} from 'formsy-material-ui/lib';
+import {FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
 import FontIcon from 'material-ui/FontIcon';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -93,7 +93,7 @@ class SubscriptionForm extends Component {
                   autoComplete="off"
                 />
               </Col>
-              <Col xs={6}>
+              <Col xs={8}>
                 <FormsyText
                   hintText="Category Description"
                   name="category_desc"
@@ -102,12 +102,22 @@ class SubscriptionForm extends Component {
                   autoComplete="off"
                 />
               </Col>
-              <Col xs={2}>
+            </Row>
+            <Row style={{padding: '0 16px 16px'}}>
+              <Col xs={4}>
+                <FormsyToggle
+                  style={this.styles.formField}
+                  name="private"
+                  label="Make private category"
+                />
+              </Col>
+            </Row>
+            <Row style={{padding: '0 16px 16px'}}>
+              <Col xs={8}>
                 <RaisedButton
                   type="submit"
                   label="Create"
                   disabled={!this.state.canSubmit}
-                  fullWidth={true}
                   buttonStyle={{height: '30px', lineHeight: '30px'}}
                   labelStyle={{fontSize: 11}}
                   style={{marginTop: 12}}
