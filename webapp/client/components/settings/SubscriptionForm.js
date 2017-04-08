@@ -7,9 +7,11 @@ import FlatButton from 'material-ui/FlatButton';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
 import {FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
+import ChipInput from 'material-ui-chip-input';
 import FontIcon from 'material-ui/FontIcon';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
+import Chip from 'material-ui/Chip'
 import IconButton from 'material-ui/IconButton';
 import {grey500, grey600} from 'material-ui/styles/colors'
 import CategoryNotifiersDialog from './CategoryNotifiersDialog';
@@ -21,7 +23,8 @@ class SubscriptionForm extends Component {
       category: null,
       canSubmit: false,
       deletionConfirmation: false,
-      deletionCategory: null
+      deletionCategory: null,
+      private_category: null
     }
   }
 
@@ -31,6 +34,11 @@ class SubscriptionForm extends Component {
         fontSize: 14,
         fontWeight: 300,
         width: '100%',
+      },
+      chipLabel: {
+        lineHeight: '28px',
+        color: '#757575',
+        fontSize: 13
       }
     }
   }
@@ -72,6 +80,39 @@ class SubscriptionForm extends Component {
     this.setState({category});
   }
 
+  handleChipChange(chips) {
+    console.log(chips)
+  }
+
+  renderUsersAdditionForm() {
+    if (this.state.private_category) {
+      return (
+        <Row style={{padding: '0 16px 16px'}}>
+          <Col xs={12}>
+            <ChipInput
+              fullWidth
+              hintText="Email id's of the users to be notified by this category"
+              newChipKeyCodes={[13, 32, 188]}
+              style={this.styles.formField}
+              onChange={(chips) => this.handleChipChange(chips)}
+              chipRenderer={({text, value, isFocused, isDisabled, handleClick, handleRequestDelete}, key) => (
+                <Chip
+                  key={key}
+                  className="chip"
+                  labelStyle={this.styles.chipLabel}
+                  onTouchTap={handleClick}
+                  onRequestDelete={handleRequestDelete}
+                >
+                  {text}
+                </Chip>
+              )}
+            />
+          </Col>
+        </Row>
+      )
+    }
+  }
+
   renderCreateCategoryForm() {
     const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
     if (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff') {
@@ -103,20 +144,23 @@ class SubscriptionForm extends Component {
                 />
               </Col>
             </Row>
+            {this.renderUsersAdditionForm()}
             <Row style={{padding: '0 16px 16px'}}>
               <Col xs={4}>
                 <FormsyToggle
                   style={this.styles.formField}
                   name="private"
                   label="Make private category"
+                  onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
                 />
               </Col>
             </Row>
             <Row style={{padding: '0 16px 16px'}}>
-              <Col xs={8}>
+              <Col xs={2}>
                 <RaisedButton
                   type="submit"
                   label="Create"
+                  fullWidth={true}
                   disabled={!this.state.canSubmit}
                   buttonStyle={{height: '30px', lineHeight: '30px'}}
                   labelStyle={{fontSize: 11}}
@@ -268,10 +312,10 @@ class SubscriptionForm extends Component {
           </TableRowColumn>
           {
             this.props.showOptions ? (
-                <TableRowColumn>
-                  {this.renderOptions(category, subscribed_as)}
-                </TableRowColumn>
-              ) : null
+              <TableRowColumn>
+                {this.renderOptions(category, subscribed_as)}
+              </TableRowColumn>
+            ) : null
           }
 
         </TableRow>
