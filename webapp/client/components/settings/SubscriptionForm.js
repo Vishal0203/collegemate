@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
 import Toggle from 'material-ui/Toggle';
 import Subheader from 'material-ui/Subheader';
@@ -24,7 +25,8 @@ class SubscriptionForm extends Component {
       canSubmit: false,
       deletionConfirmation: false,
       deletionCategory: null,
-      private_category: null
+      private_category: null,
+      email_ids: []
     }
   }
 
@@ -52,6 +54,7 @@ class SubscriptionForm extends Component {
   }
 
   handleCategoryCreate(data) {
+    data = {...data, email_ids: this.state.email_ids};
     this.props.parentProps.actions.createAnnouncementCategoryRequest(data)
   }
 
@@ -80,8 +83,8 @@ class SubscriptionForm extends Component {
     this.setState({category});
   }
 
-  handleChipChange(chips) {
-    console.log(chips)
+  handleChipChange(email_ids) {
+    this.setState({email_ids})
   }
 
   renderUsersAdditionForm() {
@@ -91,6 +94,8 @@ class SubscriptionForm extends Component {
           <Col xs={12}>
             <ChipInput
               fullWidth
+              defaultValue={this.state.email_ids}
+              spellCheck={false}
               hintText="Email id's of the users to be notified by this category"
               newChipKeyCodes={[13, 32, 188]}
               style={this.styles.formField}
@@ -144,7 +149,12 @@ class SubscriptionForm extends Component {
                 />
               </Col>
             </Row>
-            {this.renderUsersAdditionForm()}
+            <ReactCSSTransitionGroup
+              transitionName='fieldAnimation'
+              transitionEnterTimeout={600}
+              transitionLeaveTimeout={500}>
+              {this.renderUsersAdditionForm()}
+            </ReactCSSTransitionGroup>
             <Row style={{padding: '0 16px 16px'}}>
               <Col xs={4}>
                 <FormsyToggle
@@ -159,7 +169,7 @@ class SubscriptionForm extends Component {
               <Col xs={2}>
                 <RaisedButton
                   type="submit"
-                  label="Create"
+                  label="Create Category"
                   fullWidth={true}
                   disabled={!this.state.canSubmit}
                   buttonStyle={{height: '30px', lineHeight: '30px'}}
