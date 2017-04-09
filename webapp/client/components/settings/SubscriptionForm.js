@@ -14,7 +14,7 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Chip from 'material-ui/Chip'
 import IconButton from 'material-ui/IconButton';
-import {grey500, grey600} from 'material-ui/styles/colors'
+import {grey500, grey600, red500} from 'material-ui/styles/colors'
 import CategoryNotifiersDialog from './CategoryNotifiersDialog';
 
 class SubscriptionForm extends Component {
@@ -41,6 +41,15 @@ class SubscriptionForm extends Component {
         lineHeight: '28px',
         color: '#757575',
         fontSize: 13
+      },
+      privateLabel: {
+        borderStyle: 'solid',
+        borderRadius: 4,
+        borderWidth: 'thin',
+        padding: 2,
+        fontSize: 'smaller',
+        color: red500,
+        marginLeft: 10
       }
     }
   }
@@ -54,8 +63,12 @@ class SubscriptionForm extends Component {
   }
 
   handleCategoryCreate(data) {
-    data = {...data, email_ids: this.state.email_ids};
-    this.props.parentProps.actions.createAnnouncementCategoryRequest(data)
+    if (this.state.email_ids.length < 2) {
+      this.props.parentProps.actions.toggleSnackbar('There should be atleast 2 recepients for a private category.')
+    } else {
+      data = {...data, email_ids: this.state.email_ids};
+      this.props.parentProps.actions.createAnnouncementCategoryRequest(data)
+    }
   }
 
   enableButton() {
@@ -96,7 +109,7 @@ class SubscriptionForm extends Component {
               fullWidth
               defaultValue={this.state.email_ids}
               spellCheck={false}
-              hintText="Email id's of the users to be notified by this category"
+              hintText="Email id's of the users to be notified by this category (Users should already be registered on College Mate)"
               newChipKeyCodes={[13, 32, 188]}
               style={this.styles.formField}
               onChange={(chips) => this.handleChipChange(chips)}
@@ -289,6 +302,7 @@ class SubscriptionForm extends Component {
       let subscribed_as = 'Not Subscribed';
       let disabled = category.disabled;
       let toggle = false;
+      category.private = !!category.private;
       for (let i = 0; i < subscriptions.length; i++) {
         if (category.category_guid === subscriptions[i].category_guid) {
           subscribed_as = 'Recipient';
@@ -306,15 +320,22 @@ class SubscriptionForm extends Component {
         }
       }
 
+      disabled = disabled || category.private;
+
       category_list.push(
-        <TableRow key={index}>
-          <TableRowColumn style={{textTransform: 'capitalize'}}>
-            {category.category_type}
+        <TableRow key={index} style={{height: 55}}>
+          <TableRowColumn style={{textTransform: 'capitalize', lineHeight: '16px'}}>
+            {category.category_type} {category.private ? <span style={this.styles.privateLabel}>Private</span> : <span/>}
             <p style={{margin: '4px 0', fontSize: 'smaller', color: grey500}}>
               {category.creator.first_name} {category.creator.last_name}
             </p>
           </TableRowColumn>
-          <TableRowColumn>{subscribed_as}</TableRowColumn>
+          <TableRowColumn>
+            {subscribed_as}
+            <p style={{margin: '4px 0', fontSize: 'smaller', color: grey500}}>
+              {category.subscribers_count} {category.subscribers_count === 1 ? 'subscriber' : 'subscribers'}
+            </p>
+          </TableRowColumn>
           <TableRowColumn>
             <Toggle disabled={disabled} defaultToggled={toggle}
                     data-toggled={toggle}
@@ -350,7 +371,12 @@ class SubscriptionForm extends Component {
                     Category Creator
                   </p>
                 </TableHeaderColumn>
-                <TableHeaderColumn style={{color: grey600}}>Subscribed As</TableHeaderColumn>
+                <TableHeaderColumn style={{color: grey600}}>
+                  Subscribed As
+                  <p style={{margin: '4px 0', fontSize: 'smaller', color: grey500}}>
+                    Number of subscribers
+                  </p>
+                </TableHeaderColumn>
                 <TableHeaderColumn style={{color: grey600}}>Status</TableHeaderColumn>
                 {
                   this.props.showOptions ?
