@@ -60,7 +60,7 @@ class Auth extends React.Component {
 
   oAuthSignIn() {
     const GoogleAuth = window.gapi.auth2.getAuthInstance();
-    GoogleAuth.signIn({scope: 'profile email'})
+    GoogleAuth.signIn({scope: 'profile email', prompt: 'select_account'})
       .then(
         (res) => {
           hashHistory.push('/');
