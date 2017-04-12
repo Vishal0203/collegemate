@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Card, CardTitle, CardText} from 'material-ui/Card';
 import Chip from 'material-ui/Chip';

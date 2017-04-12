@@ -45,7 +45,6 @@ class InteractionPost extends React.Component {
       },
       notificationPublisher: {
         padding: '10px 16px 12px 16px',
-        fontStyle: 'italic',
         color: '#a5a5a5',
         fontWeight: 300,
         fontSize: 13
@@ -55,7 +54,6 @@ class InteractionPost extends React.Component {
         marginTop: 6,
         color: 'rgba(0, 0, 0, 0.35)',
         fontWeight: 400,
-        fontStyle: 'italic',
         fontSize: 13
       },
       chipsContainer: {
@@ -125,6 +123,7 @@ class InteractionPost extends React.Component {
           </div>
           <div style={{width: '80%', flexBasis: '80%'}}>
             <CardHeader
+              className="post-header"
               onClick = {() => this.cardClick(post)}
               title={post.post_heading}
               subtitle={username}

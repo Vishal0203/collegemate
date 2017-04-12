@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
 import Toggle from 'material-ui/Toggle';
@@ -147,6 +147,7 @@ class SubscriptionForm extends Component {
                 <FormsyText
                   hintText="Category Type"
                   name="category_type"
+                  inputStyle={{boxShadow: 'none'}}
                   style={this.styles.formField}
                   required
                   autoComplete="off"
@@ -156,6 +157,7 @@ class SubscriptionForm extends Component {
                 <FormsyText
                   hintText="Category Description"
                   name="category_desc"
+                  inputStyle={{boxShadow: 'none'}}
                   style={this.styles.formField}
                   required
                   autoComplete="off"
@@ -179,7 +181,7 @@ class SubscriptionForm extends Component {
               </Col>
             </Row>
             <Row style={{padding: '0 16px 16px'}}>
-              <Col xs={2}>
+              <Col xs={3}>
                 <RaisedButton
                   type="submit"
                   label="Create Category"

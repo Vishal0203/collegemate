@@ -301,6 +301,7 @@ class InteractionSingle extends Component {
           <Card>
             <Row>
               <CardHeader
+                className="post-header"
                 title={post.post_heading}
                 subtitle={username}
                 avatar={
@@ -317,7 +318,7 @@ class InteractionSingle extends Component {
                 {votes}
               </div>
               <div style={{width: '85%', flexBasis: '85%', textAlign: 'justify'}}>
-                <CardText style={{paddingLeft: 0, paddingBottom: 10}}>
+                <CardText style={{padding: '10px 16px 10px 0'}}>
                   <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(post.post_description)}/>
                 </CardText>
                 <PostUpdateDialog

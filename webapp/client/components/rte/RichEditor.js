@@ -1,5 +1,6 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
+import {Editor, EditorState, RichUtils, getDefaultKeyBinding} from 'draft-js';
+import CodeUtils from 'draft-js-code';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Popover from 'material-ui/Popover';
@@ -17,6 +18,8 @@ export default class RichEditor extends React.Component {
 
     this.focus = () => this.refs.editor.focus();
 
+    this.keyBindingFn = (e) => this._keyBindingFn(e);
+    this.handleReturn = (e) => this._handleReturn(e);
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
     this.onTab = (e) => this._onTab(e);
     this.toggleBlockType = (type) => this._toggleBlockType(type);
@@ -108,9 +111,31 @@ export default class RichEditor extends React.Component {
     }
   }
 
+  _keyBindingFn(e) {
+    const {editorState} = this.props;
+    let command;
+
+    if (CodeUtils.hasSelectionInBlock(editorState)) {
+      command = CodeUtils.getKeyBinding(e);
+    }
+    if (command) {
+      return command;
+    }
+
+    return getDefaultKeyBinding(e);
+  }
+
   _handleKeyCommand(command) {
     const {editorState} = this.props;
-    const newState = RichUtils.handleKeyCommand(editorState, command);
+    let newState;
+    if (CodeUtils.hasSelectionInBlock(editorState)) {
+      newState = CodeUtils.handleKeyCommand(editorState, command)
+    }
+
+    if (!newState) {
+      newState = RichUtils.handleKeyCommand(editorState, command);
+    }
+
     if (newState) {
       this.props.onChange(newState);
       return true;
@@ -118,9 +143,30 @@ export default class RichEditor extends React.Component {
     return false;
   }
 
+  _handleReturn(e) {
+    const {editorState} = this.props;
+
+    if (!CodeUtils.hasSelectionInBlock(editorState)) {
+      return;
+    }
+
+    this.props.onChange(
+      CodeUtils.handleReturn(e, editorState)
+    );
+
+    return true;
+  }
+
   _onTab(e) {
-    const maxDepth = 4;
-    this.props.onChange(RichUtils.onTab(e, this.props.editorState, maxDepth));
+    const {editorState} = this.props;
+
+    if (!CodeUtils.hasSelectionInBlock(editorState)) {
+      return;
+    }
+
+    this.props.onChange(
+      CodeUtils.handleTab(e, editorState)
+    );
   }
 
   _toggleBlockType(blockType) {
@@ -210,7 +256,7 @@ export default class RichEditor extends React.Component {
     // Custom overrides for "code" style.
     const styleMap = {
       CODE: {
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        backgroundColor: 'rgba(243, 243, 243, 1)',
         fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
         fontSize: 14,
         padding: 2,
@@ -286,8 +332,10 @@ export default class RichEditor extends React.Component {
             blockStyleFn={getBlockStyle}
             customStyleMap={styleMap}
             editorState={editorState}
+            keyBindingFn={this.keyBindingFn}
             handleKeyCommand={this.handleKeyCommand}
             onChange={this.props.onChange}
+            handleReturn={this.handleReturn}
             onTab={this.onTab}
             ref="editor"
             spellCheck={true}

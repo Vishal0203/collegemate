@@ -115,6 +115,7 @@ class AnnouncementForm extends React.Component {
                 name="notificationHeader"
                 hintText="Heading"
                 fullWidth={true}
+                inputStyle={{boxShadow: 'none'}}
                 style={{paddingTop: 15, fontWeight: 400, marginBottom: 6}}
                 required
                 autoFocus

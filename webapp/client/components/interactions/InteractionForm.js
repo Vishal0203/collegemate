@@ -218,6 +218,7 @@ class InteractionForm extends React.Component {
             name="post_heading"
             hintText="What would you like to ask? Be specific."
             fullWidth={true}
+            inputStyle={{boxShadow: 'none'}}
             style={{fontWeight: 400}}
             defaultValue={defaultHeading}
             required

@@ -152,21 +152,14 @@ class InteractionsContainer extends Component {
                 <Col xs={4}>
                   <StickyDiv zIndex={1} offsetTop={65}>
                     <div className="right-content">
-                      <MobileTearSheet height={260}>
+                      <MobileTearSheet height={200}>
                         <div>
                           <h4 style={{marginBottom: 5}}>How to ask question?</h4>
                           <ul className="how-to-list" style={{fontSize: 14}}>
                             <li>It is recommended to use formal language while asking a question.</li>
                             <li>Avoid using short forms and extra full stops.</li>
-                            <li><span>Use</span>
-                              <i className="material-icons" style={{position: 'relative', fontSize: 20, top: '5px'}}>
-                                format_bold
-                              </i>
-                              as stressor.
-                            </li>
-                            <li>Try to explain your question as much as possible to get answers quickly.</li>
                             <li>
-                              Use <code>shift+enter</code> to continue typing in code block.
+                              Use <code>ctrl+enter</code> or <code>cmd+enter</code> to leave the <code>Code Block</code>.
                             </li>
                           </ul>
                         </div>

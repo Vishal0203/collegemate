@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Avatar from 'material-ui/Avatar';
 import {bindActionCreators} from 'redux';
@@ -129,6 +129,7 @@ class SettingsContainer extends Component {
                       <CardTitle style={{padding: 0}} title="Your Profile"/>
                       <div style={{paddingTop: 5}}>
                         <FormsyText
+                          inputStyle={{boxShadow: 'none'}}
                           style={this.styles.formField}
                           name="memberId"
                           floatingLabelText="Hallticket Number (Students / Alumni) or Employee ID (Staff)"
@@ -139,6 +140,7 @@ class SettingsContainer extends Component {
                           autoComplete="off"
                         />
                         <FormsyText
+                          inputStyle={{boxShadow: 'none'}}
                           style={this.styles.formField}
                           name="designation"
                           floatingLabelText="Designation"
@@ -172,6 +174,7 @@ class SettingsContainer extends Component {
                           floatingLabelText="About me"
                           floatingLabelStyle={this.styles.floatingLabelStyle}
                           name="aboutMe"
+                          textareaStyle={{boxShadow: 'none'}}
                           style={this.styles.formField}
                           multiLine={true}
                           fullWidth={true}
