@@ -40,6 +40,7 @@ class RedirectIfAuthenticated
                 'defaultInstitute.categories' =>
                     function ($category) {
                         $category->with('creator');
+                        $category->withCount('subscribers');
                     },
                 'defaultInstitute.subscriptions' =>
                     function ($categories) use ($user) {

@@ -12,7 +12,7 @@ class Category extends Model
     protected $table = 'categories';
 
     protected $fillable =
-        ['category_type', 'category_desc',  'institute_id', 'category_guid', 'created_by' ];
+        ['category_type', 'category_desc',  'institute_id', 'category_guid', 'created_by', 'private'];
 
     protected $hidden = ['id', 'institute_id', 'created_by', 'created_at', 'updated_at', 'deleted_at', 'pivot'];
 

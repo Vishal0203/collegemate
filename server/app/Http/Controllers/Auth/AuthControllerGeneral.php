@@ -28,6 +28,7 @@ class AuthControllerGeneral extends Controller
             'defaultInstitute.categories' =>
                 function ($category) {
                     $category->with('creator');
+                    $category->withCount('subscribers');
                 },
             'defaultInstitute.subscriptions' =>
                 function ($categories) use ($user) {

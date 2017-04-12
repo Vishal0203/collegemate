@@ -54,8 +54,14 @@ class CategoryController extends Controller
             'institute_id' => $institute_id,
             'category_type' => $request['category_type'],
             'category_desc' => $request['category_desc'],
+            'private' => $request['private'],
             'created_by' => \Auth::user()->id,
         ]);
+
+        if ($request['private']) {
+            $users = User::whereIn('email', $request['email_ids'])->get();
+            $category->subscribers()->attach($users);
+        }
 
         $this->addNotifierToCategory($category, Auth::user());
         $category->load('creator');

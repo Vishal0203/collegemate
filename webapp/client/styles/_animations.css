@@ -7,3 +7,12 @@
 .headerForm-leave {
     animation: 0.5s zoomOutUp ease;
 }
+
+.fieldAnimation-enter {
+    animation: 0.6s fadeInDown ease;
+}
+
+.fieldAnimation-leave {
+    animation: 0.5s fadeOutDown ease;
+}
+
