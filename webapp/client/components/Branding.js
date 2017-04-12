@@ -1,5 +1,5 @@
 import Paper from 'material-ui/Paper';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {grey500} from 'material-ui/styles/colors';

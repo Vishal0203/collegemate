@@ -153,9 +153,20 @@ body {
 
 .post-content pre {
     background: rgba(237, 237, 237, 0.71);
+    font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
     border-radius: 1px;
     padding: 8px;
     margin: 0;
+}
+
+.post-content pre code {
+    font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
+}
+
+.post-content pre code br {
+    display: block;
+    margin: -4px 0;
+    content: close-quote;
 }
 
 .post-content blockquote {

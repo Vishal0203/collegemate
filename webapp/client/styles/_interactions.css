@@ -1,29 +1,7 @@
-.rte-container {
-    min-height: 150px;
-    font-family: "Roboto", sans-serif;
-}
-
-.rte-editor {
-    min-height: 100px;
-    font-size: 14px;
-}
-
-.rte-editor blockquote {
-    font-size: 14px;
-    font-weight: 400;
-    font-style: normal !important;
-    font-family: "Roboto", sans-serif !important;
-}
-
-.DraftEditor-root, .DraftEditor-editorContainer, .public-DraftEditor-content {
-    min-height: inherit;
-    text-align: initial;
-}
-
 .RichEditor-root {
     background: #fff;
     border: 1px solid #ddd;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', serif;
     font-size: 14px;
     padding: 15px;
 }
@@ -31,8 +9,8 @@
 .RichEditor-editor {
     border-top: 1px solid #ddd;
     cursor: text;
-    font-size: 14px;
-    margin-top: 5px;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
 .RichEditor-editor .public-DraftEditorPlaceholder-root,
@@ -53,16 +31,17 @@
     border-left: 5px solid #eee;
     color: #666;
     font-family: 'Roboto', sans-serif;
-    font-style: italic;
+    font-size: 14px;
     margin: 16px 0;
     padding: 10px 20px;
 }
 
-.RichEditor-editor .public-DraftStyleDefault-pre {
+.RichEditor-editor .public-DraftStyleDefault-pre > pre {
     background-color: rgba(0, 0, 0, 0.05);
     font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
     font-size: 14px;
-    padding: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .RichEditor-controls {
@@ -79,7 +58,7 @@
 }
 
 .RichEditor-styleButton {
-    color: #707070;
+    color: #909090;
     cursor: pointer;
     display: table-cell !important;
     vertical-align: middle;
