@@ -114,10 +114,11 @@ class Announcement extends React.Component {
           title={announcement.notification_head}
           subtitle={`${announcement.category.category_type}`}
           avatar={
-            <Avatar size={45} backgroundColor={avatarColor}>
+            <Avatar size={45} style={{marginRight: 10, backgroundColor: avatarColor}}>
               {announcement.category.category_type[0].toUpperCase()}
             </Avatar>
           }
+          titleStyle={{marginTop: 3}}
           subtitleStyle={{textTransform: 'capitalize', marginTop: 4}}>
           <div className="time-container" onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
                onMouseLeave={() => {

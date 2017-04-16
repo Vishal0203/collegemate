@@ -16,6 +16,6 @@ export function HttpHelper(type, method, data, params) {
       return response
     })
     .catch(function (error) {
-      console.log(error);
+      return error.response
     });
 }

@@ -26,7 +26,6 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::post('google_token', 'Auth\AuthControllerGeneral@googleOauth');
     Route::get('logout', 'Auth\AuthControllerGeneral@getLogout');
     Route::post('update_profile', 'UserProfileController@updateProfile');
-
     Route::put('read_notifications', 'UserProfileController@readNotifications');
     Route::put('read_all_notifications', 'UserProfileController@readAllNotifications');
 
@@ -43,18 +42,22 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         'TagsController',
         ['only' => ['index']]
     );
-
     Route::group(['prefix' => 'institute/{institute_guid}'], function () {
         Route::get('file/{short_code}', 'FilesController@getFile');
         Route::get('files/download', 'FilesController@downloadAll');
         Route::get('staff/categories', 'StaffController@getCategoriesForNotifier');
+        Route::get('students_requests', 'InstituteController@getPendingStudentsRequests');
+        Route::post('students_requests', 'InvitationController@studentRequestAction');
+        Route::get('staff_requests', 'InstituteController@getPendingStaffMembers');
+        Route::post('staff_requests', 'InvitationController@studentRequestAction');
         Route::post('register', 'InstituteController@registerToInstitute');
         Route::resource(
             'staff',
             'StaffController',
             ['only' => ['index', 'store', 'update', 'destroy']]
         );
-
+        Route::get('validate_staff', 'StaffController@validateStaffProfile');
+        Route::get('download_staff_template', 'StaffController@getStaffTemplateSheet');
         Route::resource(
             'members',
             'MemberController',
@@ -73,6 +76,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         );
 
         Route::post('invitation/bulk_invite', 'InvitationController@bulkInvite');
+        Route::post('staff/add_staff', 'StaffController@addStaffMember');
         Route::resource(
             'invitation',
             'InvitationController',

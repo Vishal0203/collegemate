@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Institute;
 use App\UserInstitute;
 use App\UserProfile;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -63,10 +65,18 @@ class UserProfileController extends Controller
             'dob' => $request['dob']
         ]);
 
-        UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
-            'member_id' => $request['memberId'],
-            'designation' => $request['designation']
-        ]);
+        try {
+            UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
+                'member_id' => $request['memberId'],
+                'designation' => $request['designation']
+            ]);
+        } catch (QueryException $e) {
+            return response()->json([
+                'error' => 'The hall ticket number or employee ID is already registered in this Institute.'
+            ], 403);
+        }
+
+        // Todo: Send approval request to staff, admin and superuser
 
         $user->load(['userProfile', 'defaultInstitute.userInstituteInfo' =>
             function ($userInstitute) use ($user) {

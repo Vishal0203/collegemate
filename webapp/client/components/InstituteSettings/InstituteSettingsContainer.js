@@ -2,148 +2,99 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-import {List, ListItem} from 'material-ui/List';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import Paper from 'material-ui/Paper';
-import * as instituteActions  from '../../actions/institutes/index';
+import {
+  Step,
+  Stepper,
+  StepButton,
+  StepContent
+} from 'material-ui/Stepper/index';
 import * as snackbarActions  from '../../actions/commons/index';
-import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card';
-import RaisedButton from 'material-ui/RaisedButton';
-import AutoComplete from 'material-ui/AutoComplete';
-import CreateInstituteForm from './CreateInstituteForm'
-import {hashHistory} from 'react-router';
+import {
+  submitStaffAdditionRequest
+}  from '../../actions/users/index';
+import {studentApprovalRequest,staffApprovalRequest} from '../../actions/institutes/index';
+import {studentApprovalAction,staffApprovalAction} from '../../actions/institutes/index';
+import ManageStudents from './ManageStudents';
+import ManageStaff from './ManageStaff';
 
 class InstituteSettingsContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 'a',
-      searchText: '',
-      chosenInstitute: null
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.props.actions.fetchInstituteRequest();
-  };
-
-  componentWillMount() {
-    if (this.props.auth_user.user.default_institute !== null) {
-      hashHistory.replace('/');
+      stepIndex: 0
     }
   }
 
   get styles() {
     return {
-      headline: {
-        fontSize: 24,
-        paddingTop: 16,
-        marginBottom: 12,
-        fontWeight: 400,
-      },
-      wrap: {
-        boxSizing: 'border-box',
-        maxWidth: '55%',
-        margin: '0 auto',
+      stepperContent: {
+        backgroundColor: 'transparent',
+        fontFamily: 'Roboto, sans-serif',
+        fontSize: 14,
+        lineHeight: '20px'
       },
       footerImage: {
         width: '100%',
-        position: 'absolute',
+        position: 'fixed',
         bottom: 0,
         zIndex: '-1'
       }
     }
-  }
-
-  handleChange(value) {
-    this.setState({
-      value,
-      searchText: this.state.searchText
-    });
   };
 
-  handleUpdateInput(searchText) {
-    this.setState({
-      value: this.state.value,
-      searchText
-    });
-  };
-
-  handleNewRequest(chosenRequest) {
-    if (this.state.searchText === chosenRequest.institute_name) {
-      this.setState({
-        value: this.state.value,
-        searchText: this.state.searchText,
-        chosenInstitute: chosenRequest
-      })
-    } else {
-      this.setState({
-        value: this.state.value,
-        searchText: this.state.searchText,
-        chosenInstitute: null
-      });
-      this.props.actions.toggleSnackbar('The institute you are trying to select does not exist.')
-    }
+  handleStepperSelect(stepIndex) {
+    this.setState({stepIndex})
   }
 
-  onProceed() {
-    if (this.state.chosenInstitute) {
-      this.props.actions.selectInstituteRequest(this.state.chosenInstitute.inst_profile_guid)
-    } else {
-      this.props.actions.toggleSnackbar('Please select an institute.')
+  renderContent() {
+    switch (this.state.stepIndex) {
+      case 0:
+        return <ManageStaff parentProps={this.props}/>;
+      case 1:
+        return <ManageStudents parentProps={this.props}/>;
     }
   }
 
   render() {
-    const dataSourceConfig = {
-      text: 'institute_name',
-      value: 'inst_profile_guid'
-    };
-
     return (
       <div className="main-content">
-        <div style={{marginTop: '4%'}}>
+        <div style={{marginTop: 70}}>
           <Grid>
-           <div style={this.styles.wrap}>
-             <Paper zDepth={0} style={{backgroundColor: 'transparent'}}>
-               <Tabs
-                 value={this.state.value}
-                 onChange={this.handleChange}
-                 className="transparent-tabs"
-               >
-                 <Tab label="Select Institute" value="a" className="dark-text-tab">
-                   <div>
-                     <h2 style={this.styles.headline}>Tell us where you belong</h2>
-                     <p>
-                       Select your institute from the list below.
-                       This helps us update you with on going events at your college and lot more things.
-                       If not, create a new Institute to get going.
-                     </p>
-                     <div>
-                       <AutoComplete
-                         listStyle={{maxHeight: 200, overflow: 'auto'}}
-                         hintText="Type to Search"
-                         onUpdateInput={(searchText) => this.handleUpdateInput(searchText)}
-                         onNewRequest={(chosenRequest) => this.handleNewRequest(chosenRequest)}
-                         openOnFocus={true}
-                         fullWidth={true}
-                         dataSource={this.props.institutes.list}
-                         dataSourceConfig={dataSourceConfig}
-                         filter={AutoComplete.fuzzyFilter}
-                       />
-                       <div style={{marginTop: 10}}>
-                         <RaisedButton label="Proceed" onClick={() => this.onProceed()} primary={true}/>
-                       </div>
-                     </div>
-                   </div>
-                 </Tab>
-                 <Tab label="Create Institute" value="b" className="dark-text-tab">
-                   <div>
-                     <h2 style={this.styles.headline}>Get Started here</h2>
-                     <CreateInstituteForm parentProps={this.props}/>
-                   </div>
-                 </Tab>
-               </Tabs>
-             </Paper>
-           </div>
+            <div className="wrap">
+              <Row>
+                <Col xs={3}>
+                  <Stepper
+                    activeStep={this.state.stepIndex}
+                    linear={false}
+                    orientation="vertical"
+                  >
+                    <Step>
+                      <StepButton onTouchTap={() => this.handleStepperSelect(0)} iconContainerStyle={{display: 'none'}}>
+                        Manage Institute Staff
+                      </StepButton>
+                      <StepContent>
+                        <p style={this.styles.stepperContent}>
+                          Invite staff to your institute. Do it individually or make a bulk invite.
+                        </p>
+                      </StepContent>
+                    </Step>
+                    <Step>
+                      <StepButton onTouchTap={() => this.handleStepperSelect(1)} iconContainerStyle={{display: 'none'}}>
+                        Manage Institute Students
+                      </StepButton>
+                      <StepContent>
+                        <p style={this.styles.stepperContent}>
+                          Verify registered students belong to your Institute or not.
+                        </p>
+                      </StepContent>
+                    </Step>
+                  </Stepper>
+                </Col>
+                <Col xs={9}>
+                  {this.renderContent()}
+                </Col>
+              </Row>
+            </div>
           </Grid>
           <img style={this.styles.footerImage} src={require('../../styles/images/institutes.png')}/>
         </div>
@@ -152,19 +103,22 @@ class InstituteSettingsContainer extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    institutes: state.institutes
-  }
-}
-
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators({
-      ...instituteActions,
-      ...snackbarActions
+      ...snackbarActions,
+      submitStaffAdditionRequest,
+      studentApprovalRequest,
+      studentApprovalAction,
+      staffApprovalRequest,
+      staffApprovalAction,
     }, dispatch)
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(InstituteSettingsContainer);      
+function mapStateToProps(state) {
+  return {
+    staffs: state.auth_user.selectedInstitute
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(InstituteSettingsContainer);
