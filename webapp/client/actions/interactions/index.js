@@ -46,6 +46,10 @@ export const FETCH_SINGLE_COMMENT_RESPONSE = 'FETCH_SINGLE_COMMENT_RESPONSE';
 
 export const CLEAR_SINGLE_POST = 'CLEAR_SINGLE_POST';
 
+export const ADD_REPLY_REQUEST = 'ADD_REPLY_REQUEST';
+export const DELETE_REPLY = 'DELETE_REPLY';
+export const FETCH_SINGLE_REPLY_RESPONSE = 'FETCH_SINGLE_REPLY_RESPONSE';
+
 export function postFormToggle() {
   return {
     type: CREATE_POST_TOGGLE
@@ -267,6 +271,13 @@ export function commentUpdate(commentUpdates) {
   }
 }
 
+export function fetchSingleReplyResponse(reply) {
+  return {
+    type: FETCH_SINGLE_REPLY_RESPONSE,
+    reply
+  }
+}
+
 export function fetchSingleCommentResponse(comment) {
   return {
     type: FETCH_SINGLE_COMMENT_RESPONSE,
@@ -278,5 +289,19 @@ export function clearSinglePost(postGuid) {
   return {
     type: CLEAR_SINGLE_POST,
     postGuid
+  }
+}
+
+export function addReplyRequest(data) {
+  return {
+    type: ADD_REPLY_REQUEST,
+    data
+  }
+}
+
+export function deleteReply(reply) {
+  return {
+    type: DELETE_REPLY,
+    reply
   }
 }

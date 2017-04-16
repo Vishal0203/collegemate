@@ -94,6 +94,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         );
 
         Route::post('post/{post_guid}/upvote', 'PostController@upvote');
+        Route::post('post/{post_guid}/reply', 'PostController@addReply');
         Route::resource(
             'post',
             'PostController',
@@ -115,6 +116,9 @@ Route::group(['prefix' => 'api/v1_0'], function () {
 
     Route::group(['prefix' => 'post/{post_guid}'], function () {
         Route::post('comment/{comment_guid}/upvote', 'CommentController@upvote');
+        Route::post('comment/{comment_guid}/reply', 'CommentController@addReply');
+        Route::get('reply/{reply_guid}', 'PostController@getReply');
+        Route::delete('reply', 'PostController@deleteReply');
         Route::resource(
             'comment',
             'CommentController',

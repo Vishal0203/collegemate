@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Events\CommentUpdates;
 use App\Notifications\CommentUpvoteNotification;
+use App\Reply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\PostCommentNotification;
-
+use App\Notifications\CommentReplyNotification;
 use Event;
 use App\Http\Requests;
 use Faker;
@@ -55,7 +56,7 @@ class CommentController extends Controller
             'comment' => $request['comment'],
         ]);
 
-        $comment->load(['user','user.userProfile']);
+        $comment->load('user.userProfile');
         $comment['upvotes_count'] = $comment->upvotesCount();
         Event::fire(new CommentUpdates(
             $post['post_guid'],
@@ -65,7 +66,7 @@ class CommentController extends Controller
         ));
 
         if ($post->user['id'] != $user['id']) {
-            Notification::send($post->user, new PostCommentNotification($post, $user));
+            Notification::send($post->user, new PostCommentNotification($post));
         }
 
         return response()->json(compact('comment'), 201);
@@ -81,10 +82,19 @@ class CommentController extends Controller
      */
     public function show($post_guid, $comment_guid)
     {
+        $user = \Auth::user();
         $comment = Comment::where('comment_guid', $comment_guid)
-            ->with('user', 'user.userProfile')->withCount('upvotes')->first();
+            ->with('user', 'user.userProfile', 'replies.user')->withCount('upvotes')->first();
         $post = Post::where('post_guid', $post_guid)->with('user')->first();
         $comment->canEdit = $comment->user['id'] == \Auth::user()['id'];
+
+        foreach ($comment->replies as $reply) {
+            $reply->canEdit = $reply->user['id'] == $user['id'];
+            if ($reply->user['id'] == $post->user['id'] && $post['is_anonymous']) {
+                unset($reply['user']);
+            }
+        }
+
         if (!$comment) {
             return response()->json(['Error' => 'Comment not found.'], 400);
         }
@@ -176,9 +186,39 @@ class CommentController extends Controller
         }
 
         if (!$upvote) {
-            Notification::send($comment->user, new CommentUpvoteNotification($comment, $user));
+            Notification::send($comment->user, new CommentUpvoteNotification($comment));
         }
 
         return response()->json(['upvotes_count' => $comment->upvotesCount(), 'upvoted' => !$upvote]);
+    }
+
+    public function addReply($post_guid, $comment_guid, Request $request)
+    {
+        $internals = Faker\Factory::create('en_US');
+        $post = Post::where('post_guid', $post_guid)->first();
+        $comment = Comment::where('comment_guid', $comment_guid)->first();
+        if ($request->has('reply_guid')) {
+            $reply = Reply::where('reply_guid', $request->get('reply_guid'))->first();
+            $reply->reply_body = $request->get('reply');
+            $reply->save();
+        } else {
+            $reply = $comment->replies()->create([
+                'reply_guid' => $internals->uuid,
+                'user_id' => \Auth::user()['id'],
+                'reply_body' => $request->get('reply')
+            ]);
+        }
+
+        Event::fire(new CommentUpdates(
+            $post['post_guid'],
+            $comment['comment_guid'],
+            $request['institute_guid'],
+            'updated-comment'
+        ));
+
+        if (\Auth::user()->id != $comment->user->id) {
+            Notification::send($comment->user, new CommentReplyNotification($comment));
+        }
+        return response()->json(compact('reply'));
     }
 }

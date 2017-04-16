@@ -110,22 +110,28 @@ export default function interactionReducer(state = initialState, action) {
       return {...state, selectedPost:action.response.post, postLoading: false}
     }
     case actions.POST_UPDATE: {
-      let newComments = [...state.selectedPost.comments];
-      if (action.response.is_anonymous) {
-        newComments.forEach((comment) => {
-          if (comment.user &&
-            state.selectedPost.user &&
-            comment.user.user_guid === state.selectedPost.user.user_guid) {
-            delete(comment.user);
-          }
-        });
-      } else {
-        newComments.forEach((comment) => {
-          if (!comment.user) {
-            comment.user = action.response.poster;
-          }
-        });
+      if (action.response.type === 'new-reply') {
+        return state
       }
+
+      if (action.response.type === 'delete-reply') {
+        return {
+          ...state,
+          selectedPost: {
+            ...state.selectedPost,
+            replies:  state.selectedPost.replies.filter(
+              (reply) => reply.reply_guid !== action.response.reply_guid
+            )
+          }
+        }
+      }
+
+      let comments = [...state.selectedPost.comments];
+      let replies = [...state.selectedPost.replies];
+
+      updateUserVisiblity(state, action, comments);
+      comments.forEach((comment) => updateUserVisiblity(state, action, comment.replies));
+      updateUserVisiblity(state, action, replies);
 
       let newPost = {
         ...state.selectedPost,
@@ -133,8 +139,11 @@ export default function interactionReducer(state = initialState, action) {
         post_description: action.response.post_description,
         is_anonymous: action.response.is_anonymous,
         user: action.response.poster,
-        comments: newComments
+        tags: action.response.tags,
+        replies,
+        comments
       };
+
       if (newPost.user == null) {
         delete(newPost.user);
       }
@@ -157,6 +166,15 @@ export default function interactionReducer(state = initialState, action) {
       }
       return state;
     }
+    case actions.FETCH_SINGLE_REPLY_RESPONSE: {
+      return {
+        ...state,
+        selectedPost: {
+          ...state.selectedPost,
+          replies: [...state.selectedPost.replies, action.reply]
+        }
+      }
+    }
     case actions.FETCH_SINGLE_COMMENT_RESPONSE: {
       let newComments = [...state.selectedPost.comments];
       let commentGuids = newComments.map((comment) => comment.comment_guid);
@@ -165,6 +183,7 @@ export default function interactionReducer(state = initialState, action) {
         const updatedComment = {
           ...newComments[index],
           comment: action.comment.comment,
+          replies: action.comment.replies,
           updated_at: action.comment.updated_at
         };
         newComments.splice(index, 1, updatedComment);
@@ -285,5 +304,23 @@ export default function interactionReducer(state = initialState, action) {
     default: {
       return state
     }
+  }
+}
+
+function updateUserVisiblity(state, action, entities) {
+  if (action.response.is_anonymous) {
+    entities.forEach((entity) => {
+      if (entity.user &&
+        state.selectedPost.user &&
+        entity.user.user_guid === state.selectedPost.user.user_guid) {
+        delete(entity.user);
+      }
+    });
+  } else {
+    entities.forEach((entity) => {
+      if (!entity.user) {
+        entity.user = action.response.poster;
+      }
+    });
   }
 }

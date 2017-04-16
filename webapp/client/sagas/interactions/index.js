@@ -98,6 +98,19 @@ function *editComment(params) {
   yield put(interactionsActions.editCommentResponse(params.comment, response.data));
 }
 
+function *postUpdate(params) {
+  if (params.response.type === 'new-reply') {
+    const institute_guid = {institute_guid: params.response.institute_guid};
+    debugger;
+    const response = yield call(
+      HttpHelper,
+      `post/${params.response.post_guid}/reply/${params.response.reply_guid}`,
+      'GET', null, institute_guid
+    );
+    yield put(interactionsActions.fetchSingleReplyResponse(response.data.reply));
+  }
+}
+
 function *commentUpdate(params) {
   if (params.commentUpdates.type !== 'deleted-comment') {
     const institute_guid = {institute_guid: params.commentUpdates.institute_guid};
@@ -156,6 +169,57 @@ function *handleTabChange(params) {
   }
 }
 
+function *addReply(params) {
+  const institute = yield select(selectors.selected_institute);
+  const post = yield select(selectors.getSelectedPost);
+
+  switch (params.data.type) {
+    case 'post': {
+      const response = yield call(
+        HttpHelper,
+        `institute/${institute.inst_profile_guid}/post/${post.post_guid}/reply`,
+        'POST',
+        params.data
+      );
+      break;
+    }
+    case 'comment': {
+      const response = yield call(
+        HttpHelper,
+        `post/${post.post_guid}/comment/${params.data.comment_guid}/reply`,
+        'POST',
+        {...params.data, institute_guid: institute.inst_profile_guid}
+      );
+      break;
+    }
+  }
+}
+
+function *deleteReply(params) {
+  const institute = yield select(selectors.selected_institute);
+  const post = yield select(selectors.getSelectedPost);
+  let data = {
+    type: 'post',
+    institute_guid: institute.inst_profile_guid,
+    reply_guid: params.reply.reply_guid
+  };
+
+  if (params.reply.repliable_type === 'App\\Comment') {
+    data = {
+      ...data,
+      type: 'comment',
+      comment_guid: params.reply.comment_guid
+    };
+  }
+
+  const response = yield call(
+    HttpHelper,
+    `post/${post.post_guid}/reply`,
+    'DELETE',
+    data
+  );
+}
+
 /*
  Watchers
  */
@@ -208,12 +272,24 @@ function *watchDeletePost() {
   yield *takeLatest(interactionsActions.DELETE_POST_REQUEST, deletePost);
 }
 
+function *watchPostUpdate() {
+  yield *takeEvery(interactionsActions.POST_UPDATE, postUpdate);
+}
+
 function *watchCommentUpdate() {
   yield *takeEvery(interactionsActions.COMMENT_UPDATE, commentUpdate);
 }
 
 function *watchTabChange() {
   yield *takeLatest('@@router/LOCATION_CHANGE', handleTabChange);
+}
+
+function *watchAddReply() {
+  yield *takeLatest(interactionsActions.ADD_REPLY_REQUEST, addReply)
+}
+
+function *watchDeleteReply() {
+  yield *takeLatest(interactionsActions.DELETE_REPLY, deleteReply)
 }
 
 export default function *interactionSaga() {
@@ -230,7 +306,10 @@ export default function *interactionSaga() {
     fork(watchEditPost),
     fork(watchEditComment),
     fork(watchDeletePost),
+    fork(watchPostUpdate),
     fork(watchCommentUpdate),
-    fork(watchTabChange)
+    fork(watchTabChange),
+    fork(watchAddReply),
+    fork(watchDeleteReply)
   ]
 }

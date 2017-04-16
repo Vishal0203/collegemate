@@ -5,22 +5,24 @@ import moment from 'moment';
 import Loader from 'halogen/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import StickyDiv from 'react-stickydiv';
-import * as interactionActions from '../../actions/interactions/index'
-import Header from '../Header';
-import {Card, CardHeader, CardText} from 'material-ui/Card/index';
-import Comment from './Comment'
 import Chip from 'material-ui/Chip';
+import {Card, CardHeader, CardText} from 'material-ui/Card/index';
 import {grey500, grey600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
+import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import Dialog from 'material-ui/Dialog';
-import PostUpdateDialog from './PostUpdateDialog';
-import {toggleSnackbar} from '../../actions/commons/index';
 import Avatar from 'material-ui/Avatar';
+import {toggleSnackbar} from '../../actions/commons/index';
+import * as interactionActions from '../../actions/interactions/index'
+import Header from '../Header';
+import Comment from './Comment'
+import PostUpdateDialog from './PostUpdateDialog';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
+import ReplyForm from './ReplyForm';
 
 class InteractionSingle extends Component {
   constructor(props) {
@@ -31,11 +33,13 @@ class InteractionSingle extends Component {
         label: ''
       },
       showConfirmation: false,
-      postGuid: null
+      postGuid: null,
+      replyForm: false
     };
   }
+
   componentWillMount() {
-    this.setState({postGuid: this.props.params.postGuid})
+    this.setState({postGuid: this.props.params.postGuid});
     this.fetchPost(this.props.params.postGuid);
   }
 
@@ -80,7 +84,7 @@ class InteractionSingle extends Component {
       postFooter: {
         fontWeight: 300,
         fontSize: 13,
-        padding: '6px 26px 10px 0',
+        padding: '6px 26px 12px 0',
         color: grey600
       },
       chipsContainer: {
@@ -98,12 +102,9 @@ class InteractionSingle extends Component {
         fontSize: 13
       },
       timeContainer: {
-        display: 'inline-block',
-        alignContent: 'right',
         fontSize: 12,
         fontWeight: 300,
-        color: 'rgba(0, 0, 0, 0.541176)',
-        position: 'absolute'
+        color: 'rgba(0, 0, 0, 0.541176)'
       },
       postVotesCount: {
         fontSize: 18,
@@ -116,15 +117,23 @@ class InteractionSingle extends Component {
         padding: 0,
         color: grey500
       },
-      postUpvotesIconButton : {
+      postUpvotesIconButton: {
         padding: 0,
         margin: 'auto',
-        width: 55 ,
+        width: 55,
         height: 55
       },
       actionButton: {
-        color: grey600,
-        cursor: 'pointer'
+        color: grey500,
+        padding: '0 9px 0 1px',
+        display: 'inline-block'
+      },
+      commentDivider: {
+        border: 'none',
+        borderTop: '1px dotted rgb(220, 220, 220)',
+        marginLeft: 2,
+        width: '97%',
+        backgroundColor: 'none'
       }
     }
   }
@@ -188,9 +197,11 @@ class InteractionSingle extends Component {
     return (
       <CardText style={this.styles.votesContainer}>
         <Row>
-          <IconButton disabled={disabled} style={this.styles.postUpvotesIconButton} onClick={() => this.togglePostUpvote(post)}>
+          <IconButton disabled={disabled} style={this.styles.postUpvotesIconButton}
+                      onClick={() => this.togglePostUpvote(post)}>
             <div>
-              <i className="material-icons" style={{...this.styles.postVotesIcon, ...upvotedColor}}>arrow_drop_up</i>
+              <FontIcon className="material-icons"
+                        style={{...this.styles.postVotesIcon, ...upvotedColor}}>arrow_drop_up</FontIcon>
             </div>
           </IconButton>
         </Row>
@@ -244,7 +255,7 @@ class InteractionSingle extends Component {
   }
 
   renderComments() {
-    if (this.props.interactions.selectedPost.comments.length == 0) {
+    if (this.props.interactions.selectedPost.comments.length === 0) {
       return (
         <CardText style={{minHeight: '30px', color: 'rgba(0, 0, 0, 0.35)'}}>
           <label style={{paddingLeft: 12}}>We rise by lifting others. Help, by answering this question.</label>
@@ -259,43 +270,120 @@ class InteractionSingle extends Component {
     );
   }
 
-  renderInteraction() {
+  getDate(date) {
+    const timezone = moment.tz.guess();
+    const time = moment.tz(date, null).format();
+    return moment(time).tz(timezone).fromNow();
+  }
+
+  renderReplies(replies) {
+    return replies.map((reply, i) => {
+      const username = reply.user ? `${reply.user.first_name} ${reply.user.last_name}` : 'Anonymous';
+      let deleteButton = null;
+      if (reply.canEdit || this.props.auth_user.user.todevs_superuser) {
+        deleteButton = <span onClick={() => this.onReplyDelete(reply)}
+                             style={{color: grey600, cursor: 'pointer'}}>  &mdash;  delete</span>
+      }
+
+      return (
+        <div key={i}>
+          <Divider style={this.styles.commentDivider}/>
+          <CardText style={{padding: '8px 20px 8px 5px', fontSize: 12, lineHeight: '16px'}}>
+            {reply.reply_body} &mdash;
+            <strong style={{textTransform: 'captitalize'}}>{username}</strong> &nbsp;
+            <span style={{color: 'rgb(205, 205, 205)'}}>| {this.getDate(reply.created_at)}</span>
+            {deleteButton}
+          </CardText>
+        </div>
+      )
+    })
+  }
+
+  onReplyDelete(reply) {
+    this.props.actions.deleteReply(reply)
+  }
+
+  onReplySubmit(data) {
+    data = {
+      type: 'post', ...data
+    };
+    this.props.actions.addReplyRequest(data);
+    this.setState({replyForm: false})
+  }
+
+  renderInteractionFooter() {
     const post = this.props.interactions.selectedPost;
     const user = this.props.auth_user.user;
+
+    const timezone = moment.tz.guess();
+    const time = moment.tz(post.created_at, null).format();
+
+    let edit = null;
+    if (post.isEditable || user.todevs_superuser || user.todevs_staff) {
+      edit = (
+        <div style={this.styles.actionButton}>
+          <label style={{cursor: 'pointer'}}
+                 onClick={() => this.toggleUpdatePostForm(post)}>
+            edit
+          </label>
+        </div>
+      );
+    }
+    let deletePost = null;
+    if (post.isEditable || user.todevs_superuser || user.todevs_staff) {
+      deletePost = (
+        <div style={this.styles.actionButton}>
+          <label style={{cursor: 'pointer'}}
+                 onClick={() => this.toggleConfirmation(true)}>
+            delete
+          </label>
+        </div>
+      );
+    }
+
+    return (
+      <div style={this.styles.postFooter}>
+        <span>
+          {edit}
+        </span>
+        <span>
+          {deletePost}
+        </span>
+        <div style={{float: 'right', right: '20px', display: 'inline-block', textAlign: 'right', height: 26}}>
+          <div style={this.styles.timeContainer}
+               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
+               onMouseLeave={() => {
+                 this.setState({timeTooltip: {show: false, label: ''}})
+               }}>
+            <label> Asked {moment(time).tz(timezone).fromNow()} </label>
+            <Tooltip show={this.state.timeTooltip.show}
+                     label={this.state.timeTooltip.label}
+                     style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
+                     horizontalPosition="left"
+                     verticalPosition="bottom"
+                     touch={true}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  renderInteraction() {
+    const post = this.props.interactions.selectedPost;
+
     let commentLoader = null;
-    if(this.props.interactions.commentLoading) {
+    if (this.props.interactions.commentLoading) {
       commentLoader = this.renderLoader();
     }
 
     if (post) {
       let votes = this.renderVotes(post.upvotes_count);
+      const commentsCount = `${post.comments_count} Answers`;
       const username = 'user' in post ? `${post.user.first_name} ${post.user.last_name}` : 'Anonymous';
-      const userIcon = 'user' in post ?
-        post.user.user_profile.user_avatar:
+      const userIcon = 'user' in post ? post.user.user_profile.user_avatar :
         `${process.env.SERVER_HOST}/avatar/defaultuser.jpg`;
-      const timezone = moment.tz.guess();
-      const time = moment.tz(post.created_at, null).format();
-      const answersCount = `${post.comments_count} Answers`;
-      let edit = null;
-      if (post.isEditable) {
-        edit = (
-          <label style={this.styles.actionButton}
-                 onClick={() => this.toggleUpdatePostForm(post)}>
-            edit
-          </label>
-        );
-      }
-      let deletePost = null;
-      if (post.isEditable ||
-        user.todevs_superuser ||
-        user.todevs_staff) {
-        deletePost = (
-          <label style={this.styles.actionButton}
-                 onClick={() => this.toggleConfirmation(true)}>
-            delete
-          </label>
-        );
-      }
+
       return (
         <div style={{paddingBottom: 40}}>
           <Card>
@@ -305,7 +393,7 @@ class InteractionSingle extends Component {
                 title={post.post_heading}
                 subtitle={username}
                 avatar={
-                  <Avatar size={43} style={{marginRight: 10}} src={userIcon} />
+                  <Avatar size={43} style={{marginRight: 10}} src={userIcon}/>
                 }
                 style={this.styles.postTitle}
                 titleStyle={{fontSize: '20px'}}
@@ -317,7 +405,7 @@ class InteractionSingle extends Component {
               <div style={{width: '11%', flexBasis: '11%', marginLeft: '14px'}}>
                 {votes}
               </div>
-              <div style={{width: '85%', flexBasis: '85%', textAlign: 'justify'}}>
+              <div style={{width: '86%', flexBasis: '86%', textAlign: 'justify'}}>
                 <CardText style={{padding: '10px 16px 10px 0'}}>
                   <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(post.post_description)}/>
                 </CardText>
@@ -331,37 +419,20 @@ class InteractionSingle extends Component {
                     {this.renderChips(post)}
                   </div>
                 </CardText>
-                <Row style={this.styles.postFooter}>
-                  <Col xs={1}>
-                    {edit}
-                  </Col>
-                  <Col xs={1}>
-                    {deletePost}
-                  </Col>
-                  <Col xsOffset={7} xs={3}>
-                    <Row end="xs">
-                      <div style={this.styles.timeContainer}
-                           onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
-                           onMouseLeave={() => {
-                             this.setState({timeTooltip: {show: false, label: ''}})
-                           }}>
-                        <label> Asked {moment(time).tz(timezone).fromNow()} </label>
-                        <Tooltip show={this.state.timeTooltip.show}
-                                 label={this.state.timeTooltip.label}
-                                 style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
-                                 horizontalPosition="left"
-                                 verticalPosition="bottom"
-                                 touch={true}
-                        />
-                      </div>
-                    </Row>
-                  </Col>
-                </Row>
+                {this.renderInteractionFooter()}
+                {this.renderReplies(post.replies)}
+                <Divider style={this.styles.commentDivider}/>
+                <ReplyForm
+                  openForm={this.state.replyForm}
+                  formPadding={{padding: '5px 20px 5px 5px'}}
+                  onButtonClick={() => this.setState({replyForm: !this.state.replyForm})}
+                  onSubmit={(data) => this.onReplySubmit(data)}
+                />
               </div>
             </Row>
             <Row>
               <CardHeader
-                title={answersCount}
+                title={commentsCount}
                 style={this.styles.postTitle}>
               </CardHeader>
             </Row>

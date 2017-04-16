@@ -12,19 +12,16 @@ class PostCommentNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $post;
-    public $commenter;
 
     /**
      * Create a new notification instance.
      *
      * @param App/Post $post
-     * @param App/User $commenter
      * @return void
      */
-    public function __construct($post, $commenter)
+    public function __construct($post)
     {
         $this->post = $post;
-        $this->commenter = $commenter;
     }
 
     /**
@@ -49,7 +46,6 @@ class PostCommentNotification extends Notification implements ShouldQueue
         return [
             'post_guid' => $this->post['post_guid'],
             'post_heading' => $this->post['post_heading'],
-            'commenter' => $this->commenter['first_name']
         ];
     }
 
@@ -59,9 +55,8 @@ class PostCommentNotification extends Notification implements ShouldQueue
             'data' => [
                 'post_guid' => $this->post['post_guid'],
                 'post_heading' => $this->post['post_heading'],
-                'commenter' => $this->commenter['first_name'],
             ],
-            'message' => 'New comment on post "' . substr($this->post['post_heading'], 0, 40) .  '..."'
+            'message' => 'New answer on post "' . substr($this->post['post_heading'], 0, 40) .  '..."'
         ]);
     }
 }

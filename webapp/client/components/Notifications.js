@@ -15,12 +15,16 @@ import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 import {bindActionCreators} from 'redux';
 import FontIcon from 'material-ui/FontIcon';
+import {ellipsis} from './extras/utils';
 
 export const POST_COMMENT_NOTIFICATION = 'App\\Notifications\\PostCommentNotification';
 export const ANNOUNCEMENT_NOTIFICATION = 'App\\Notifications\\AnnouncementNotification';
 export const POST_UPVOTE_NOTIFICATION = 'App\\Notifications\\PostUpvoteNotification';
 export const COMMENT_UPVOTE_NOTIFICATION = 'App\\Notifications\\CommentUpvoteNotification';
-export const POST_NOTIFICATION = 'PostNotification';
+export const POST_REPLY_NOTIFICATION = 'App\\Notifications\\PostReplyNotification';
+export const COMMENT_REPLY_NOTIFICATION = 'App\\Notifications\\CommentReplyNotification';
+export const POST_NOTIFICATION = 'POST_NOTIFICATION';
+export const COMMENT_NOTIFICATION = 'COMMENT_NOTIFICATION';
 
 class Notifications extends React.Component {
 
@@ -97,7 +101,7 @@ class Notifications extends React.Component {
 
   openNotification(notification) {
     this.closeNotificationMenu();
-    if (notification.type === POST_NOTIFICATION || notification.type === COMMENT_UPVOTE_NOTIFICATION) {
+    if (notification.type === POST_NOTIFICATION || notification.type === COMMENT_NOTIFICATION) {
       hashHistory.push(`/interactions/${notification.post_guid}`);
     }
     else {
@@ -108,36 +112,53 @@ class Notifications extends React.Component {
     this.readNotification(notification);
   }
 
+  getPlural(entity, count) {
+    if (count === 1) {
+      return entity;
+    }
+    switch(entity) {
+      case 'reply': return 'replies';
+      default: return `${entity}s`
+    }
+  }
+
+  getNotificationCountsText(updates) {
+    const keys = Object.keys(updates).sort();
+    if(keys.length === 1) {
+      return `${updates[keys[0]]} ${this.getPlural(keys[0], updates[keys[0]])} `;
+    }
+    let countsText = '';
+    let i=0;
+    for(; i < keys.length-1; i++) {
+      countsText += `${updates[keys[i]]} ${this.getPlural(keys[i], updates[keys[i]])}, `;
+    }
+    return `${countsText}and ${updates[keys[i]]} ${this.getPlural(keys[i], updates[keys[i]])} `;
+  }
+
   notificationText(notification) {
     let notificationMessage = null;
     let temp = null;
     switch (notification.type) {
       case POST_NOTIFICATION:
-        const {upvoteCount, commentCount} = notification;
-        if (upvoteCount && commentCount) {
-          temp = `${upvoteCount} upvote(s) and ${commentCount} new comment(s)`;
-        } else if (upvoteCount) {
-          temp = `${upvoteCount} upvote(s)`;
-        } else {
-          temp = `${commentCount} new comment(s)`;
-        }
-        notificationMessage = (
+        return (
           <p className="notification-text">
-            {temp} on your post '<b>{notification.post_heading.substring(0,25)}...</b>'
+            {this.getNotificationCountsText(notification.updates)}
+            on your post <strong>{ellipsis(notification.post_heading, 30)}</strong>
           </p>
         );
         break;
       case ANNOUNCEMENT_NOTIFICATION:
         notificationMessage = (
           <p className="notification-text">
-            {notification.count} new announcement(s) in <b>{notification.category_type}</b>
+            {notification.count} new announcement(s) in <strong>{notification.category_type}</strong>
           </p>
         );
         break;
-      case COMMENT_UPVOTE_NOTIFICATION:
+      case COMMENT_NOTIFICATION:
         notificationMessage = (
           <p className="notification-text">
-            {notification.count} upvote(s) on your comment on post '<b>{notification.post_heading.substring(0,25)}...</b>'
+            {this.getNotificationCountsText(notification.updates)}
+            on your comment on post <strong>{ellipsis(notification.post_heading, 30)}</strong>
           </p>
         );
         break;
@@ -146,6 +167,23 @@ class Notifications extends React.Component {
         break;
     }
     return notificationMessage;
+  }
+
+  addInteractionNotification(input) {
+    let {notifications, notification, aggregateOn, incrementOn, type} = input;
+    const {id, created_at} = notification;
+    const {post_guid, post_heading} = notification.data;
+    notifications[aggregateOn] =
+      notifications[aggregateOn] ? {
+        ...notifications[aggregateOn],
+        updates: {
+          ...notifications[aggregateOn].updates,
+          [incrementOn]: (notifications[aggregateOn].updates[incrementOn] || 0) + 1
+        },
+        id: [...notifications[aggregateOn].id, id],
+        post_guid, post_heading, created_at
+      } :
+      {id: [notification.id], type, updates: {[incrementOn]: 1}, post_guid, post_heading, created_at};
   }
 
   aggregateNotifications() {
@@ -165,28 +203,49 @@ class Notifications extends React.Component {
           {id: [id], type: notification.type, category_type, count: 1, category_guid, created_at};
           break;
         case POST_COMMENT_NOTIFICATION:
-          notifications[post_guid] = notifications[post_guid] ? {
-            ...notifications[post_guid],
-            commentCount: notifications[post_guid].commentCount + 1,
-            id: [...notifications[post_guid].id, notification.id]
-          } :
-          {id: [id], type: POST_NOTIFICATION, commentCount: 1, upvoteCount: 0, post_guid, post_heading, created_at};
+          this.addInteractionNotification({
+            notifications,
+            notification,
+            aggregateOn: post_guid,
+            incrementOn: 'answer',
+            type: POST_NOTIFICATION
+          });
           break;
         case POST_UPVOTE_NOTIFICATION:
-          notifications[post_guid] = notifications[post_guid] ? {
-            ...notifications[post_guid],
-            upvoteCount: notifications[post_guid].upvoteCount + 1,
-            id: [...notifications[post_guid].id, notification.id]
-          } :
-          {id: [id], type: POST_NOTIFICATION, commentCount: 0, upvoteCount: 1, post_guid, post_heading, created_at};
+          this.addInteractionNotification({
+            notifications,
+            notification,
+            aggregateOn: post_guid,
+            incrementOn: 'upvote',
+            type: POST_NOTIFICATION
+          });
+          break;
+        case POST_REPLY_NOTIFICATION:
+          this.addInteractionNotification({
+            notifications,
+            notification,
+            aggregateOn: post_guid,
+            incrementOn: 'comment',
+            type: POST_NOTIFICATION
+          });
           break;
         case COMMENT_UPVOTE_NOTIFICATION:
-          notifications[comment_guid] = notifications[comment_guid] ? {
-            ...notifications[comment_guid],
-            count: notifications[comment_guid].count + 1,
-            id: [...notifications[comment_guid].id, notification.id]
-          } :
-          {id: [id], type: COMMENT_UPVOTE_NOTIFICATION, count: 1, post_guid, post_heading, created_at};
+          this.addInteractionNotification({
+            notifications,
+            notification,
+            aggregateOn: comment_guid,
+            incrementOn: 'upvote',
+            type: COMMENT_NOTIFICATION
+          });
+          break;
+        case COMMENT_REPLY_NOTIFICATION:
+          this.addInteractionNotification({
+            notifications,
+            notification,
+            aggregateOn: comment_guid,
+            incrementOn: 'comment',
+            type: COMMENT_NOTIFICATION
+          });
           break;
       }
     });
@@ -203,7 +262,7 @@ class Notifications extends React.Component {
                 {notifications[key].type === ANNOUNCEMENT_NOTIFICATION ? 'announcement' : 'question_answer'}
               </i>
             </Col>
-            <Col xs={9} style={this.styles.notificationText} onTouchTap={() => this.openNotification(notifications[key])}>
+            <Col xs={10} style={this.styles.notificationText} onTouchTap={() => this.openNotification(notifications[key])}>
               {this.notificationText(notifications[key])}
               <Row style={{margin: 'auto'}}>
                 <div style={this.styles.timeStamp}>
@@ -211,7 +270,7 @@ class Notifications extends React.Component {
                 </div>
               </Row>
             </Col>
-            <Col xs={2}>
+            <Col xs={1}>
               <Row end="xs">
                 <DoneIcon style={this.styles.readIcon} color={grey400} onTouchTap={() => this.readNotification(notifications[key])}/>
               </Row>

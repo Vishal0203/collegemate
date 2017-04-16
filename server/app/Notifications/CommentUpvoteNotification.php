@@ -12,19 +12,16 @@ class CommentUpvoteNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $comment;
-    public $upvoter;
 
     /**
      * Create a new notification instance.
      *
      * @param App/Comment $comment
-     * @param App/User $upvoter
      * @return void
      */
-    public function __construct($comment, $upvoter)
+    public function __construct($comment)
     {
         $this->comment = $comment;
-        $this->upvoter = $upvoter;
     }
 
     /**
@@ -51,7 +48,6 @@ class CommentUpvoteNotification extends Notification implements ShouldQueue
             'comment_guid' => $this->comment['comment_guid'],
             'post_guid' => $this->comment->post['post_guid'],
             'post_heading' => $this->comment->post['post_heading'],
-            'upvoter' => $this->upvoter['first_name']
         ];
     }
 
@@ -62,10 +58,9 @@ class CommentUpvoteNotification extends Notification implements ShouldQueue
                 'comment_guid' => $this->comment['comment_guid'],
                 'post_guid' => $this->comment->post['post_guid'],
                 'post_heading' => $this->comment->post['post_heading'],
-                'upvoter' => $this->upvoter['first_name'],
             ],
             'message' =>
-                'Your comment on post "' . substr($this->comment->post['post_heading'], 0, 40) . '" was upvoted'
+                'Your answer on post "' . substr($this->comment->post['post_heading'], 0, 40) . '" was upvoted'
         ]);
     }
 }

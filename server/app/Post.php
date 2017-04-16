@@ -42,6 +42,11 @@ class Post extends Model
         return $this->morphMany('App\Upvote', 'upvotable')->count();
     }
 
+    public function replies()
+    {
+        return $this->morphMany('App\Reply', 'repliable');
+    }
+
     public function commentsCount()
     {
         return $this->hasMany('App\Comment')->count();

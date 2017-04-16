@@ -7,21 +7,20 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class PostUpvoteNotification extends Notification implements ShouldQueue
+class CommentReplyNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $post;
+    public $comment;
 
     /**
      * Create a new notification instance.
      *
-     * @param App/Post $post
-     * @return void
+     * @param App/Comment $comment
      */
-    public function __construct($post)
+    public function __construct($comment)
     {
-        $this->post = $post;
+        $this->comment = $comment;
     }
 
     /**
@@ -45,8 +44,9 @@ class PostUpvoteNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'post_guid' => $this->post['post_guid'],
-            'post_heading' => $this->post['post_heading'],
+            'comment_guid' => $this->comment['comment_guid'],
+            'post_guid' => $this->comment->post['post_guid'],
+            'post_heading' => $this->comment->post['post_heading'],
         ];
     }
 
@@ -54,10 +54,13 @@ class PostUpvoteNotification extends Notification implements ShouldQueue
     {
         return new BroadcastMessage([
             'data' => [
-                'post_guid' => $this->post['post_guid'],
-                'post_heading' => $this->post['post_heading'],
+                'comment_guid' => $this->comment['comment_guid'],
+                'post_guid' => $this->comment->post['post_guid'],
+                'post_heading' => $this->comment->post['post_heading'],
             ],
-            'message' => 'Your post "' . substr($this->post['post_heading'], 0, 40) .  '... was upvoted"'
+            'message' => 'New comment on your answer to the post "'
+                . substr($this->comment->post['post_heading'], 0, 40)
+                . '..."'
         ]);
     }
 }

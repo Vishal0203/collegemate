@@ -7,12 +7,15 @@ import {grey500, grey600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {renderVotes} from './InteractionSingle'
 import FlatButton from 'material-ui/FlatButton';
+import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
+import Divider from 'material-ui/Divider';
 import RichEditor from '../rte/RichEditor';
 import {EditorState, CompositeDecorator} from 'draft-js';
 import {stateToHTML} from 'draft-js-export-html';
 import {stateFromHTML} from 'draft-js-import-html';
 import {Link, findLinkEntities} from '../rte/CommonUtils';
+import ReplyForm from './ReplyForm';
 
 
 class Comment extends Component {
@@ -33,11 +36,13 @@ class Comment extends Component {
       },
       editorState: EditorState.createWithContent(stateFromHTML(props.comment.comment), decorator),
       edit: false,
-      showConfirmation: false
+      showConfirmation: false,
+      replyForm: false
     };
 
     this.onChange = (editorState) => this.setState({editorState});
   }
+
   get styles() {
     return {
       votesContainer: {
@@ -71,18 +76,25 @@ class Comment extends Component {
         fontSize: 12,
         fontWeight: 300,
         color: 'rgba(0, 0, 0, 0.541176)',
-        position: 'absolute',
-        marginTop: 18
+        marginTop: 4
       },
-      commentUpvotesIconButton : {
+      commentUpvotesIconButton: {
         padding: 0,
         margin: 'auto',
-        width: 52 ,
+        width: 52,
         height: 52
       },
       actionButton: {
-        color: grey600,
-        cursor: 'pointer'
+        color: grey500,
+        padding: '0 9px 0 1px',
+        display: 'inline-block'
+      },
+      commentDivider: {
+        border: 'none',
+        borderTop: '1px dotted rgb(220, 220, 220)',
+        marginLeft: 2,
+        width: '100%',
+        backgroundColor: 'none'
       }
     }
   }
@@ -107,7 +119,7 @@ class Comment extends Component {
   toggleCommentUpvote(comment) {
     const instituteGuid = this.props.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const postGuid = this.props.parentProps.interactions.selectedPost.post_guid;
-    const formData = {institute_guid : instituteGuid };
+    const formData = {institute_guid: instituteGuid};
     this.props.parentProps.actions.toggleCommentUpvoteRequest(postGuid, comment, formData);
   }
 
@@ -115,14 +127,14 @@ class Comment extends Component {
     const comment = this.props.comment;
     const instituteGuid = this.props.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const postGuid = this.props.parentProps.interactions.selectedPost.post_guid;
-    const formData = {institute_guid : instituteGuid };
+    const formData = {institute_guid: instituteGuid};
     this.props.parentProps.actions.deleteCommentRequest(postGuid, comment, formData);
     this.toggleConfirmation();
   }
 
   editComment(operation) {
     const comment = this.props.comment;
-    switch(operation) {
+    switch (operation) {
       case 'show': {
         this.setState({edit: true});
         break;
@@ -142,7 +154,8 @@ class Comment extends Component {
         this.setState({edit: false});
         break;
       }
-      default: break;
+      default:
+        break;
     }
   }
 
@@ -159,9 +172,10 @@ class Comment extends Component {
     return (
       <CardText style={this.styles.votesContainer}>
         <Row>
-          <IconButton disabled={disabled} style={this.styles.commentUpvotesIconButton} onClick={() => this.toggleCommentUpvote(comment)}>
+          <IconButton disabled={disabled} style={this.styles.commentUpvotesIconButton}
+                      onClick={() => this.toggleCommentUpvote(comment)}>
             <div>
-              <i className="material-icons" style={{...this.styles.commentVotesIcon, ...upvotedColor}}>arrow_drop_up</i>
+              <FontIcon className="material-icons" style={{...this.styles.commentVotesIcon, ...upvotedColor}}>arrow_drop_up</FontIcon>
             </div>
           </IconButton>
         </Row>
@@ -169,7 +183,7 @@ class Comment extends Component {
           <span style={this.styles.commentVotesCount}>{comment.upvotes_count}</span>
         </Row>
         <Row>
-          <span style={{margin : '-5px auto auto auto'}}>votes</span>
+          <span style={{margin: '-5px auto auto auto'}}>votes</span>
         </Row>
       </CardText>
     );
@@ -212,6 +226,54 @@ class Comment extends Component {
     );
   }
 
+  getDate(date) {
+    const timezone = moment.tz.guess();
+    const time = moment.tz(date, null).format();
+    return moment(time).tz(timezone).fromNow();
+  }
+
+  renderComments(replies) {
+    return replies.map((reply, i) => {
+      const username = reply.user ? `${reply.user.first_name} ${reply.user.last_name}` : 'Anonymous';
+      let deleteButton = null;
+      if (reply.canEdit || this.props.parentProps.auth_user.user.todevs_superuser) {
+        deleteButton = <span onClick={() => this.onReplyDelete(reply)}
+                             style={{color: grey600, cursor: 'pointer'}}>  &mdash;  delete</span>
+      }
+
+      return (
+        <div key={i}>
+          <Divider style={this.styles.commentDivider}/>
+          <CardText style={{padding: '8px 20px 8px 5px', fontSize: 12, lineHeight: '16px'}}>
+            {reply.reply_body} &mdash;
+            <strong style={{textTransform: 'captitalize'}}>{username}</strong> &nbsp;
+            <span style={{color: 'rgb(205, 205, 205)'}}>| {this.getDate(reply.created_at)}</span>
+            {deleteButton}
+          </CardText>
+        </div>
+      )
+    })
+  }
+
+  onReplyDelete(reply) {
+    const data = {
+      ...reply,
+      comment_guid: this.props.comment.comment_guid
+    };
+
+    this.props.parentProps.actions.deleteReply(data)
+  }
+
+  onReplySubmit(data) {
+    data = {
+      type: 'comment',
+      comment_guid: this.props.comment.comment_guid,
+      ...data
+    };
+    this.props.parentProps.actions.addReplyRequest(data);
+    this.setState({replyForm: false})
+  }
+
 
   render() {
     let comment = this.props.comment;
@@ -219,80 +281,80 @@ class Comment extends Component {
     const timezone = moment.tz.guess();
     const time = moment.tz(comment.created_at, null).format();
     let edit = null;
-    if(comment.canEdit) {
+    if (comment.canEdit) {
       edit = (
-        <label style={this.styles.actionButton}
-               onClick={() => this.editComment('show')}>
-          edit
-        </label>
+        <div style={this.styles.actionButton}>
+          <label style={{cursor: 'pointer'}} onClick={() => this.editComment('show')}>
+            edit
+          </label>
+        </div>
       );
     }
     let deleteIcon = null;
-    if(comment.canEdit ||
+    if (comment.canEdit ||
       auth_user.todevs_superuser ||
       auth_user.todevs_staff) {
       deleteIcon = (
-        <label style={this.styles.actionButton}
-               onClick={() => this.toggleConfirmation()}>
-          delete
-        </label>
+        <div style={this.styles.actionButton}>
+          <label style={{cursor: 'pointer'}} onClick={() => this.toggleConfirmation()}>
+            delete
+          </label>
+        </div>
       );
     }
 
     let commentContent = null;
-    if(this.state.edit === false) {
+    if (this.state.edit === false) {
       commentContent = (
-        <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(comment.comment)} />
+        <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(comment.comment)}/>
       );
     }
     else {
       commentContent = this.renderEditComment();
     }
     let actions = null;
-    if(this.state.edit) {
+    if (this.state.edit) {
       actions = [
-        (<Col xs={1} key={1}>
-          <label style={this.styles.actionButton}
+        <div key={1} style={this.styles.actionButton}>
+          <label style={{cursor: 'pointer'}}
                  onClick={() => this.editComment('submit')}>
             submit
           </label>
-        </Col>),
-        (<Col xs={1} key={2}>
-          <label style={this.styles.actionButton}
+        </div>,
+        <div key={2} style={this.styles.actionButton}>
+          <label style={{cursor: 'pointer'}}
                  onClick={() => this.editComment('cancel')}>
             cancel
           </label>
-        </Col>)
+        </div>
       ];
     }
     else {
-      const username = comment.user ?`${comment.user.first_name} ${comment.user.last_name}` : 'Anonymous';
+      const username = comment.user ? `${comment.user.first_name} ${comment.user.last_name}` : 'Anonymous';
       actions = [
-        (<Col xs={1} key={1}>
+        <span key={1}>
           {edit}
-        </Col>),
-        (<Col xs={1} key={2}>
+        </span>,
+        <span key={2}>
           {deleteIcon}
-        </Col>),
-        (<Col xsOffset={7} xs={3} key={3}>
-          <Row end="xs">
-            <label style={{fontWeight: 400, textTransform: 'capitalize'}}>{username}</label>
-            <div style={this.styles.timeContainer}
-                 onMouseEnter={() => this.timeTooltipMouseEnter(timezone, moment.tz(comment.created_at, null).format())}
-                 onMouseLeave={() => {
-                   this.setState({ timeTooltip: {show: false, label: ''} })
-                 }}>
-              <label> {`Answered ${moment(time).tz(timezone).fromNow()}`} </label>
-              <Tooltip show={this.state.timeTooltip.show}
-                       label={this.state.timeTooltip.label}
-                       style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
-                       horizontalPosition="left"
-                       verticalPosition="bottom"
-                       touch={true}
-              />
-            </div>
-          </Row>
-        </Col>)
+        </span>,
+        <div key={4} style={{float: 'right', display: 'inline-block', textAlign: 'right', height: 44}}>
+          <label style={{fontWeight: 400, textTransform: 'capitalize'}}>{username}</label>
+          <div style={this.styles.timeContainer}
+               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, moment.tz(comment.created_at, null).format())}
+               onMouseLeave={() => {
+                 this.setState({timeTooltip: {show: false, label: ''}})
+               }}>
+            <label> {`Answered ${moment(time).tz(timezone).fromNow()}`} </label>
+            <Tooltip show={this.state.timeTooltip.show}
+                     label={this.state.timeTooltip.label}
+                     style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
+                     horizontalPosition="left"
+                     verticalPosition="bottom"
+                     touch={true}
+            />
+          </div>
+        </div>
       ]
     }
 
@@ -302,14 +364,22 @@ class Comment extends Component {
           <div style={{width: '11%', flexBasis: '11%'}}>
             {this.renderVotes()}
           </div>
-          <div style={{width: '85%', flexBasis: '85%', textAlign: 'justify'}}>
-            <CardText style={{paddingLeft: 0, paddingBottom: 10}}>
+          <div style={{width: '86%', flexBasis: '86%', textAlign: 'justify'}}>
+            <CardText style={{padding: '10px 16px 10px 0'}}>
               {commentContent}
             </CardText>
-            <Row style={this.styles.commentFooter}>
+            <div style={this.styles.commentFooter}>
               {actions}
               {this.renderDeleteConfirmation()}
-            </Row>
+            </div>
+            {this.renderComments(comment.replies)}
+            <Divider style={this.styles.commentDivider}/>
+            <ReplyForm
+              openForm={this.state.replyForm}
+              formPadding={{padding: '5px 0px 5px 5px'}}
+              onButtonClick={() => this.setState({replyForm: !this.state.replyForm})}
+              onSubmit={(data) => this.onReplySubmit(data)}
+            />
           </div>
         </Row>
       </div>
