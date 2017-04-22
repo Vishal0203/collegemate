@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class PostUpvoteNotification extends Notification implements ShouldQueue
+class PostReplyNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -17,7 +17,6 @@ class PostUpvoteNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      *
      * @param App/Post $post
-     * @return void
      */
     public function __construct($post)
     {
@@ -34,7 +33,6 @@ class PostUpvoteNotification extends Notification implements ShouldQueue
     {
         return ['database', 'broadcast'];
     }
-
 
     /**
      * Get the array representation of the notification.
@@ -57,7 +55,7 @@ class PostUpvoteNotification extends Notification implements ShouldQueue
                 'post_guid' => $this->post['post_guid'],
                 'post_heading' => $this->post['post_heading'],
             ],
-            'message' => 'Your post "' . substr($this->post['post_heading'], 0, 40) .  '... was upvoted"'
+            'message' => 'New comment on post "' . substr($this->post['post_heading'], 0, 40) . '..."'
         ]);
     }
 }

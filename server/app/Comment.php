@@ -33,4 +33,9 @@ class Comment extends Model
     {
         return $this->morphMany('App\Upvote', 'upvotable')->count();
     }
+
+    public function replies()
+    {
+        return $this->morphMany('App\Reply', 'repliable');
+    }
 }

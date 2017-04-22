@@ -32,7 +32,6 @@ class Announcement extends React.Component {
       },
       notificationPublisher: {
         padding: '10px 16px 12px 16px',
-        fontStyle: 'italic',
         color: '#a5a5a5',
         fontWeight: 300,
         fontSize: 13
