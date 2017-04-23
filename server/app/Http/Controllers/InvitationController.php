@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\UserInstitute;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use App\Helper\UploadDataValidator;
 use App\Http\Requests;
 use App\Http\Controllers\Auth\AuthControllerGeneral;
@@ -14,6 +14,7 @@ use App\UserProfile;
 use Faker;
 use App\Institute;
 use Maatwebsite\Excel\Facades\Excel;
+use Validator;
 
 class InvitationController extends Controller
 {
@@ -53,46 +54,29 @@ class InvitationController extends Controller
         if ($request->get('for') == 'member') {
             array_pop($required_keys);
         }
-
         $validator = new UploadDataValidator($uploaded_data);
         $refined_data = $validator->validateAndRefineUploadedExcel($required_keys);
-
-        $internals = Faker\Factory::create('en_US');
-
-        $users_data = ['success' => [], 'error' => []];
-        foreach ($refined_data["success"] as $input) {
-            $user = User::where('email', $input['email'])->get()->first();
-            if (!$user) {
-                $user = User::create([
-                    'user_guid' => $internals->uuid,
-                    'email' => $input['email'],
-                    'hash' => $internals->md5
-                ]);
-
-                UserProfile::create([
-                    'user_profile_guid' => $internals->uuid,
-                    'user_id' => $user['id']
-                ]);
+        if (count($refined_data['success']) > 0 && count($refined_data['error']) == 0) {
+            DB::beginTransaction();
+            foreach ($refined_data["success"] as $input) {
+                $validator = $this->validator($input);
+                if ($validator->fails() == false) {
+                    $req = [
+                        'memberId' => $input['employeeid'],
+                        'designation' => $input['designation'],
+                        'email' => $input['email']
+                    ];
+                    StaffController::addStaffMember($req, $institute_guid);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['ErrorResponse' => 'Please submit a valid file'], 400);
+                }
             }
-
-            $role = 'inst_staff';
-            $data = [
-                'member_id' => $input['employeeid'],
-                'role' => $role,
-                'designation' => $input['designation'],
-            ];
-
-            $response = $this->addUserInstitute($institute, $user, $data);
-            if (!is_null($response->errorInfo)) {
-                $input['error_msg'] = "This user might've already been invited or member ID is not unique";
-                array_push($users_data['error'], $input);
-            } else {
-                array_push($users_data['success'], $response);
-            }
+            DB::commit();
+            return response()->json(['Response' => 'File has been successfully processed'], 200);
+        } else {
+            return response()->json(['ErrorResponse' => 'Please submit a valid file'], 400);
         }
-
-        $users_data['error'] = array_merge($users_data['error'], $refined_data['error']);
-        return response()->json(compact('users_data'));
     }
 
     public static function addUserInstitute(Institute $institute, User $user_data, array $request)
@@ -232,5 +216,19 @@ class InvitationController extends Controller
         $data['invitation_status'] = $request['invitation_response'];
 
         return view('invitation.response', $data);
+    }
+
+    public function validator(array $data)
+    {
+        $messages = [
+            'required' => ':attribute is required field',
+            'email.max' => ':attribute exceeds max limit 255 chars',
+            'unique' => ':attribute already exists'
+        ];
+
+        return Validator::make($data, [
+            'email' => 'bail|required|email|max:255',
+            'employeeid' => 'bail|required:users_institutes,member_id'
+        ], $messages);
     }
 }

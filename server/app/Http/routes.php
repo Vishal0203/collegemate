@@ -56,7 +56,6 @@ Route::group(['prefix' => 'api/v1_0'], function () {
             'StaffController',
             ['only' => ['index', 'store', 'update', 'destroy']]
         );
-        Route::get('validate_staff', 'StaffController@validateStaffProfile');
         Route::get('download_staff_template', 'StaffController@getStaffTemplateSheet');
         Route::resource(
             'members',
@@ -76,7 +75,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         );
 
         Route::post('invitation/bulk_invite', 'InvitationController@bulkInvite');
-        Route::post('staff/add_staff', 'StaffController@addStaffMember');
+        Route::post('staff/add_staff', 'StaffController@staffInviteRequest');
         Route::resource(
             'invitation',
             'InvitationController',
