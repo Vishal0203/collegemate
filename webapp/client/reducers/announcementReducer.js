@@ -1,5 +1,7 @@
 import * as actions from '../actions/announcements/index';
+import * as eventActions from '../actions/events/index';
 import {OPEN_CATEGORY_ANNOUNCEMENTS} from '../actions/notifications/index';
+import moment from 'moment';
 
 const initialState = {
   categories: [],
@@ -11,8 +13,50 @@ const initialState = {
   skip: 0,
   items: {
     data: []
-  }
+  },
+  eventsLoader: false,
+  events: [],
+  eventsCalendar: {
+    eventsInWeek: [],
+    eventsInMonth: [],
+    eventsWeekLoader: false,
+    monthEventsStartDate: null,
+    monthEventsEndDate: null
+  },
+  singleAnnouncement: null,
+  singleAnnouncementLoader: false
 };
+
+function updateEvents(state, notification) {
+  let eventsInMonth = state.eventsCalendar.eventsInMonth;
+  let eventsInWeek = state.eventsCalendar.eventsInWeek;
+  let events = state.events;
+  const {event_date} = notification;
+  if (event_date) {
+    const dayDiffFromToday = moment(event_date).diff(moment().startOf('day'), 'days');
+
+    events = [...events, notification];
+    events = events.sort((event1, event2) => moment(event1.event_date).diff(moment(event2.event_date), 'days'))
+      .slice(0,4);
+
+
+    if (dayDiffFromToday >= 0 && dayDiffFromToday < 7) {
+      eventsInWeek = [...eventsInWeek, notification];
+      eventsInWeek.sort((event1, event2) => moment(event1.event_date).diff(moment(event2.event_date), 'days'));
+    }
+    if (state.eventsCalendar.monthEventsStartDate) {
+      const dayDiffFromMonthStart = moment(event_date).diff(state.eventsCalendar.monthEventsStartDate, 'days');
+      const dayDiffFromMonthEnd = moment(event_date).diff(state.eventsCalendar.monthEventsEndDate, 'days');
+      if (dayDiffFromMonthStart >= 0 && dayDiffFromMonthEnd <= 0) {
+        eventsInMonth = [...eventsInMonth, {
+          ...notification,
+          allDay: true,
+        }];
+      }
+    }
+  }
+  return {eventsInMonth, eventsInWeek, events}
+}
 
 export default function announcementReducer(state = initialState, action) {
   switch (action.type) {
@@ -31,10 +75,17 @@ export default function announcementReducer(state = initialState, action) {
           loadingMore: false
         };
       }
+      const {eventsInMonth, eventsInWeek, events} = updateEvents(state, action.notification);
       return {
         ...state,
         skip,
         items: {...state.items, data: [action.notification, ...state.items.data]},
+        events,
+        eventsCalendar: {
+          ...state.eventsCalendar,
+          eventsInWeek,
+          eventsInMonth
+        },
         loadingMore: false
       };
     }
@@ -47,6 +98,32 @@ export default function announcementReducer(state = initialState, action) {
         hasMore: !!action.response.next_page_url,
         nextPageUrl: action.response.next_page_url
       };
+    }
+    case actions.FETCH_SINGLE_ANNOUNCEMENT_REQUEST: {
+      return {
+        ...state,
+        singleAnnouncementLoader: true
+      }
+    }
+    case actions.FETCH_SINGLE_ANNOUNCEMENT_RESPONSE: {
+      return {
+        ...state,
+        singleAnnouncementLoader: false,
+        singleAnnouncement: action.response.notification
+      }
+    }
+    case actions.FETCH_EVENTS_REQUEST: {
+      return {
+        ...state,
+        eventsLoader: true
+      }
+    }
+    case actions.FETCH_EVENTS_RESPONSE: {
+      return {
+        ...state,
+        events: action.response.events,
+        eventsLoader: false
+      }
     }
     case actions.SET_ANNOUNCEMENT_CATEGORIES: {
       return {
@@ -111,6 +188,43 @@ export default function announcementReducer(state = initialState, action) {
         ...initialState,
         categories: state.categories,
         filters: newFilters
+      }
+    }
+    case eventActions.FETCH_WEEK_EVENTS_REQUEST: {
+      return {
+        ...state,
+        eventsCalendar: {
+          ...state.eventsCalendar,
+          eventsInWeek: [],
+          eventsWeekLoader: true
+        }
+      }
+    }
+    case eventActions.FETCH_WEEK_EVENTS_RESPONSE: {
+      return {
+        ...state,
+        eventsCalendar: {
+          ...state.eventsCalendar,
+          eventsInWeek: action.response.events,
+          eventsWeekLoader: false
+        }
+      }
+    }
+    case eventActions.FETCH_MONTH_EVENTS_RESPONSE: {
+      const eventsInMonth = action.response.events.map((event) => {
+        return {
+          ...event,
+          allDay: true
+        }
+      });
+      return {
+        ...state,
+        eventsCalendar: {
+          ...state.eventsCalendar,
+          eventsInMonth,
+          monthEventsStartDate: action.eventsStartDate,
+          monthEventsEndDate: action.eventsEndDate
+        }
       }
     }
     case '@@router/LOCATION_CHANGE': {

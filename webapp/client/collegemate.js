@@ -6,6 +6,7 @@ import Main from './components/Main';
 import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
+import EventsCalendar from './components/announcements/EventsCalendar';
 import SettingsContainer from './components/settings/SettingsContainer';
 import InstituteSettingsContainer from './components/InstituteSettings/InstituteSettingsContainer';
 import InstituteContainer from './components/InstituteSettings/InstituteContainer';
@@ -16,6 +17,7 @@ import {Provider} from 'react-redux';
 import rootSaga from './sagas/index';
 import {syncHistoryWithStore} from 'react-router-redux';
 import './styles/style.css';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 injectTapEventPlugin();
 
@@ -36,6 +38,7 @@ const router = (
         <Route path='/settings' component={SettingsContainer}/>
         <Route path='/institute' component={InstituteContainer}/>
         <Route path='/institute_settings' component={InstituteSettingsContainer}/>
+        <Route path='/events' component={EventsCalendar}/>
       </Route>
     </Router>
   </Provider>

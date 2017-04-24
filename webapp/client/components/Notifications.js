@@ -150,7 +150,8 @@ class Notifications extends React.Component {
       case ANNOUNCEMENT_NOTIFICATION:
         notificationMessage = (
           <p className="notification-text">
-            {notification.count} new announcement(s) in <strong>{notification.category_type}</strong>
+            {notification.count} new {notification.count === 1 ? 'announcement' : 'announcements'} in
+            category <strong>{notification.category_type}</strong>
           </p>
         );
         break;

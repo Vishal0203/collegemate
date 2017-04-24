@@ -56,7 +56,7 @@ function *watchOpenAnnouncementNotification() {
   yield *takeLatest(notificationActions.OPEN_CATEGORY_ANNOUNCEMENTS, openCategoryAnnouncements)
 }
 
-export default function *userSaga() {
+export default function *notificationSaga() {
   yield [
     fork(watchReadNotification),
     fork(watchReadAllNotifications),

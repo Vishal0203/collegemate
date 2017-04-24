@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\NotificationFiles;
 use App\Institute;
 use App\NotificationData;
+use Illuminate\Support\Facades\Auth;
 use Input;
 use AWS;
 use App\Category;
@@ -15,6 +16,7 @@ use Event;
 use App\Events\NewAnnouncement;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AnnouncementNotification;
+use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
@@ -49,8 +51,10 @@ class NotificationController extends Controller
      */
     public function store($institute_guid, Request $request)
     {
+        if ($request['event_date'] && Carbon::createFromFormat('Y-m-d', $request['event_date']) === false) {
+            return response()->json(['Error' => 'Invalid Date Format - event_date.'], 400);
+        }
         $category_guid = $request['category_guid'];
-
         $category =
             Category::where('category_guid', $category_guid)->get()->first();
 
@@ -60,6 +64,7 @@ class NotificationController extends Controller
             'notification_guid' => $internals->uuid,
             'notification_head' => $request['notification_head'],
             'notification_body' => $request['notification_body'],
+            'event_date' => $request['event_date'],
             'created_by' => \Auth::user()->id
         ]);
 
@@ -89,7 +94,7 @@ class NotificationController extends Controller
         Event::fire(new NewAnnouncement($notification, $institute_guid));
         Notification::send($category->subscribers, new AnnouncementNotification($category, $notification));
 
-        return response()->json(['message' => 'Announcement published in ' . $category['category_type']], 200);
+        return response()->json($request['event_date'], 200);
     }
 
     /**
@@ -104,7 +109,13 @@ class NotificationController extends Controller
         $notification =
             NotificationData
                 ::where('notification_guid', '=', $notification_guid)
-                ->with('attachments', 'categories')->get();
+                ->with(['notificationFiles', 'category',
+                    'publisher' => function ($query) use ($institute_guid) {
+                        $query->with(['userProfile', 'institutes' => function ($institutes) use ($institute_guid) {
+                            $institutes->where('inst_profile_guid', $institute_guid)
+                                ->select('id', 'designation')->get();
+                        }]);
+                    }])->first();
 
         return response()->json(compact('notification'), 200);
     }
@@ -136,5 +147,29 @@ class NotificationController extends Controller
             $request->url() . "?" . http_build_query($query_params) : null;
 
         return response()->json(compact('total', 'next_page_url', 'data'), 200);
+    }
+
+    public function getNextEvents($institute_guid, Request $request)
+    {
+        $user = \Auth::user();
+        $category_guid = $request['category_guid'];
+        $category_ids = Category::whereIn('category_guid', explode(',', $category_guid))
+            ->pluck('id');
+        $events = NotificationData::whereIn('category_id', $category_ids->toArray())
+            ->where('event_date', '>=', date('Y-m-d'))->orderBy('event_date', 'asc')->take(4)->get();
+        return response()->json(compact('events'), 200);
+    }
+
+    public function getEventsInRange($institute_guid, Request $request)
+    {
+        $user = \Auth::user();
+        $start = $request->get('startDate', Carbon::now()->startOfMonth());
+        $end = $request->get('endDate', Carbon::now()->endOfMonth());
+        $category_guid = $request['category_guid'];
+        $category_ids = Category::whereIn('category_guid', explode(',', $category_guid))
+            ->pluck('id');
+        $events = NotificationData::whereIn('category_id', $category_ids->toArray())
+            ->where('event_date', '>=', $start)->where('event_date', '<=', $end)->orderBy('event_date', 'asc')->get();
+        return response()->json(compact('events'), 200);
     }
 }

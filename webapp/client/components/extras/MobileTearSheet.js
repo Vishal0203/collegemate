@@ -6,11 +6,10 @@ class MobileTearSheet extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    height: PropTypes.number.isRequired,
   };
 
   static defaultProps = {
-    height: 500,
+    height: 'initial',
   };
 
   static contextTypes = {
@@ -45,10 +44,12 @@ class MobileTearSheet extends Component {
       },
     };
 
+    const {containerStyle} = this.props;
+
     return (
       <div style={prepareStyles(styles.root)}>
         <Paper zDepth={0}>
-          <div style={prepareStyles(styles.container)}>
+          <div style={prepareStyles({...styles.container, ...containerStyle})}>
             {this.props.children}
           </div>
         </Paper>

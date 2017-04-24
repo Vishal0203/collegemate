@@ -4,8 +4,10 @@ import Avatar from 'material-ui/Avatar';
 import moment from 'moment';
 import FlatButton from 'material-ui/FlatButton';
 import Tooltip from 'material-ui/internal/Tooltip';
+import {grey600} from 'material-ui/styles/colors';
+import {getDateDiff} from '../extras/utils';
 
-class Announcement extends React.Component {
+export class AnnouncementContent extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
@@ -34,7 +36,8 @@ class Announcement extends React.Component {
         padding: '10px 16px 12px 16px',
         color: '#a5a5a5',
         fontWeight: 300,
-        fontSize: 13
+        fontSize: 13,
+        position: 'relative'
       },
       attachmentTooltip: {
         left: 0,
@@ -47,6 +50,19 @@ class Announcement extends React.Component {
       divider: {
         width: '97%',
         backgroundColor: 'rgba(224, 224, 224, 0.6)'
+      },
+      eventLabel: {
+        display: 'inline-block',
+        padding: 3,
+        fontSize: 12,
+        color: grey600,
+        marginLeft: 12,
+        fontWeight: 300,
+        borderWidth: 'thin',
+        borderStyle: 'solid',
+        borderRadius: 4,
+        position: 'relative',
+        top: '-4px'
       }
     }
   }
@@ -105,10 +121,9 @@ class Announcement extends React.Component {
   render() {
     const {announcement, avatarColor} = this.props;
     const timezone = moment.tz.guess();
-    const time = moment.tz(announcement.created_at, null).format();
 
     return (
-      <Card style={{marginTop: 15, marginBottom: 15}}>
+      <div>
         <CardHeader
           title={announcement.notification_head}
           subtitle={`${announcement.category.category_type}`}
@@ -119,11 +134,12 @@ class Announcement extends React.Component {
           }
           titleStyle={{marginTop: 3}}
           subtitleStyle={{textTransform: 'capitalize', marginTop: 4}}>
-          <div className="time-container" onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
+          <div className="time-container"
+               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, announcement.created_at)}
                onMouseLeave={() => {
                  this.setState({timeTooltip: {show: false, label: ''}})
                }}>
-            <label> {moment(time).tz(timezone).fromNow()} </label>
+            <label> {getDateDiff(announcement.created_at)} </label>
           </div>
           <Tooltip show={this.state.timeTooltip.show}
                    label={this.state.timeTooltip.label}
@@ -139,9 +155,34 @@ class Announcement extends React.Component {
         </CardText>
         {this.showAttachments(announcement)}
         <CardText style={this.styles.notificationPublisher}>
-          <span style={{textTransform: 'capitalize'}}>{announcement.publisher.first_name} {announcement.publisher.last_name}, </span>
-          {announcement.publisher.institutes[0].designation}
+          <span style={{textTransform: 'capitalize'}}>
+            {announcement.publisher.first_name} {announcement.publisher.last_name}, {announcement.publisher.institutes[0].designation}
+          </span>
+          <span style={{position: 'absolute', right: 16}}>
+            {announcement.event_date ?
+              <div style={this.styles.eventLabel}>
+                Event {getDateDiff(announcement.event_date)}
+              </div> : <span/>
+            }
+          </span>
         </CardText>
+      </div>
+    );
+  }
+}
+
+class Announcement extends React.Component {
+  constructor(props) {
+    super(props);
+    this.parentProps = props.parentProps;
+  }
+
+  render() {
+    return (
+      <Card style={{marginTop: 15, marginBottom: 15, paddingBottom: 8}}>
+        <AnnouncementContent parentProps={this.parentProps}
+                             announcement={this.props.announcement}
+                             avatarColor={this.props.avatarColor}/>
       </Card>
     );
   }
