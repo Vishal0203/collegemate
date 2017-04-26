@@ -1,0 +1,19 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "main-server",
+            "image": "640330380514.dkr.ecr.ap-southeast-1.amazonaws.com/collegemate-server:latest",
+            "essential": true,
+            "entryPoint": null,
+            "portMappings": [
+                {
+                    "containerPort": 443,
+                    "hostPort": 0
+                }
+            ],
+            "memory": 500,
+            "cpu": 10
+        }
+    ],
+    "family": "main-server"
+}

@@ -31,7 +31,6 @@ class Kernel extends HttpKernel
         'auth' => Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => Middleware\RedirectIfAuthenticated::class,
-        'todevs.auth' => Middleware\ToDevsAuthChecker::class,
         'inst_super' => Middleware\InstituteSuperCheck::class,
         'inst_admin' => Middleware\NotificationsEligibility::class,
         'inst_user' => Middleware\SubscriptionCheck::class,

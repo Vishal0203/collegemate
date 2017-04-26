@@ -1,0 +1,19 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "pubsub-server",
+            "image": "640330380514.dkr.ecr.ap-southeast-1.amazonaws.com/pubsub-server:latest",
+            "essential": true,
+            "entryPoint": null,
+            "portMappings": [
+                {
+                    "containerPort": 443,
+                    "hostPort": 0
+                }
+            ],
+            "cpu": 10,
+            "memory": 1000
+        }
+    ],
+    "family": "pubsub-server"
+}

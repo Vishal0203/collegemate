@@ -5,9 +5,9 @@ import Toggle from 'material-ui/Toggle';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import {Grid, Row, Col} from 'react-flexbox-grid';
+import {Row, Col} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
-import {FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
+import {FormsyText, FormsyCheckbox} from 'formsy-material-ui/lib';
 import ChipInput from 'material-ui-chip-input';
 import FontIcon from 'material-ui/FontIcon';
 import IconMenu from 'material-ui/IconMenu';
@@ -63,11 +63,12 @@ class SubscriptionForm extends Component {
   }
 
   handleCategoryCreate(data) {
-    if (this.state.email_ids.length < 2) {
+    if (data.private && this.state.email_ids.length < 2) {
       this.props.parentProps.actions.toggleSnackbar('There should be atleast 2 recepients for a private category.')
     } else {
       data = {...data, email_ids: this.state.email_ids};
-      this.props.parentProps.actions.createAnnouncementCategoryRequest(data)
+      this.props.parentProps.actions.createAnnouncementCategoryRequest(data);
+      this.refs.category_form.reset();
     }
   }
 
@@ -103,7 +104,7 @@ class SubscriptionForm extends Component {
   renderUsersAdditionForm() {
     if (this.state.private_category) {
       return (
-        <Row style={{padding: '0 16px 16px'}}>
+        <Row style={{padding: '0 16px 10px'}}>
           <Col xs={12}>
             <ChipInput
               fullWidth
@@ -138,14 +139,15 @@ class SubscriptionForm extends Component {
         <div>
           <Subheader>Create Announcement Category</Subheader>
           <Formsy.Form
+            ref="category_form"
             onValid={this.enableButton.bind(this)}
             onInvalid={this.disableButton.bind(this)}
             onValidSubmit={(data) => this.handleCategoryCreate(data)}
           >
-            <Row style={{padding: '0 16px 16px'}}>
+            <Row style={{padding: '0 16px 10px'}}>
               <Col xs={4}>
                 <FormsyText
-                  hintText="Category Type"
+                  hintText="Category Name"
                   name="category_type"
                   inputStyle={{boxShadow: 'none'}}
                   style={this.styles.formField}
@@ -171,26 +173,22 @@ class SubscriptionForm extends Component {
               {this.renderUsersAdditionForm()}
             </ReactCSSTransitionGroup>
             <Row style={{padding: '0 16px 16px'}}>
-              <Col xs={4}>
-                <FormsyToggle
-                  style={this.styles.formField}
-                  name="private"
-                  label="Make private category"
-                  onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
-                />
-              </Col>
-            </Row>
-            <Row style={{padding: '0 16px 16px'}}>
               <Col xs={3}>
                 <RaisedButton
                   type="submit"
                   label="Create Category"
                   fullWidth={true}
                   disabled={!this.state.canSubmit}
-                  buttonStyle={{height: '30px', lineHeight: '30px'}}
-                  labelStyle={{fontSize: 11}}
-                  style={{marginTop: 12}}
+                  labelStyle={{fontSize: 12}}
                   primary={true}/>
+              </Col>
+              <Col xs={4}>
+                <FormsyCheckbox
+                  style={{...this.styles.formField, marginTop: 5}}
+                  name="private"
+                  label="Make this a private category"
+                  onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
+                />
               </Col>
             </Row>
           </Formsy.Form>
