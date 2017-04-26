@@ -159,7 +159,7 @@ class Notifications extends React.Component {
         notificationMessage = (
           <p className="notification-text">
             {this.getNotificationCountsText(notification.updates)}
-            on your comment on post <strong>{ellipsis(notification.post_heading, 30)}</strong>
+            on your answer on post <strong>{ellipsis(notification.post_heading, 30)}</strong>
           </p>
         );
         break;
