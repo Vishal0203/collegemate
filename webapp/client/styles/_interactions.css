@@ -40,7 +40,9 @@
     background-color: rgba(0, 0, 0, 0.05);
     font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
     font-size: 14px;
-    padding: 20px;
+    padding: 8px;
+    border-radius: 3px;
+    border: thin solid lightgrey;
     margin-bottom: 20px;
 }
 

@@ -406,7 +406,7 @@ class InteractionSingle extends Component {
                 {votes}
               </div>
               <div style={{width: '86%', flexBasis: '86%', textAlign: 'justify'}}>
-                <CardText style={{padding: '10px 16px 10px 0'}}>
+                <CardText style={{padding: '10px 23px 10px 0'}}>
                   <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(post.post_description)}/>
                 </CardText>
                 <PostUpdateDialog

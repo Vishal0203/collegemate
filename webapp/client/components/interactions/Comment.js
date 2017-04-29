@@ -364,8 +364,8 @@ class Comment extends Component {
           <div style={{width: '11%', flexBasis: '11%'}}>
             {this.renderVotes()}
           </div>
-          <div style={{width: '86%', flexBasis: '86%', textAlign: 'justify'}}>
-            <CardText style={{padding: '10px 16px 10px 0'}}>
+          <div style={{width: '87%', flexBasis: '87%', textAlign: 'justify'}}>
+            <CardText style={{padding: '10px 0'}}>
               {commentContent}
             </CardText>
             <div style={this.styles.commentFooter}>

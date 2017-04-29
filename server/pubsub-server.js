@@ -24,6 +24,16 @@ app.listen(6001, function() {
 });
 
 function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Request-Method', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  if (req.method === 'OPTIONS') {
+     res.writeHead(200);
+     res.end();
+     return;
+  }
+
   res.writeHead(200);
   res.end('');
 }
@@ -44,3 +54,4 @@ redis.on('pmessage', function(subscribed, channel, message) {
   }
   io.emit(channel + ':' + message.event, message.data);
 });
+

@@ -154,9 +154,12 @@ body {
 .post-content pre {
     background: rgba(237, 237, 237, 0.71);
     font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
-    border-radius: 1px;
+    border-radius: 3px;
+    border: thin solid lightgrey;
     padding: 8px;
     margin: 0;
+    max-height: 300px;
+    overflow: scroll;
 }
 
 .post-content pre code {
