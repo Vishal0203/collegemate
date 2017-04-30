@@ -182,14 +182,16 @@ class SubscriptionForm extends Component {
                   labelStyle={{fontSize: 12}}
                   primary={true}/>
               </Col>
-              <Col xs={4}>
+              <div style={{display: 'inline-block'}}>
                 <FormsyCheckbox
-                  style={{...this.styles.formField, marginTop: 5}}
+                  style={{...this.styles.formField, marginTop: 8}}
+                  iconStyle={{width: 20, height: 20, marginRight: 10}}
                   name="private"
                   label="Make this a private category"
+                  labelStyle={{fontSize: 12, fontWeight:400, width:'100%', bottom:'2px'}}
                   onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
                 />
-              </Col>
+              </div>
             </Row>
           </Formsy.Form>
         </div>
