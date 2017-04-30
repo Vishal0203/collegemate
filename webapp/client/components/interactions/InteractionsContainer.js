@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Header from '../Header';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import Loader from 'halogen/ScaleLoader';
+import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
 import Chip from 'material-ui/Chip';
@@ -154,7 +154,7 @@ class InteractionsContainer extends Component {
             <div className="wrap">
               <Row>
                 <Col xs={8}>
-                  <InfiniteScroll elementIsScrollable={false} hasMore={this.props.interactions.hasMore}
+                  <InfiniteScroll hasMore={this.props.interactions.hasMore}
                                   loadingMore={this.props.interactions.loadingMore}
                                   loadMore={() => this.loadMore()} loader={loader}>
                     {this.renderInteractions()}

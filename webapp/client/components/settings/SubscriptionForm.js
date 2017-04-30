@@ -25,7 +25,7 @@ class SubscriptionForm extends Component {
       canSubmit: false,
       deletionConfirmation: false,
       deletionCategory: null,
-      private_category: null,
+      private_category: false,
       email_ids: []
     }
   }
@@ -66,9 +66,10 @@ class SubscriptionForm extends Component {
     if (data.private && this.state.email_ids.length < 2) {
       this.props.parentProps.actions.toggleSnackbar('There should be atleast 2 recepients for a private category.')
     } else {
-      data = {...data, email_ids: this.state.email_ids};
+      data = {...data, private: !!data.private, email_ids: this.state.email_ids};
       this.props.parentProps.actions.createAnnouncementCategoryRequest(data);
       this.refs.category_form.reset();
+      this.setState({private_category: false, email_ids: []})
     }
   }
 

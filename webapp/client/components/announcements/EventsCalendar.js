@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import BigCalendar from 'react-big-calendar';
-import moment from 'moment';
+import moment from 'moment/moment';
 import Paper from 'material-ui/Paper';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {
@@ -12,7 +12,7 @@ import {
   StepContent,
 } from 'material-ui/Stepper';
 import Divider from 'material-ui/Divider';
-import Loader from 'halogen/ScaleLoader';
+import Loader from 'halogenium/ScaleLoader';
 import StickyDiv from 'react-stickydiv';
 import * as eventActions  from '../../actions/events/index';
 import AnnouncementDialog from './AnnouncementDialog';

@@ -13,10 +13,9 @@ module.exports = {
     publicPath: '/dist/'
   },
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': "'production'",
+        NODE_ENV: "'production'",
         SERVER_HOST: JSON.stringify(process.env.SERVER_HOST),
         SOCKET_SERVER: JSON.stringify(process.env.SOCKET_SERVER),
         GOOGLE_CLIENT_ID: JSON.stringify(process.env.GOOGLE_CLIENT_ID)
@@ -27,35 +26,35 @@ module.exports = {
         warnings: false,
         screw_ie8: true
       },
-      comments: false,
-      sourceMap: false
+      comments: false
     })
   ],
   module: {
-    loaders: [
-      // json
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
-      },
+    rules: [
       // js
       {
-        test: /\.js$/,
-        loaders: ['babel'],
+        test: /\.js/,
+        loader: 'babel-loader',
         include: path.join(__dirname, 'client')
       },
       // CSS
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        use: [
+          'style-loader',
+          'css-loader'
+        ],
         include: [path.join(__dirname, 'client'), /node_modules/]
       },
       // statics
       {
         test: /\.(jpe?g|gif|png|svg)$/,
-        loaders: [
-          'file?hash=sha512&digest=hex&name=[hash].[ext]'
-        ]
+        loader: 'file-loader',
+        options: {
+          hash: 'sha512',
+          digest: 'hex',
+          name: '[hash].[ext]'
+        }
       }
     ]
   }

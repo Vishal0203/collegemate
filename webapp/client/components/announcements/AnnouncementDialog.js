@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import {Row} from 'react-flexbox-grid';
-import Loader from 'halogen/ScaleLoader';
+import Loader from 'halogenium/ScaleLoader';
 import {AnnouncementContent} from './Announcement';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
 import {fetchSingleAnnouncementRequest} from '../../actions/announcements/index';
