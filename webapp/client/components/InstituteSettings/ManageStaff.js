@@ -59,24 +59,13 @@ class ManageStaff extends Component {
     }
   }
 
-  enableButton() {
-    this.setState({canSubmit: true})
-    this.setState({formValid: true})
+  setFormValidity(enabled) {
+    this.setState({canSubmit: enabled, formValid: enabled});
   }
 
-  disableButton() {
-    this.setState({canSubmit: false})
-    this.setState({formValid: false})
+  toggleConfirmationDialog() {
+    this.setState({open: !this.state.open});
   }
-
-  handleOpen() {
-    this.setState({open: true});
-  }
-
-  handleClose() {
-    this.setState({open: false});
-  }
-
 
   onFileSelect(e) {
     if (e.target.files.length === 0) {
@@ -91,15 +80,9 @@ class ManageStaff extends Component {
         this.parentProps.actions.toggleSnackbar('Please select a valid file');
         return;
       }
-      this.refs.chosenFiles.innerHTML = '';
       this.refs.chosenFiles.innerHTML = text;
-      this.setState({showButton: true})
-      this.setState({canSubmit: true})
+      this.setState({showButton: true, canSubmit: true});
     }
-  }
-
-  onSubmitForm() {
-    this.handleOpen();
   }
 
   clearAttachement() {
@@ -107,7 +90,7 @@ class ManageStaff extends Component {
     this.refs.chosenFiles.innerHTML = '';
     this.setState({showButton: false})
     if (!this.state.formValid) {
-      this.disableButton();
+      this.setFormValidity(false);
     }
 
   }
@@ -126,13 +109,15 @@ class ManageStaff extends Component {
       const request = {hasFile: false, invite_data: data};
       this.parentProps.actions.submitStaffAdditionRequest(request);
     }
-    this.setState({open: false});
-    this.setState({canSubmit: false});
-    this.setState({showButton: false});
+    this.setState({
+      open: false,
+      canSubmit: false,
+      showButton: false
+    });
     this.refs.form.reset();
   }
 
-  handleClick(user_guid, status) {
+  handleApproval(user_guid, status) {
     this.parentProps.actions.staffApprovalAction(user_guid, status);
   }
   handleChange(e) {
@@ -159,12 +144,12 @@ class ManageStaff extends Component {
             </TableRowColumn>
             <TableRowColumn style={{ color: grey600, width: 80 }}>
               <IconButton>
-                <FontIcon className="material-icons" onClick={() => this.handleClick(staff.user_guid, 'declined')}>
+                <FontIcon className="material-icons" onClick={() => this.handleApproval(staff.user_guid, 'declined')}>
                   clear
                 </FontIcon>
               </IconButton>
               <IconButton>
-                <FontIcon className="material-icons" onClick={() => this.handleClick(staff.user_guid, 'accepted')}>
+                <FontIcon className="material-icons" onClick={() => this.handleApproval(staff.user_guid, 'accepted')}>
                   done
                 </FontIcon>
               </IconButton>
@@ -208,18 +193,19 @@ class ManageStaff extends Component {
     const sample_sheet = `${process.env.SERVER_HOST}/api/v1_0/institute/${institute_guid}/download_staff_template`;
 
     const actions = [
-      <FlatButton label="Cancel" primary={true} onTouchTap={() => this.handleClose()}/>,
+      <FlatButton label="Cancel" primary={true} onTouchTap={() => this.toggleConfirmationDialog()}/>,
       <FlatButton label="Submit" primary={true} keyboardFocused={true} onTouchTap={() => this.submitForm()}/>
     ];
 
     return (
       <div>
-        <Formsy.Form
-          ref="form"
-          onValid={this.enableButton.bind(this)}
-          onInvalid={this.disableButton.bind(this)}
-        >
-          <Card>
+        <Card>
+          <Formsy.Form
+            ref="form"
+            onValid={() => this.setFormValidity(true)}
+            onInvalid={() => this.setFormValidity(false)}
+          >
+
             <CardTitle titleStyle={{fontSize: 20}} style={this.styles.formTitle}
                        title="Invite Staff" subtitle="All fields are required"/>
             <CardText style={this.styles.formDescription}>
@@ -252,39 +238,40 @@ class ManageStaff extends Component {
                   autoComplete="off"/>
               </Col>
             </CardText>
-            <CardActions style={{padding: '0px 16px 16px'}}>
-              <RaisedButton
-                containerElement="label"
-                primary={true}
-                label="Import via excel">
-                <input ref="StaffAttachments" type="file"
-                       style={this.styles.chooseButton}
-                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                       onChange={(e) => this.onFileSelect(e)}/>
-              </RaisedButton>
-              <em style={{paddingLeft: 5, fontSize: 11, color: '#c6c6c6'}} ref="chosenFiles">
-                No file chosen
-              </em>
-              {this.state.showButton ? (
-                  <i className="material-icons"
-                     style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
-                     onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
-              <p style={{margin: '16px 0 0', fontSize: 12, color: grey500}}>
-                Download sample <a href={sample_sheet}>spreadsheet</a> to import via excel
-              </p>
-            </CardActions>
-            <CardActions style={{textAlign: 'right'}}>
-              <RaisedButton
-                label="Submit"
-                type="submit"
-                buttonStyle={{height: '30px', lineHeight: '30px'}}
-                labelStyle={{fontSize: 11}}
-                primary={true}
-                onTouchTap={() => this.onSubmitForm()}
-                disabled={!this.state.canSubmit}/>
-            </CardActions>
-          </Card>
-        </Formsy.Form>
+          </Formsy.Form>
+          <CardActions style={{padding: '0px 16px 16px'}}>
+            <RaisedButton
+              containerElement="label"
+              primary={true}
+              label="Import via excel">
+              <input ref="StaffAttachments" type="file"
+                     style={this.styles.chooseButton}
+                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                     onChange={(e) => this.onFileSelect(e)}/>
+            </RaisedButton>
+            <em style={{paddingLeft: 5, fontSize: 11, color: '#c6c6c6'}} ref="chosenFiles">
+              No file chosen
+            </em>
+            {this.state.showButton ? (
+                <i className="material-icons"
+                   style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
+                   onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
+            <p style={{margin: '16px 0 0', fontSize: 12, color: grey500}}>
+              Download sample <a href={sample_sheet}>spreadsheet</a> to import via excel
+            </p>
+          </CardActions>
+          <CardActions style={{textAlign: 'right'}}>
+            <RaisedButton
+              label="Submit"
+              type="submit"
+              buttonStyle={{height: '30px', lineHeight: '30px'}}
+              labelStyle={{fontSize: 11}}
+              primary={true}
+              onTouchTap={() => this.toggleConfirmationDialog()}
+              disabled={!this.state.canSubmit}/>
+          </CardActions>
+        </Card>
+
 
         {this.renderStaffApprovals()}
 
@@ -293,10 +280,11 @@ class ManageStaff extends Component {
           actions={actions}
           modal={false}
           open={this.state.open}
-          onRequestClose={() => this.handleClose()}
+          onRequestClose={() => this.toggleConfirmationDialog()}
         >
           {this.state.showButton ?('Your file will be uploaded') :
-              ('Submitting will create new staff member')}
+            ('Staff will have access to create categories and ' +
+            'add other staff to Institute. This action is irreversible!')}
         </Dialog>
       </div>
     )

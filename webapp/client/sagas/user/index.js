@@ -158,7 +158,9 @@ function *inviteStaffMember(params) {
     response = yield call(HttpHelper, `institute/${institute_guid}/staff/add_staff`, 'POST', formData.invite_data, null);
   }
   if (response.status === 200) {
-    yield put(toggleSnackbar('Your request is successfully submitted'));
+    yield put(toggleSnackbar(response.data.Response));
+  } else {
+    yield put(toggleSnackbar(response.data.ErrorResponse));
   }
 }
 

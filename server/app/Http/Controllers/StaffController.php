@@ -175,56 +175,66 @@ class StaffController extends Controller
         ], $messages);
     }
 
-    public function validateStaffProfile(Request $request, $institute_guid)
-    {
-        $user = User::where('email', $request['email'])->with(['institutes' => function ($inst) use ($institute_guid) {
-            $inst->where('inst_profile_guid', $institute_guid)->first();
-        }])->first();
-        if (!is_null($user)) {
-            $userInfo = $user['institutes'];
-            if (count($userInfo) > 0) {
-                $role = $userInfo[0]['pivot']['role'];
-                if ($role == 'inst_staff' || $role == 'inst_superuser' || $role == 'inst_admin') {
-                    return response()->json(['validationFlag' => 'STAFF'], 200);
-                } else {
-                    return response()->json([
-                        'memberId' => $user['institutes'][0]['pivot']['member_id'],
-                        'validationFlag' => 'STUDENT'], 200);
-                }
-            } else {
-                return response()->json(['validationFlag' => 'NOROLE'], 200);
-            }
-        } else {
-            return response()->json(['validationFlag' => 'NONE'], 200);
-        }
-    }
-
     public function getStaffTemplateSheet()
     {
         $file= public_path(). "/StaffTemplate.xlsx";
         return response()->download($file);
     }
 
-    public function addStaffMember(Request $request, $institute_guid)
+    public function staffInviteRequest(Request $request, $institute_guid)
     {
-        $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
-        $internals = Faker\Factory::create('en_US');
-        $user = User::create([
-            'user_guid' => $internals->uuid,
-            'email' => $request['email'],
-            'hash' => $internals->md5
-        ]);
-        UserProfile::create([
-            'user_profile_guid' => $internals->uuid,
-            'user_id' => $user['id']
-        ]);
-        $data = [
-            'member_id' => $request['memberId'],
-            'designation' => $request['designation'],
-            'role' => 'inst_staff'
-        ];
+        $res = StaffController::addStaffMember($request, $institute_guid);
+        return response()->json(['Response' => $res], 200);
+    }
 
-        $respo = InvitationController::addUserInstitute($institute, $user, $data);
-        return response()->json(compact('user'));
+    public static function addStaffMember($request, $institute_guid)
+    {
+        $where = ['email'=> $request['email']];
+        $user = User::where($where)
+            ->with(['institutes' => function ($inst) use ($institute_guid) {
+                $inst->where('inst_profile_guid', $institute_guid)->first();
+            }])->first();
+        if (!is_null($user)) {
+            $userInfo = $user['institutes'];
+            if (count($userInfo) > 0) {
+                $role = $userInfo[0]['pivot']['role'];
+                if ($role == 'inst_staff' || $role == 'inst_superuser' || $role == 'inst_admin') {
+                    return 'Member already exists';
+                } else {
+                    $role = $userInfo[0]['pivot'];
+                    $role->update(['designation' => $request['designation'],
+                        'role' => 'inst_staff',]);
+                    return 'Member Upgraded to Staff';
+                }
+            } else {
+                $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
+                $data = [
+                    'member_id' => $request['memberId'],
+                    'designation' => $request['designation'],
+                    'role' => 'inst_staff'
+                ];
+                InvitationController::addUserInstitute($institute, $user, $data);
+                return 'Member added to institute';
+            }
+        } else {
+            $institute = Institute::where('inst_profile_guid', $institute_guid)->get()->first();
+            $internals = Faker\Factory::create('en_US');
+            $user = User::create([
+                'user_guid' => $internals->uuid,
+                'email' => $request['email'],
+                'hash' => $internals->md5
+            ]);
+            UserProfile::create([
+                'user_profile_guid' => $internals->uuid,
+                'user_id' => $user['id']
+            ]);
+            $data = [
+                'member_id' => $request['memberId'],
+                'designation' => $request['designation'],
+                'role' => 'inst_staff'
+            ];
+            InvitationController::addUserInstitute($institute, $user, $data);
+            return 'Member successfully Invited';
+        }
     }
 }
