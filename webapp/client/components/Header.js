@@ -4,7 +4,7 @@ import {Grid, Col, Row} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
 import AnnouncementForm from './announcements/AnnouncementForm';
 import InteractionForm from './interactions/InteractionForm';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 class Header extends Component {
   constructor(props) {
@@ -122,12 +122,12 @@ class Header extends Component {
           </Row>
         </Col>
         {actionButton}
-        <ReactCSSTransitionGroup
+        <CSSTransitionGroup
           transitionName='headerForm'
           transitionEnterTimeout={600}
           transitionLeaveTimeout={500}>
           {form}
-        </ReactCSSTransitionGroup>
+        </CSSTransitionGroup>
       </Paper>
     )
   }
