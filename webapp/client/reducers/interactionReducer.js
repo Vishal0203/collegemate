@@ -291,7 +291,7 @@ export default function interactionReducer(state = initialState, action) {
     }
 
     case '@@router/LOCATION_CHANGE': {
-      if (action.payload.pathname === '/interactions') {
+      if (action.payload.pathname !== '/interactions') {
         return {
           ...initialState,
           tags: state.tags,

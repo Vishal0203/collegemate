@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import Announcement from './Announcement'
 import * as announcementActions  from '../../actions/announcements/index';
 import Header from '../Header';
-import Loader from 'halogen/ScaleLoader';
+import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
 import Chip from 'material-ui/Chip';
@@ -233,7 +233,7 @@ class AnnouncementsContainer extends Component {
             <div className="wrap">
               <Row>
                 <Col xs={8}>
-                  <InfiniteScroll elementIsScrollable={false} hasMore={this.props.announcements.hasMore}
+                  <InfiniteScroll hasMore={this.props.announcements.hasMore}
                                   loadingMore={this.props.announcements.loadingMore}
                                   loadMore={() => this.loadMore()} loader={loader}>
                     {this.renderAnnouncements()}

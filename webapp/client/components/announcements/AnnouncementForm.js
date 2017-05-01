@@ -12,7 +12,7 @@ import {EditorState, CompositeDecorator} from 'draft-js';
 import {stateToHTML} from 'draft-js-export-html';
 import {Link, findLinkEntities} from '../rte/CommonUtils';
 import DatePicker from 'material-ui/DatePicker';
-import moment from 'moment';
+import moment from 'moment/moment';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {

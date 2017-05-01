@@ -8,7 +8,7 @@ import {Card, CardTitle, CardText} from 'material-ui/Card/index';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
-import moment from 'moment';
+import moment from 'moment/moment';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
 import Header from '../Header';

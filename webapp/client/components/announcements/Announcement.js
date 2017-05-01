@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, CardHeader, CardText} from 'material-ui/Card/index';
 import Avatar from 'material-ui/Avatar';
-import moment from 'moment';
+import moment from 'moment/moment';
 import FlatButton from 'material-ui/FlatButton';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {grey600} from 'material-ui/styles/colors';

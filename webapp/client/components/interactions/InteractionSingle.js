@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import moment from 'moment';
-import Loader from 'halogen/ScaleLoader';
+import moment from 'moment/moment';
+import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import StickyDiv from 'react-stickydiv';
 import Chip from 'material-ui/Chip';

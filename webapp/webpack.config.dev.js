@@ -15,7 +15,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         SERVER_HOST: JSON.stringify(process.env.SERVER_HOST),
@@ -28,30 +28,39 @@ module.exports = {
     net: 'empty'
   },
   module: {
-    loaders: [
-      // json
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
-      },
+    rules: [
       // js
       {
-        test: /\.js$/,
-        loaders: ['babel'],
+        test: /\.js/,
+        loader: 'babel-loader',
         include: path.join(__dirname, 'client')
       },
       // CSS
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        use: [
+          'style-loader',
+          'css-loader'
+        ],
         include: [path.join(__dirname, 'client'), /node_modules/]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          "style-loader",
+          "css-loader",
+          "sass-loader"
+        ]
       },
       // statics
       {
         test: /\.(jpe?g|gif|png|svg)$/,
-        loaders: [
-          'file?hash=sha512&digest=hex&name=[hash].[ext]'
-        ]
+        loader: 'file-loader',
+        options: {
+          hash: 'sha512',
+          digest: 'hex',
+          name: '[hash].[ext]'
+        }
       }
     ]
   }

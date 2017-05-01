@@ -1,6 +1,6 @@
 import React from 'react';
 import Badge from 'material-ui/Badge';
-import moment from 'moment';
+import moment from 'moment/moment';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import DoneIcon from 'material-ui/svg-icons/action/done';

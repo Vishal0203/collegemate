@@ -1,7 +1,7 @@
 import * as actions from '../actions/announcements/index';
 import * as eventActions from '../actions/events/index';
 import {OPEN_CATEGORY_ANNOUNCEMENTS} from '../actions/notifications/index';
-import moment from 'moment';
+import moment from 'moment/moment';
 
 const initialState = {
   categories: [],

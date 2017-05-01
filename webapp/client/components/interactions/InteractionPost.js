@@ -1,7 +1,7 @@
 import React from 'react';
 import {hashHistory} from 'react-router';
 import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card/index';
-import moment from 'moment';
+import moment from 'moment/moment';
 import Chip from 'material-ui/Chip';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {green600} from 'material-ui/styles/colors';

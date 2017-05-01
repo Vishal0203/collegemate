@@ -7,7 +7,7 @@ import {grey500} from 'material-ui/styles/colors';
 import {FormsyText} from 'formsy-material-ui/lib';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
-import Loader from 'halogen/ScaleLoader';
+import Loader from 'halogenium/ScaleLoader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Chip from 'material-ui/Chip';
 import IconButton from 'material-ui/IconButton';

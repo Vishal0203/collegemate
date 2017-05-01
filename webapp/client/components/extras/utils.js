@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment/moment';
 
 export function ellipsis(text, length) {
   return text.length > length ? `${text.substring(0,length)}...` : text;

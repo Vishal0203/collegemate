@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import moment from 'moment';
+import moment from 'moment/moment';
 import {Row, Col} from 'react-flexbox-grid'
 import {CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
