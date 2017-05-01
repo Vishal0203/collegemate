@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
 import Toggle from 'material-ui/Toggle';
 import Subheader from 'material-ui/Subheader';
@@ -167,12 +167,12 @@ class SubscriptionForm extends Component {
                 />
               </Col>
             </Row>
-            <ReactCSSTransitionGroup
+            <CSSTransitionGroup
               transitionName='fieldAnimation'
               transitionEnterTimeout={600}
               transitionLeaveTimeout={500}>
               {this.renderUsersAdditionForm()}
-            </ReactCSSTransitionGroup>
+            </CSSTransitionGroup>
             <Row style={{padding: '0 16px 16px'}}>
               <Col xs={3}>
                 <RaisedButton
