@@ -44,14 +44,6 @@ module.exports = {
         ],
         include: [path.join(__dirname, 'client'), /node_modules/]
       },
-      {
-        test: /\.scss$/,
-        use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader"
-        ]
-      },
       // statics
       {
         test: /\.(jpe?g|gif|png|svg)$/,
