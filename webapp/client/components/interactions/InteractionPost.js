@@ -73,7 +73,7 @@ class InteractionPost extends React.Component {
         lineHeight: '24px',
         color: '#bababa',
         textTransform: 'lowercase',
-        fontSize: 8
+        fontSize: 9
       }
     }
   }
@@ -94,7 +94,7 @@ class InteractionPost extends React.Component {
   renderChips(post) {
     return post.tags.map((tag, i) =>
       <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}
-        {tag.is_approved === false && <label style={this.styles.chipLabelNotApproved}> (custom)</label>} </Chip>
+        {!tag.is_approved ? <label style={this.styles.chipLabelNotApproved}> (custom)</label> : <span/>} </Chip>
     )
   }
 
@@ -109,28 +109,30 @@ class InteractionPost extends React.Component {
         <Row>
           <div style={{width: '20%', flexBasis: '20%', position: 'relative'}}>
             <CardText style={this.styles.postCountContainer}>
-            <Row center="xs" style={{height: '100%'}}>
-              <div style={{width: '50%', margin: 'auto'}}>
-                <span style={this.styles.postCountNumbers}>{post.upvotes_count}</span>
-                <p style={this.styles.postLabel}>votes</p>
-              </div>
-              <div style={{width: '50%', margin: 'auto', color: green600}}>
-                <span style={this.styles.postCountNumbers}>{post.comments_count}</span>
-                <p style={this.styles.postLabel}>answers</p>
-              </div>
-            </Row>
+              <Row center="xs" style={{height: '100%'}}>
+                <div style={{width: '50%', margin: 'auto'}}>
+                  <span style={this.styles.postCountNumbers}>{post.upvotes_count}</span>
+                  <p style={this.styles.postLabel}>votes</p>
+                </div>
+                <div style={{width: '50%', margin: 'auto', color: green600}}>
+                  <span style={this.styles.postCountNumbers}>{post.comments_count}</span>
+                  <p style={this.styles.postLabel}>answers</p>
+                </div>
+              </Row>
             </CardText>
           </div>
           <div style={{width: '80%', flexBasis: '80%'}}>
             <CardHeader
               className="post-header"
-              onClick = {() => this.cardClick(post)}
+              onClick={() => this.cardClick(post)}
               title={post.post_heading}
               subtitle={username}
               style={this.styles.postTitle}
               subtitleStyle={this.styles.postSubtitle}>
               <div className="time-container" onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
-                   onMouseLeave={()=>{this.setState({ timeTooltip: {show: false, label: ''} }) }}>
+                   onMouseLeave={() => {
+                     this.setState({timeTooltip: {show: false, label: ''}})
+                   }}>
                 <label> {moment(time).tz(timezone).fromNow()} </label>
               </div>
               <Tooltip show={this.state.timeTooltip.show}

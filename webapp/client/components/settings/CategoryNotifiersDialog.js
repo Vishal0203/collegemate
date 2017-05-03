@@ -7,6 +7,7 @@ import {grey500} from 'material-ui/styles/colors';
 import {FormsyText} from 'formsy-material-ui/lib';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
+import ChipInput from 'material-ui-chip-input';
 import Loader from 'halogenium/ScaleLoader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Chip from 'material-ui/Chip';
@@ -19,7 +20,9 @@ class CategoryNotifiersDialog extends Component {
     this.state = {
       canSubmit: false,
       deletionConfirmation: false,
-      deletionNotifier: null
+      deletionNotifier: null,
+      added_subscribers: [],
+      removed_subscribers: []
     }
   }
 
@@ -33,6 +36,11 @@ class CategoryNotifiersDialog extends Component {
       chip: {
         margin: 4,
         size: 12
+      },
+      chipLabel: {
+        lineHeight: '28px',
+        color: '#757575',
+        fontSize: 13
       },
       validatedUsersContainer: {
         padding: '0px 16px 5px 28px',
@@ -75,7 +83,7 @@ class CategoryNotifiersDialog extends Component {
   }
 
   handleNotifierAddition() {
-    let user_guids =[];
+    let user_guids = [];
     const parentProps = this.props.parentProps;
     parentProps.auth_user.categoryNotifiers.validatedUsers.map((validatedUser) => {
       user_guids.push(validatedUser.user_guid);
@@ -127,10 +135,12 @@ class CategoryNotifiersDialog extends Component {
         onRequestClose={this.toggleDeletionConfirmationDialog}
         contentStyle={{width: '50%'}}
       >
-        {deletionNotifier?
-          `Are you sure want to remove ${deletionNotifier.first_name} as a notifier?
-          ${deletionNotifier.first_name} will no longer be able announce on '${this.props.category.category_type}'`:
-          ''}
+        {
+          deletionNotifier ?
+            `Are you sure want to remove ${deletionNotifier.first_name} as a notifier?
+          ${deletionNotifier.first_name} will no longer be able announce on '${this.props.category.category_type}'` :
+            ''
+        }
       </Dialog>
     );
   }
@@ -168,28 +178,55 @@ class CategoryNotifiersDialog extends Component {
     return notifier_list;
   }
 
+  onSubscriberAdd(email_id) {
+    this.props.parentProps.actions.subscribersChipsUpdate(email_id, 'add');
+    this.setState({added_subscribers: [email_id, ...this.state.added_subscribers]})
+  }
+
+  onSubscriberRemove(email_id) {
+    this.props.parentProps.actions.subscribersChipsUpdate(email_id, 'remove');
+    this.setState({removed_subscribers: [email_id, ...this.state.removed_subscribers]})
+  }
+
+  updateSubscribers() {
+    const data = {
+      category_guid: this.props.category.category_guid,
+      removed_email_ids: this.state.removed_subscribers,
+      added_email_ids: this.state.added_subscribers
+    };
+
+    this.props.parentProps.actions.updateSubscribers(data);
+    this.setState({
+      added_subscribers: [],
+      removed_subscribers: []
+    });
+  }
+
+  getLoader = (key) => {
+    return (
+      <div style={{marginTop: '15px', marginBottom: '15px'}} key={key}>
+        <Row center="xs">
+          <Loader color="#126B6F" size="5px" margin="5px"/>
+        </Row>
+      </div>
+    )
+  };
+
   render() {
     let parentProps = this.props.parentProps;
-
     const category = this.props.category;
+
     if (!parentProps.auth_user.categoryNotifiers.notifiersDialogOpen) {
       return null;
     }
 
-    const loader = (
-      <div style={{marginTop: '70px', marginBottom: '50px'}} key="existing_notifiers_loader">
-        <Row center="xs">
-          <Loader color="#126B6F" size="10px" margin="5px"/>
-        </Row>
-      </div>
-    );
-    let notifiersData = loader;
+    let notifiersData = this.getLoader('existing_notifiers');
     if (!parentProps.auth_user.categoryNotifiers.loading) {
       const editableNotifiers = parentProps.auth_user.categoryNotifiers.notifiers.filter((notifier) =>
         notifier.editable_by_user
       );
       notifiersData = (
-        <div style={{padding: '0px 16px 25px 16px'}} key="existing_notifiers">
+        <div style={{padding: '16px 16px 0px 16px'}} key="existing_notifiers">
           <Subheader>Currently announced by</Subheader>
           <div style={{padding: '0 16px 16px'}}>
             <Table fixedHeader={true} selectable={false}>
@@ -222,7 +259,7 @@ class CategoryNotifiersDialog extends Component {
             key={`validated_${validatedUser.user_guid}`}
             labelStyle={{fontSize: 12}}
           >
-            <Avatar src={validatedUser.user_profile.user_avatar} />
+            <Avatar src={validatedUser.user_profile.user_avatar}/>
             {`${validatedUser.first_name} ${validatedUser.last_name}`}
           </Chip>
         );
@@ -237,7 +274,7 @@ class CategoryNotifiersDialog extends Component {
     let notifierForm = null;
     if (category.subscribed_as === 'Announcer') {
       notifierForm = (
-        <div style={{padding: '16px 16px 0px 16px'}} key="notifier_form">
+        <div style={{padding: '0px 16px'}} key="notifier_form">
           <Subheader>Add announcers to category</Subheader>
           <Formsy.Form
             onValid={this.enableButton.bind(this)}
@@ -265,7 +302,7 @@ class CategoryNotifiersDialog extends Component {
                   labelStyle={{fontSize: 11}}
                   style={{marginTop: 12}}
                   disabled={!this.state.canSubmit}
-                  onTouchTap={() => submitType='Validate'}
+                  onTouchTap={() => submitType = 'Validate'}
                   primary={true}/>
               </Col>
               <Col xs={2}>
@@ -275,7 +312,7 @@ class CategoryNotifiersDialog extends Component {
                   buttonStyle={{height: '30px', lineHeight: '30px'}}
                   labelStyle={{fontSize: 11}}
                   style={{marginTop: 12}}
-                  disabled={validatedUsers.length == 0}
+                  disabled={validatedUsers.length === 0}
                   onTouchTap={() => this.handleNotifierAddition()}
                   primary={true}/>
               </Col>
@@ -285,8 +322,57 @@ class CategoryNotifiersDialog extends Component {
       )
     }
 
+    let privateCategorySubscribers = null;
+    if (category.private) {
+      privateCategorySubscribers = this.getLoader('current_subscribers');
+      if(parentProps.category.subscribers.loaded) {
+        privateCategorySubscribers = (
+          <div style={{padding: '0 16px'}} key="category_subscribers">
+            <Subheader>Current Subscribers</Subheader>
+            <Row style={{padding: '0 16px'}}>
+              <Col xs={10}>
+                <ChipInput
+                  fullWidth
+                  value={parentProps.category.subscribers.data}
+                  onRequestAdd={(email_id) => this.onSubscriberAdd(email_id)}
+                  onRequestDelete={(email_id) => this.onSubscriberRemove(email_id)}
+                  dataSource={parentProps.category.subscribers.data}
+                  spellCheck={false}
+                  hintText="Email id's of the users to be notified by this category (Users should already be registered on College Mate)"
+                  newChipKeyCodes={[13, 32, 188]}
+                  style={this.styles.formField}
+                  chipRenderer={({text, value, isFocused, isDisabled, handleClick, handleRequestDelete}, key) => (
+                    <Chip
+                      key={key}
+                      className="chip"
+                      labelStyle={this.styles.chipLabel}
+                      onTouchTap={handleClick}
+                      onRequestDelete={handleRequestDelete}
+                    >
+                      {text}
+                    </Chip>
+                  )}
+                />
+              </Col>
+              <Col xs={2}>
+                <RaisedButton
+                  label="Update"
+                  fullWidth={true}
+                  buttonStyle={{height: '30px', lineHeight: '30px'}}
+                  labelStyle={{fontSize: 11}}
+                  style={{marginTop: 12}}
+                  onClick={() => this.updateSubscribers()}
+                  primary={true}/>
+              </Col>
+            </Row>
+          </div>
+        );
+      }
+    }
+
     const dialogContent = [
       notifierForm,
+      privateCategorySubscribers,
       validatedUsersContainer,
       notifiersData
     ];

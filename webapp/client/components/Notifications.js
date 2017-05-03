@@ -327,7 +327,7 @@ class Notifications extends React.Component {
           </IconButton>
         </Badge>
         <Popover
-          className="notification-popover"
+          className="navbar-popover"
           open={this.state.notificationsMenuOpen}
           anchorEl={this.state.anchorEl}
           anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}

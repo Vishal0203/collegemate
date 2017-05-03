@@ -31,7 +31,7 @@ class Category extends Model
 
     public function subscribers()
     {
-        return $this->belongsToMany('App\User', 'subscriptions_user', 'category_id')->withTimestamps();
+        return $this->belongsToMany('App\User', 'subscriptions_user', 'category_id');
     }
 
     public function notifications()

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
@@ -31,11 +32,23 @@ class BelongsToInstitute
             return $next($request);
         }
 
-        $user_institute = $user->institutes()->where('inst_profile_guid', $institute_guid)->get();
-        if ($user_institute->count() != 0) {
-            // array will always have 1 institute
-            $request->attributes->add(['auth_user_role' => $user_institute[0]->pivot->role]);
+        $key = \Session::getId() . "_" . $institute_guid;
+        $role = \Cache::get($key);
+        if ($role) {
+            $request->attributes->add(['auth_user_role' => $role]);
             return $next($request);
+        } else {
+            $user_institute = $user->institutes()->where('inst_profile_guid', $institute_guid)->get();
+            // array will always have 1 institute
+            if ($user_institute->count() != 0) {
+                $role = $user_institute[0]->pivot->role;
+
+                $expiresAt = Carbon::now()->addMinutes(20);
+                \Cache::add($key, $role, $expiresAt);
+
+                $request->attributes->add(['auth_user_role' => $role]);
+                return $next($request);
+            }
         }
 
         return response()->json(['error' => 'You are not authorized'], 403);

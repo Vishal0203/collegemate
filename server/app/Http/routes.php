@@ -28,6 +28,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::post('update_profile', 'UserProfileController@updateProfile');
     Route::put('read_notifications', 'UserProfileController@readNotifications');
     Route::put('read_all_notifications', 'UserProfileController@readAllNotifications');
+    Route::get('change_institute', 'InstituteController@changeInstitute');
 
     Route::post('feedback', 'FeedbackController@create');
 
@@ -66,6 +67,8 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::post('category/assign_notifier', 'CategoryController@assignNotifier');
         Route::delete('category/remove_notifier', 'CategoryController@removeNotifier');
         Route::get('category/notifiers', 'CategoryController@getNotifiers');
+        Route::get('category/subscribers', 'CategoryController@getSubscribers');
+        Route::post('category/update_subscribers', 'CategoryController@updateSubscribers');
         Route::get('category/validate_notifier', 'CategoryController@validateNotifier');
 
         Route::resource(

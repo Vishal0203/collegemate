@@ -1,4 +1,5 @@
 import * as actions from '../actions/announcements/index';
+import * as userActions from '../actions/users/index';
 import * as eventActions from '../actions/events/index';
 import {OPEN_CATEGORY_ANNOUNCEMENTS} from '../actions/notifications/index';
 import moment from 'moment/moment';
@@ -225,6 +226,13 @@ export default function announcementReducer(state = initialState, action) {
           monthEventsStartDate: action.eventsStartDate,
           monthEventsEndDate: action.eventsEndDate
         }
+      }
+    }
+    case userActions.SELECTED_INSTITUTE_CHANGED: {
+      return {
+        ...initialState,
+        categories: state.categories,
+        filters: state.filters
       }
     }
     case '@@router/LOCATION_CHANGE': {

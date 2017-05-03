@@ -25,7 +25,7 @@ class User extends Model implements
         'hash', 'user_guid', 'todevs_superuser', 'default_institute'];
 
     protected $hidden = ['google_id', 'password', 'remember_token', 'id', 'created_at', 'updated_at', 'hash',
-        'default_institute'];
+        'default_institute', 'pivot'];
 
     protected $dates = ['created_at', 'updated_at'];
 

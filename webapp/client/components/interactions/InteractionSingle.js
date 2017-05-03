@@ -134,6 +134,12 @@ class InteractionSingle extends Component {
         marginLeft: 2,
         width: '97%',
         backgroundColor: 'none'
+      },
+      chipLabelNotApproved: {
+        lineHeight: '24px',
+        color: '#bababa',
+        textTransform: 'lowercase',
+        fontSize: 9
       }
     }
   }
@@ -180,7 +186,8 @@ class InteractionSingle extends Component {
 
   renderChips(post) {
     return post.tags.map((tag, i) =>
-      <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}</Chip>
+      <Chip key={i} className="chip post-chip" labelStyle={this.styles.chipLabel}>{tag.name}
+        {!tag.is_approved ? <label style={this.styles.chipLabelNotApproved}> (custom)</label> : <span/>}</Chip>
     )
   }
 
@@ -191,7 +198,7 @@ class InteractionSingle extends Component {
       disabled = true;
     }
     let upvotedColor = null;
-    if (post.upvoted == true) {
+    if (post.upvoted === true) {
       upvotedColor = {color: 'rgb(18, 107, 111)'}
     }
     return (

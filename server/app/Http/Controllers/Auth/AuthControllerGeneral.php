@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helper\UserData;
 use App\User;
 use App\UserInstitute;
 use App\UserProfile;
-use Auth;
 use Illuminate\Http\Request;
 use Mail;
 use Validator;
@@ -20,44 +20,6 @@ class AuthControllerGeneral extends Controller
     public function __construct()
     {
         $this->middleware('guest', ['except' => ['getLogout', 'loggedInUserInfo']]);
-    }
-
-    private function buildUserReturnable(User $user)
-    {
-        $user->load(['userProfile', 'institutes', 'unreadNotifications',
-            'defaultInstitute.categories' =>
-                function ($category) {
-                    $category->with('creator');
-                    $category->withCount('subscribers');
-                },
-            'defaultInstitute.subscriptions' =>
-                function ($categories) use ($user) {
-                    $categories->whereHas('subscribers', function ($subscribers) use ($user) {
-                        $subscribers->where('user_id', $user['id']);
-                    });
-                },
-            'defaultInstitute.notifyingCategories' =>
-                function ($categories) use ($user) {
-                    $categories->whereHas('notifiers', function ($notifiers) use ($user) {
-                        $notifiers->where('user_id', $user['id']);
-                    });
-                },
-            'defaultInstitute.userInstituteInfo' =>
-                function ($userInstitute) use ($user) {
-                    $userInstitute->where('user_id', $user['id']);
-                }
-        ]);
-
-        foreach ($user['unreadNotifications'] as $notification) {
-            unset(
-                $notification['notifiable_id'],
-                $notification['notifiable_type'],
-                $notification['read_at'],
-                $notification['updated_at']
-            );
-        }
-
-        return $user;
     }
 
     private function buildBase64($url)
@@ -84,8 +46,8 @@ class AuthControllerGeneral extends Controller
                 ]);
             }
 
-            Auth::login($user, true);
-            $user = $this->buildUserReturnable($user);
+            \Auth::login($user, true);
+            $user = UserData::buildUserReturnable($user);
             return response()->json(compact('user'));
         } else {
             if ($payload) {
@@ -109,8 +71,8 @@ class AuthControllerGeneral extends Controller
                     'user_avatar' => $this->buildBase64($payload['picture'] . '?sz=250')
                 ]);
 
-                Auth::login($user, true);
-                $user = $this->buildUserReturnable($user);
+                \Auth::login($user, true);
+                $user = UserData::buildUserReturnable($user);
                 return response()->json(compact('user'));
             } else {
                 return response()->json(['error' => 'Invalid auth token'], 400);
@@ -139,8 +101,8 @@ class AuthControllerGeneral extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->get('remember_me');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $user = $this->buildUserReturnable(Auth::user());
+        if (\Auth::attempt($credentials, $remember)) {
+            $user = UserData::buildUserReturnable(\Auth::user());
             return response()->json(compact('user'));
         }
 
@@ -195,7 +157,7 @@ class AuthControllerGeneral extends Controller
 
     public function getLogout()
     {
-        Auth::logout();
+        \Auth::logout();
         return response()->json(["success" => "Logged Out"], 200);
     }
 
