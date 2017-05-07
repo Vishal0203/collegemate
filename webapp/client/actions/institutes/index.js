@@ -18,6 +18,10 @@ export const STAFF_APPROVAL_RESPONSE = 'STAFF_APPROVAL_RESPONSE';
 export const STAFF_APPROVAL_ACTION = 'STAFF_APPROVAL_ACTION';
 export const STAFF_APPROVAL_ACTION_RESPONSE = 'STAFF_APPROVAL_ACTION_RESPONSE';
 
+export const NEW_STAFF_APPROVAL = 'NEW_STAFF_APPROVAL';
+export const NEW_STUDENT_APPROVAL = 'NEW_STUDENT_APPROVAL';
+
+
 export function fetchInstituteRequest() {
   return {
     type: FETCH_INSTITUTE_LIST_REQUEST
@@ -112,5 +116,19 @@ export function staffApprovalActionResponse(user_guid) {
   return {
     type: STAFF_APPROVAL_ACTION_RESPONSE,
     user_guid
+  }
+}
+
+export function newStaffApproval(newUser) {
+  return {
+    type: NEW_STAFF_APPROVAL,
+    newUser
+  }
+}
+
+export function newStudentApproval(newUser) {
+  return {
+    type: NEW_STUDENT_APPROVAL,
+    newUser
   }
 }

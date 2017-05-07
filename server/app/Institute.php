@@ -29,6 +29,14 @@ class Institute extends Model
             ->withPivot('role', 'invitation_status', 'created_at', 'member_id')->withTimestamps();
     }
 
+    public function staff()
+    {
+        return $this->belongsToMany('App\User', 'users_institutes')
+            ->withPivot('role', 'invitation_status', 'created_at', 'member_id')
+            ->where('role', '!=', 'inst_student')
+            ->withTimestamps();
+    }
+
     public function pendingStudents()
     {
         return $this->belongsToMany('App\User', 'users_institutes')

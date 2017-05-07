@@ -5,7 +5,10 @@ import * as instituteActions from '../actions/institutes/index';
 const initialState = {
   user: {},
   approvalAlert: false,
-  selectedInstitute: {},
+  selectedInstitute: {
+    pending_staffs: [],
+    pending_students: []
+  },
   categoryNotifiers: {
     loading: false,
     notifiersDialogOpen: false,
@@ -175,7 +178,7 @@ export default function userReducer(state = initialState, action) {
         ...state,
         user: {
           ...state.user,
-          unread_notifications: [...state.user.unread_notifications, action.notification]
+          unread_notifications: [action.notification, ...state.user.unread_notifications]
         }
       }
     }
@@ -318,6 +321,30 @@ export default function userReducer(state = initialState, action) {
           pending_staffs: state.selectedInstitute.pending_staffs.filter((staff) =>
             staff.user_guid !== action.user_guid
           )
+        }
+      }
+    }
+    case instituteActions.NEW_STUDENT_APPROVAL: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          pending_students: [
+            action.newUser,
+            ...state.selectedInstitute.pending_students.filter((user) => user.user_guid !== action.newUser.user_guid)
+          ]
+        }
+      }
+    }
+    case instituteActions.NEW_STAFF_APPROVAL: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          pending_staffs: [
+            action.newUser,
+            ...state.selectedInstitute.pending_staffs.filter((user) => user.user_guid !== action.newUser.user_guid)
+          ]
         }
       }
     }
