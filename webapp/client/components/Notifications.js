@@ -23,6 +23,7 @@ export const POST_UPVOTE_NOTIFICATION = 'App\\Notifications\\PostUpvoteNotificat
 export const COMMENT_UPVOTE_NOTIFICATION = 'App\\Notifications\\CommentUpvoteNotification';
 export const POST_REPLY_NOTIFICATION = 'App\\Notifications\\PostReplyNotification';
 export const COMMENT_REPLY_NOTIFICATION = 'App\\Notifications\\CommentReplyNotification';
+export const APPROVAL_NOTIFICATION = 'App\\Notifications\\ApprovalNotification';
 export const POST_NOTIFICATION = 'POST_NOTIFICATION';
 export const COMMENT_NOTIFICATION = 'COMMENT_NOTIFICATION';
 
@@ -104,10 +105,13 @@ class Notifications extends React.Component {
     if (notification.type === POST_NOTIFICATION || notification.type === COMMENT_NOTIFICATION) {
       hashHistory.push(`/interactions/${notification.post_guid}`);
     }
-    else {
+    else if (notification.type === ANNOUNCEMENT_NOTIFICATION) {
       hashHistory.push('/');
       const category = {category_guid: notification.category_guid, category_type: notification.category_type};
       this.props.actions.openCategoryAnnouncements(category);
+    }
+    else if (notification.type === APPROVAL_NOTIFICATION) {
+      hashHistory.push('/institute_settings');
     }
     this.readNotification(notification);
   }
@@ -160,6 +164,13 @@ class Notifications extends React.Component {
           <p className="notification-text">
             {this.getNotificationCountsText(notification.updates)}
             on your answer on post <strong>{ellipsis(notification.post_heading, 30)}</strong>
+          </p>
+        );
+        break;
+      case APPROVAL_NOTIFICATION:
+        notificationMessage = (
+          <p className="notification-text">
+            Pending approvals in your Institute.
           </p>
         );
         break;
@@ -248,6 +259,14 @@ class Notifications extends React.Component {
             type: COMMENT_NOTIFICATION
           });
           break;
+        case APPROVAL_NOTIFICATION:
+          this.addInteractionNotification({
+            notifications,
+            notification,
+            aggregateOn: notification.type,
+            incrementOn: 'count',
+            type: APPROVAL_NOTIFICATION
+          })
       }
     });
     return notifications;

@@ -4,6 +4,8 @@ import * as notificationActions from '../../actions/notifications/index';
 import {toggleSnackbar} from '../../actions/commons/index';
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
+import {APPROVAL_NOTIFICATION} from '../../components/Notifications';
+import {newStaffApproval, newStudentApproval} from '../../actions/institutes/index';
 
 function *readNotification(params) {
   const response = yield call(
@@ -40,6 +42,23 @@ function *openCategoryAnnouncements(params) {
   }
 }
 
+function *newNotification(params) {
+  const browser_location = yield select(selectors.browser_location);
+  const selectedInstitute = yield select(selectors.selected_institute);
+  //For new approval Notifications
+  if (browser_location === '/institute_settings' &&
+    params.notification.type === APPROVAL_NOTIFICATION &&
+    params.notification.data.institutes[0].inst_profile_guid === selectedInstitute.inst_profile_guid) {
+    let approvalUser = params.notification.data;
+    let role = approvalUser.institutes[0].pivot.role;
+    approvalUser.pivot = approvalUser.institutes[0].pivot;
+    delete approvalUser.institutes;
+    role === 'inst_student' ?
+      yield put(newStudentApproval(approvalUser)):
+      yield put(newStaffApproval(approvalUser));
+  }
+}
+
 /*
  Watchers
  */
@@ -56,10 +75,15 @@ function *watchOpenAnnouncementNotification() {
   yield *takeLatest(notificationActions.OPEN_CATEGORY_ANNOUNCEMENTS, openCategoryAnnouncements)
 }
 
+function *watchNewNotification() {
+  yield *takeLatest(notificationActions.NEW_NOTIFICATION, newNotification)
+}
+
 export default function *notificationSaga() {
   yield [
     fork(watchReadNotification),
     fork(watchReadAllNotifications),
-    fork(watchOpenAnnouncementNotification)
+    fork(watchOpenAnnouncementNotification),
+    fork(watchNewNotification)
   ]
 }

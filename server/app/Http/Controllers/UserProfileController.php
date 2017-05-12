@@ -13,6 +13,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Storage;
 use Response;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ApprovalNotification;
 use Carbon\Carbon;
 
 class UserProfileController extends Controller
@@ -76,7 +78,12 @@ class UserProfileController extends Controller
             ], 403);
         }
 
+        $staff = $institute->staff()->where('id', '!=', $user['id'])->get();
         // Todo: Send approval request to staff, admin and superuser
+        $userInstitute = UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->first();
+        if ($userInstitute->invitation_status == 'pending') {
+            Notification::send($staff, new ApprovalNotification($user, $institute));
+        }
 
         $user->load(['userProfile', 'defaultInstitute.userInstituteInfo' =>
             function ($userInstitute) use ($user) {
