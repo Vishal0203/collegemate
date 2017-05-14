@@ -5,7 +5,7 @@ import instituteSaga from './institutes/index';
 import socketSaga from './socket/index';
 import userSaga from './user/index';
 import notificationSaga from './notifications/index';
-import notifiersSaga from './notifiers/index';
+import categoriesSaga from './categories/index';
 import eventsSaga from './events/index';
 
 export default function *rootSaga() {
@@ -16,7 +16,7 @@ export default function *rootSaga() {
     fork(socketSaga),
     fork(userSaga),
     fork(notificationSaga),
-    fork(notifiersSaga),
+    fork(categoriesSaga),
     fork(eventsSaga),
   ]
 }

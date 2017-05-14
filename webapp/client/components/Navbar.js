@@ -6,20 +6,40 @@ import {Tabs, Tab} from 'material-ui/Tabs/index';
 import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar/index';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton/IconButton';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import FontIcon from 'material-ui/FontIcon';
+import {CardText} from 'material-ui/Card/index';
+import Divider from 'material-ui/Divider';
 import {hashHistory} from 'react-router';
 import {userLogout} from '../actions/users/index'
 import {toggleSnackbar} from '../actions/commons/index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Notifications from './Notifications';
-import Divider from 'material-ui/Divider';
+import {humanizeRoles} from './extras/utils';
+import {grey500} from 'material-ui/styles/colors';
 
 class Navbar extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      institutePopover: false,
+      userMenu: false,
+    };
   }
+
+  onInstituteTouch = (event) => {
+    event.preventDefault();
+
+    this.setState({
+      institutePopover: true,
+      userMenu: false,
+      anchorEl: event.currentTarget,
+    });
+  };
 
   get styles() {
     return {
@@ -36,16 +56,23 @@ class Navbar extends React.Component {
         cursor: 'default',
         textAlign: 'right',
         textTransform: 'capitalize',
-        marginBottom: 0
+        margin: 0
       },
 
       instituteName: {
         fontSize: 12,
         fontWeight: 200,
         color: 'rgba(255, 255, 255, 0.85)',
-        cursor: 'default',
         textAlign: 'right',
-        marginTop: 4
+        cursor: 'pointer',
+        margin: '4px 0 0'
+      },
+
+      footer: {
+        fontSize: 13,
+        padding: 0,
+        fontWeight: 400,
+        textAlign: 'center'
       }
     }
   }
@@ -53,10 +80,11 @@ class Navbar extends React.Component {
   logoutUser() {
     this.props.actions.userLogout()
   };
+
   renderAddStaffButton() {
     const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
     if (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff') {
-      return(
+      return (
         <MenuItem onClick={() => hashHistory.push('/institute_settings')} primaryText="Institute Settings"/>
       );
     }
@@ -87,7 +115,7 @@ class Navbar extends React.Component {
     }
   }
 
-  renderTabs(tabIndex) {  
+  renderTabs(tabIndex) {
     const {auth_user} = this.props;
     if (Object.keys(auth_user.selectedInstitute).length !== 0) {
       const {member_id, designation, invitation_status} = auth_user.selectedInstitute.user_institute_info[0];
@@ -95,7 +123,7 @@ class Navbar extends React.Component {
       if (member_id && designation && invitation_status === 'accepted') {
         return (
           <ToolbarGroup className="tab-container">
-            <Tabs className="tabs" inkBarStyle={{ position: 'absolute', bottom: 0 }} value={tabIndex}>
+            <Tabs className="tabs" inkBarStyle={{position: 'absolute', bottom: 0}} value={tabIndex}>
               <Tab data-route="/"
                    onActive={(tab) => hashHistory.push(tab.props['data-route'])}
                    className="tab"
@@ -115,6 +143,16 @@ class Navbar extends React.Component {
     }
   }
 
+  addInstitute = () => {
+    this.setState({institutePopover: false});
+    hashHistory.replace('/institute')
+  };
+
+  changeInstitute = (institute_guid) => {
+    this.props.parentProps.actions.changeSelectedInstitute(institute_guid);
+    this.setState({institutePopover: false});
+  };
+
   renderUserNav() {
     const {parentProps} = this.props;
     const {auth_user} = this.props;
@@ -124,10 +162,50 @@ class Navbar extends React.Component {
 
       return (
         <ToolbarGroup >
-          <Notifications/>
+          <Notifications />
           <div style={{display: 'inline-block'}}>
-            <p style={this.styles.username}>{username}</p>
-            <p style={this.styles.instituteName}>{instituteName}</p>
+            <p style={this.styles.username}>{username} </p>
+            <p style={this.styles.instituteName} onClick={this.onInstituteTouch}>{instituteName}</p>
+            <p style={{position: 'absolute', top: 46, right: 46, margin: 0}}>
+              <FontIcon className={
+                this.state.institutePopover ?
+                  'material-icons arrow-up visible' :
+                  'material-icons arrow-up hidden'
+              }>
+                arrow_drop_up
+              </FontIcon>
+            </p>
+
+            <Popover
+              open={this.state.institutePopover}
+              className="navbar-popover"
+              anchorEl={this.state.anchorEl}
+              anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+              targetOrigin={{horizontal: 'right', vertical: 'top'}}
+              onRequestClose={() => this.setState({institutePopover: false})}
+            >
+              <Menu width={320} maxHeight={450}>
+                {auth_user.user.institutes.map((institute, index) =>
+                  <div key={index}>
+                    <CardText style={{padding: 8, cursor: 'pointer'}}
+                              onClick={() => this.changeInstitute(institute.inst_profile_guid)}>
+                      <div>
+                        {institute.institute_name}
+                      </div>
+                      <div style={{fontSize: 12, marginTop: 5, color: grey500}}>
+                        {humanizeRoles(institute.pivot.role)}
+                      </div>
+                    </CardText>
+                    <Divider className="card-divider"/>
+                  </div>
+                )}
+                <CardText style={this.styles.footer}>
+                  <span style={{cursor: 'pointer'}} onTouchTap={this.addInstitute}>
+                    Add Institute
+                  </span>
+                </CardText>
+              </Menu>
+            </Popover>
           </div>
           <div style={{display: 'inline-block'}}>
             <IconMenu desktop={true}
@@ -137,10 +215,12 @@ class Navbar extends React.Component {
                         </IconButton>
                       }
                       anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                      targetOrigin={{horizontal: 'right', vertical: 'top'}} >
+                      targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                      open={this.state.userMenu}
+                      onRequestChange={(open) => this.setState({userMenu: open})}>
               {this.renderAddStaffButton()}
               <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="User Settings"/>
-              <Divider/>
+              <Divider />
               <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>
             </IconMenu>
           </div>
@@ -163,7 +243,6 @@ class Navbar extends React.Component {
   render() {
     const {currentLocation} = this.props;
     const tabIndex = this.getTabIndex(currentLocation);
-
     return (
       <Paper className="fixed-top">
         <Toolbar className="navbar">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\UserData;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -21,7 +22,7 @@ class CategoryController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('inst_super', ['only' => ['destroy']]);
-        $this->middleware('inst_admin', ['except' => ['store', 'destroy', 'getNotifiers']]);
+        $this->middleware('inst_admin', ['except' => ['store', 'destroy', 'getNotifiers', 'getSubscribers']]);
     }
 
     /**
@@ -94,6 +95,20 @@ class CategoryController extends Controller
         } else {
             return response()->json(['error' => 'something went wrong'], 400);
         }
+    }
+
+    public function updateSubscribers(Request $request)
+    {
+        $category_guid = $request['category_guid'];
+        $category = Category::where('category_guid', $category_guid)->get()->first();
+
+        $removed_users = User::whereIn('email', $request['removed_email_ids'])->get();
+        $category->subscribers()->detach($removed_users);
+
+        $added_users = User::whereIn('email', $request['added_email_ids'])->get();
+        $category->subscribers()->attach($added_users);
+
+        return $this->getSubscribers($request);
     }
 
     /**
@@ -187,6 +202,25 @@ class CategoryController extends Controller
             unset($notifier->pivot);
         }
         return response()->json(compact('category_users'), 200);
+    }
+
+    public function getSubscribers(Request $request)
+    {
+        $category_guid = $request['category_guid'];
+        $notifiers = Category::where('category_guid', $category_guid)
+            ->with(['notifiers' => function ($query) {
+                $query->select('email');
+            }])->first()->notifiers->toArray();
+
+        $notifiers = UserData::getFieldsAsArray($notifiers, 'email');
+
+        $subscribers = Category::where('category_guid', $category_guid)
+            ->with(['subscribers' => function ($query) use ($notifiers) {
+                $query->whereNotIn('email', $notifiers)->select('email');
+            }])->first()->subscribers->toArray();
+
+        $subscribers = UserData::getFieldsAsArray($subscribers, 'email');
+        return response()->json(compact('subscribers'));
     }
 
     public function validateNotifier($institute_guid, Request $request)

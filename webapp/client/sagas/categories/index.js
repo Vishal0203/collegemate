@@ -1,8 +1,21 @@
 import {takeLatest} from 'redux-saga';
-import {put, call, fork} from 'redux-saga/effects';
+import {put, call, fork, select} from 'redux-saga/effects';
 import {toggleSnackbar} from '../../actions/commons/index';
 import {HttpHelper} from '../utils/apis';
 import * as userActions from '../../actions/users/index';
+import * as categoryActions from '../../actions/categories/index';
+import * as selectors from '../../reducers/selectors';
+
+function *fetchCategorySubscribers(params) {
+  const response = yield call(HttpHelper, params.url, 'GET', null, params.data);
+  if (response.status === 200) {
+    yield put(categoryActions.fetchCategorySubscribersResponse(response.data));
+  }
+  else {
+    let message = response.data.error ? response.data.error : 'Something went wrong. Please try again after sometime';
+    yield put(toggleSnackbar(message));
+  }
+}
 
 function *fetchCategoryNotifiers(params) {
   const response = yield call(HttpHelper, params.url, 'GET', null, params.data);
@@ -53,6 +66,30 @@ function *removeNotifier(params) {
   yield put(userActions.removeNotifierResponse(params.data.user_guid));
 }
 
+function *updateSubscribers(params) {
+  const institute = yield select(selectors.selected_institute);
+  const response = yield call(
+    HttpHelper,
+    `institute/${institute.inst_profile_guid}/category/update_subscribers`,
+    'POST',
+    params.data,
+    null
+  );
+  if (response.status === 200) {
+    yield put(categoryActions.fetchCategorySubscribersResponse(response.data));
+    yield put(toggleSnackbar('Subscribers updated'));
+  } else {
+    yield put(toggleSnackbar('Something went wrong'));
+  }
+}
+
+/*
+ Watchers
+*/
+
+function *watchSubscribersFetch() {
+  yield *takeLatest(categoryActions.FETCH_CATEGORY_SUBSCRIBERS_REQUEST, fetchCategorySubscribers);
+}
 
 function *watchFetchCategoryNotifiers() {
   yield *takeLatest(userActions.FETCH_CATEGORY_NOTIFIERS_REQUEST, fetchCategoryNotifiers);
@@ -70,11 +107,17 @@ function *watchRemoveNotifier() {
   yield *takeLatest(userActions.REMOVE_NOTIFIER_REQUEST, removeNotifier);
 }
 
-export default function *notifiersSaga() {
+function *watchSubscribersUpdate() {
+  yield *takeLatest(categoryActions.UPDATE_SUBSCRIBERS, updateSubscribers);
+}
+
+export default function *categoriesSaga() {
   yield [
+    fork(watchSubscribersFetch),
     fork(watchFetchCategoryNotifiers),
     fork(watchValidateNotifier),
     fork(watchAddNotifiers),
-    fork(watchRemoveNotifier)
+    fork(watchRemoveNotifier),
+    fork(watchSubscribersUpdate)
   ]
 }

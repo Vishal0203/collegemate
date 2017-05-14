@@ -33,6 +33,9 @@ export const REMOVE_NOTIFIER_RESPONSE = 'REMOVE_NOTIFIER_RESPONSE';
 export const STAFF_ADD_REQUEST = 'STAFF_ADD_REQUEST';
 export const STAFF_ADD_RESPONSE = 'STAFF_ADD_RESPONSE';
 
+export const CHANGE_SELECTED_INSTITUTE_REQUEST = 'CHANGE_SELECTED_INSTITUTE_REQUEST';
+export const SELECTED_INSTITUTE_CHANGED = 'SELECTED_INSTITUTE_CHANGED';
+
 export function userLogin() {
   return {
     type: USER_LOGIN_REQUEST
@@ -233,6 +236,20 @@ export function submitStaffAdditionRequest(staffMembers) {
 export function submitStaffAdditionResponse(response) {
   return {
     type: STAFF_ADD_RESPONSE,
+    response
+  }
+}
+
+export function changeSelectedInstitute(institute_guid) {
+  return {
+    type: CHANGE_SELECTED_INSTITUTE_REQUEST,
+    institute_guid
+  }
+}
+
+export function selectedInstituteChanged(response) {
+  return {
+    type: SELECTED_INSTITUTE_CHANGED,
     response
   }
 }

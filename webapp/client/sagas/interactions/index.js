@@ -101,7 +101,6 @@ function *editComment(params) {
 function *postUpdate(params) {
   if (params.response.type === 'new-reply') {
     const institute_guid = {institute_guid: params.response.institute_guid};
-    debugger;
     const response = yield call(
       HttpHelper,
       `post/${params.response.post_guid}/reply/${params.response.reply_guid}`,

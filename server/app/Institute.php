@@ -20,7 +20,8 @@ class Institute extends Model
 
     public function superUser()
     {
-        return $this->belongsToMany('App\User', 'users_institutes')->wherePivot('role', 'inst_superuser');
+        return $this->belongsToMany('App\User', 'users_institutes')
+            ->wherePivot('role', 'inst_superuser');
     }
 
     public function users()
@@ -42,6 +43,8 @@ class Institute extends Model
         return $this->belongsToMany('App\User', 'users_institutes')
             ->wherePivot('role', 'inst_student')
             ->wherePivot('invitation_status', 'pending')
+            ->whereNotNull('member_id')
+            ->whereNotNull('designation')
             ->withPivot('role', 'invitation_status', 'member_id');
     }
 
@@ -51,6 +54,8 @@ class Institute extends Model
             ->wherePivot('role', 'inst_staff')
             ->wherePivot('invitation_status', 'pending')
             ->where('is_verified', 1)
+            ->whereNotNull('member_id')
+            ->whereNotNull('designation')
             ->withPivot('role', 'invitation_status', 'member_id');
     }
 

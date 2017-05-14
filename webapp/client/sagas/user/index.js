@@ -9,32 +9,35 @@ import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
 import {hashHistory} from 'react-router';
 
+function *loadUserData(response) {
+  const subscribed_categories = response.data.user.default_institute.subscriptions;
+  yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
+  // subscribe to categories
+  for (let i in subscribed_categories) {
+    const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
+    yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
+  }
+  // subscribe to posts
+  const institute_guid = response.data.user.default_institute.inst_profile_guid;
+  yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
+
+  const {member_id, designation, invitation_status} = response.data.user.default_institute.user_institute_info[0];
+  if (!(member_id && designation)) {
+    hashHistory.replace('/settings');
+    yield put(toggleSnackbar('Please update your member id and designation.'));
+  }
+  if (invitation_status === 'pending') {
+    hashHistory.replace('/settings');
+    yield put(toggleSnackbar('Your account is pending approval from your institute.'));
+  }
+}
+
 function *handleAuthResponse(response) {
   // subscribe to notifications
   const user_guid = response.data.user.user_guid;
   yield put(userActions.subscribeChannel(`private-users_${user_guid}:new-notification`, notificationActions.newNotification));
-
   if (response.data.user.default_institute) {
-    const subscribed_categories = response.data.user.default_institute.subscriptions;
-    yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
-    // subscribe to categories
-    for (let i in subscribed_categories) {
-      const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
-      yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
-    }
-    // subscribe to posts
-    const institute_guid = response.data.user.default_institute.inst_profile_guid;
-    yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
-
-    const {member_id, designation, invitation_status} = response.data.user.default_institute.user_institute_info[0];
-    if (!(member_id && designation)) {
-      hashHistory.replace('/settings');
-      yield put(toggleSnackbar('Please update your member id and designation.'));
-    }
-    if (invitation_status === 'pending') {
-      hashHistory.replace('/settings');
-      yield put(toggleSnackbar('Your account is pending approval from your institute.'));
-    }
+    yield call(loadUserData, response);
   }
   else {
     hashHistory.replace('/institute');
@@ -164,6 +167,19 @@ function *inviteStaffMember(params) {
   }
 }
 
+function *changeInstiute(params) {
+  const query = {institute_guid: params.institute_guid};
+  const response = yield call(HttpHelper, 'change_institute', 'GET', null, query);
+  if (response.status === 200) {
+    yield call(loadUserData, response);
+    yield put(toggleSnackbar('Institute Changed'));
+    yield put(userActions.selectedInstituteChanged(response.data));
+  }
+  else {
+    yield put(toggleErrorDialog());
+  }
+}
+
 /*
  Watchers
  */
@@ -201,8 +217,11 @@ function *watchInviteStaffMember() {
   yield *takeLatest(userActions.STAFF_ADD_REQUEST, inviteStaffMember)
 }
 
+function *watchInstituteChangeRequest() {
+  yield *takeLatest(userActions.CHANGE_SELECTED_INSTITUTE_REQUEST, changeInstiute)
+}
 
-export default function *userSaga() {
+export default function* userSaga() {
   yield [
     fork(watchGoogleAuth),
     fork(watchUserLogout),
@@ -211,6 +230,7 @@ export default function *userSaga() {
     fork(watchCreateAnnouncementCategory),
     fork(watchDeleteAnnouncementCategory),
     fork(watchFeedbackSubmit),
-    fork(watchInviteStaffMember)
+    fork(watchInviteStaffMember),
+    fork(watchInstituteChangeRequest)
   ]
 }

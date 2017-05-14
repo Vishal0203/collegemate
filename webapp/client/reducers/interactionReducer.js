@@ -1,4 +1,5 @@
 import * as actions from '../actions/interactions/index';
+import * as userActions from '../actions/users/index';
 
 const initialState = {
   tags: [],
@@ -289,7 +290,14 @@ export default function interactionReducer(state = initialState, action) {
     case actions.EDIT_COMMENT_RESPONSE: {
       return {...state, commentLoading: false}
     }
-
+    case userActions.SELECTED_INSTITUTE_CHANGED: {
+      return {
+        ...initialState,
+        tags: state.tags,
+        filters: state.filters,
+        selectedPost: state.selectedPost
+      }
+    }
     case '@@router/LOCATION_CHANGE': {
       if (action.payload.pathname !== '/interactions') {
         return {

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Helper\UserData;
+use App\Http\Controllers\Auth\AuthControllerGeneral;
 use Illuminate\Http\Request;
 use App\Helper\DynamicSchema;
 use App\Institute;
@@ -20,6 +21,7 @@ class InstituteController extends Controller
         $this->middleware('auth', ['except' => 'index']);
         $this->middleware('inst_super', ['only' => 'destroy']);
         $this->middleware('inst_admin', ['only' => 'getPendingStudentsRequests']);
+        $this->middleware('belongs_to_institute', ['only' => 'changeInstitute']);
     }
 
     /**
@@ -29,11 +31,18 @@ class InstituteController extends Controller
      */
     public function index()
     {
-        $institutes = Institute::all();
-        foreach ($institutes as $institute) {
-            $institute->superUser;
-        }
+        $institutes = Institute::with('superUser')->get();
         return response()->json(compact('institutes'), 200);
+    }
+
+    public function changeInstitute(Request $request)
+    {
+        $user = \Auth::user();
+        $institute_id = Institute::where('inst_profile_guid', $request['institute_guid'])->pluck('id')->first();
+        $user->update(['default_institute' => $institute_id]);
+
+        $user = UserData::buildUserReturnable($user, true);
+        return response()->json(compact('user'));
     }
 
     private function createInstitute(array $data)
@@ -191,8 +200,8 @@ class InstituteController extends Controller
 
         return Validator::make($data, [
             'institute_code' => 'max:255|min:|unique:institute_profile',
-            'institute_name' => 'required|min:6|max:255',
-            'institute_description' => 'required|max:255',
+            'institute_name' => 'required|min:4|max:100',
+            'institute_description' => 'required|max:300',
             'contact' => 'required|max:20|min:10',
             'address' => 'required',
             'city' => 'required',
@@ -261,6 +270,14 @@ class InstituteController extends Controller
         return response()->json(compact('institute'));
     }
 
+    public function getPendingStaffMembers($institute_guid)
+    {
+        $institute = Institute::where('inst_profile_guid', $institute_guid)
+            ->with('pendingStaff.userProfile')->get()->first();
+
+        return response()->json(compact('institute'));
+    }
+
     private function createDynamicTable(array $schema, $table_name)
     {
         if (Schema::hasTable($table_name)) {
@@ -311,13 +328,5 @@ class InstituteController extends Controller
             ],
             "foreign_keys" => null
         ];
-    }
-
-    public function getPendingStaffMembers($institute_guid)
-    {
-        $institute = Institute::where('inst_profile_guid', $institute_guid)
-            ->with('pendingStaff.userProfile')->get()->first();
-
-        return response()->json(compact('institute'));
     }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/users';
+import * as categoryActions from '../actions/categories';
 import initGapi from '../store/configureGapi';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Snackbar from 'material-ui/Snackbar';
@@ -111,13 +112,14 @@ function mapStateToProps(state) {
   return {
     auth_user: state.auth_user,
     snackbar: state.snackbar,
+    category: state.category,
     errorDialog: state.errorDialog,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({...userActions, toggleSnackbar, toggleErrorDialog}, dispatch)
+    actions: bindActionCreators({...userActions, ...categoryActions, toggleSnackbar, toggleErrorDialog}, dispatch)
   };
 }
 

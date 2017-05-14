@@ -1,6 +1,7 @@
 import * as actions from '../actions/users/index';
 import * as notificationActions from '../actions/notifications/index';
 import * as instituteActions from '../actions/institutes/index';
+import * as categoryActions from '../actions/categories/index';
 
 const initialState = {
   user: {},
@@ -32,6 +33,22 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         user: action.userData.user,
+        selectedInstitute
+      };
+    }
+    case actions.SELECTED_INSTITUTE_CHANGED: {
+      let selectedInstitute = {};
+      if (action.response.user.default_institute) {
+        selectedInstitute = {
+          ...action.response.user.default_institute,
+          categories: action.response.user.default_institute.categories.map((category) => {
+            return {...category, disabled: false}
+          })
+        }
+      }
+
+      return {
+        ...state,
         selectedInstitute
       };
     }
@@ -217,7 +234,6 @@ export default function userReducer(state = initialState, action) {
           notifiers,
           loading: false
         }
-
       }
     }
     case actions.NOTIFIER_VALIDATION_RESPONSE: {

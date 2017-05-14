@@ -92,9 +92,14 @@ class SubscriptionForm extends Component {
     const {parentProps} = this.props;
     const institute_guid = parentProps.auth_user.selectedInstitute.inst_profile_guid;
     let url = `institute/${institute_guid}/category/notifiers`;
-    const data = {category_guid: category.category_guid};
+    let data = {category_guid: category.category_guid};
     parentProps.actions.toggleNotifiersDialog();
     parentProps.actions.fetchCategoryNotifersRequest(data, url);
+    if (category.private) {
+      url = `institute/${institute_guid}/category/subscribers`;
+      data = {category_guid: category.category_guid};
+      parentProps.actions.fetchCategorySubscribersRequest(data, url);
+    }
     this.setState({category});
   }
 
