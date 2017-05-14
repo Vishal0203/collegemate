@@ -11,10 +11,13 @@ use App\Http\Controllers\Auth\AuthControllerGeneral;
 use Illuminate\Database\QueryException;
 use App\User;
 use App\UserProfile;
+use App\Category;
 use Faker;
+use Mail;
 use App\Institute;
 use Maatwebsite\Excel\Facades\Excel;
 use Validator;
+use App\Mail\StudentApproved;
 
 class InvitationController extends Controller
 {
@@ -129,8 +132,11 @@ class InvitationController extends Controller
             UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
                 'invitation_status' => $request->get('status')
             ]);
-
-            //Todo: Send approved mail
+            $allcategories = Institute::where('inst_profile_guid', $institute_guid)->first()
+                                      ->categories()->withCount('subscribers')->get();
+            $categories = $allcategories->sortByDesc('subscribers_count')->splice(0, 3);
+            Mail::to($user->email)
+                ->queue(new StudentApproved($user, $categories));
             return response()->json([
                 "message" => "You have approved " . $user['first_name'] . "'s request."
             ], 201);

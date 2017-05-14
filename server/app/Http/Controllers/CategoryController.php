@@ -14,6 +14,8 @@ use Auth;
 use Faker;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\Collection;
+use Mail;
+use App\Mail\CategoryCreated;
 
 class CategoryController extends Controller
 {
@@ -66,6 +68,11 @@ class CategoryController extends Controller
 
         $this->addNotifierToCategory($category, Auth::user());
         $category->load('creator');
+        $InstUsers = Institute::where('inst_profile_guid', $institute_guid)->first()->users()->get();
+        foreach ($InstUsers as $InstUser) {
+            Mail::to($InstUser->email)
+                ->queue(new CategoryCreated($InstUser, $category, $institute));
+        }
         return response()->json(compact('category'), 200);
     }
 

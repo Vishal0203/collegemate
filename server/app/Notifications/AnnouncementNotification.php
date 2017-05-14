@@ -72,9 +72,6 @@ class AnnouncementNotification extends Notification implements ShouldQueue
  */
     public function toMail($notifiable)
     {
-        $url = url('/category_notifications?category_guid='.$this->category['category_guid']);
-        $Line1 = "A new announcement has been made in category";
-        $Line1 = $Line1 ." ". $this->category['category_type'];
         return (new NewAnnouncement($notifiable, $this->category))->to($notifiable->email);
     }
 }

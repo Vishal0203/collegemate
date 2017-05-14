@@ -7,21 +7,23 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewCommentOnPost extends Mailable
+class CategoryCreated extends Mailable
 {
     use Queueable, SerializesModels;
 
     protected $user;
-    protected $post;
+    protected $category;
+    protected $institute;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user, $post)
+    public function __construct($user, $category, $institute)
     {
         $this->user = $user;
-        $this->post = $post;
+        $this->category = $category;
+        $this->institute = $institute;
     }
 
     /**
@@ -31,12 +33,12 @@ class NewCommentOnPost extends Mailable
      */
     public function build()
     {
-        return $this->view('email.CommentEmail')
-                    ->subject('Comment in your Post')
+        return $this->view('email.CategoryCreated')
+                    ->subject('New Category created in your institute')
                     ->with([
                         'userName' => $this->user->first_name,
-                        'postHeading' => $this->post['post_heading'],
-                        'postguid' => $this->post['post_guid'],
+                        'categoryName' => $this->category->category_type,
+                        'instituteName' => $this->institute->institute_name,
                     ]);
     }
 }

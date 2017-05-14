@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Institute;
 use App\UserInstitute;
 use App\User;
@@ -11,6 +10,8 @@ use App\UserProfile;
 use App\Category;
 use Faker;
 use Validator;
+use Mail;
+use App\Mail\InviteStaff;
 
 class StaffController extends Controller
 {
@@ -22,7 +23,7 @@ class StaffController extends Controller
         $this->middleware('inst_admin', ['except' => ['store']]);
     }
 
-    /**
+    /**InviteStaff
      * Display a listing of the resource.
      *
      * @param  string $institute_guid
@@ -234,6 +235,8 @@ class StaffController extends Controller
                 'role' => 'inst_staff'
             ];
             InvitationController::addUserInstitute($institute, $user, $data);
+            Mail::to($request['email'])
+            ->queue(new InviteStaff($institute));
             return 'Member successfully Invited';
         }
     }

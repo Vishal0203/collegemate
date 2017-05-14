@@ -64,8 +64,6 @@ class PostCommentNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        $Line1 = "A new Comment in";
-        $Line1 = $Line1 ." ". $this->post['post_heading'];
         return (new NewCommentOnPost($notifiable, $this->post))->to($notifiable->email);
     }
 }
