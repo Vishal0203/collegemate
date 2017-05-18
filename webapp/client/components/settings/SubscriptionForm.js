@@ -16,6 +16,8 @@ import Chip from 'material-ui/Chip'
 import IconButton from 'material-ui/IconButton';
 import {grey500, grey600, red500} from 'material-ui/styles/colors'
 import CategoryNotifiersDialog from './CategoryNotifiersDialog';
+import AutoComplete from 'material-ui/AutoComplete';
+import * as snackbarActions  from '../../actions/commons/index';
 
 class SubscriptionForm extends Component {
   constructor(props) {
@@ -26,7 +28,9 @@ class SubscriptionForm extends Component {
       deletionConfirmation: false,
       deletionCategory: null,
       private_category: null,
-      email_ids: []
+      email_ids: [],
+      value: 'a',
+      searchText: ''
     }
   }
 
@@ -50,10 +54,32 @@ class SubscriptionForm extends Component {
         fontSize: 'smaller',
         color: red500,
         marginLeft: 10
+      },
+      Autocomplete: {
+        fontSize: 14,
+        paddingLeft: '65px',
+        paddingTop: '20px',
+        textAlign: 'right'
       }
     }
   }
 
+  handleNewRequest(chosenRequest) {
+    if (chosenRequest.category_guid !== null && chosenRequest.category_guid !== undefined) {
+      this.setState({
+        value: this.state.value,
+        searchText: chosenRequest.category_guid
+      });
+    } else {
+      this.props.parentProps.actions.toggleSnackbar('Please enter a valid search text');
+    }
+  }
+
+  handleEmptySearch() {
+    this.setState({
+      searchText: ''
+    });
+  }
   handleToggle(evt, category_guid) {
     if (evt.target.getAttribute('data-toggled') === 'true') {
       this.props.parentProps.actions.unsubscribeAnnouncementRequest(category_guid)
@@ -296,9 +322,15 @@ class SubscriptionForm extends Component {
   }
 
   renderCategories() {
-    const allCategories = this.props.parentProps.auth_user.selectedInstitute.categories;
+    let allCategories = this.props.parentProps.auth_user.selectedInstitute.categories.filter(
+      (category) => {
+        return category.category_guid.toLowerCase().indexOf(
+            this.state.searchText.toLowerCase()) !== -1;
+      }
+    );
     const {subscriptions, notifying_categories} = this.props.parentProps.auth_user.selectedInstitute;
     let category_list = [];
+
 
     allCategories.map((category, index) => {
       let subscribed_as = 'Not Subscribed';
@@ -345,10 +377,10 @@ class SubscriptionForm extends Component {
           </TableRowColumn>
           {
             this.props.showOptions ? (
-              <TableRowColumn>
-                {this.renderOptions(category, subscribed_as)}
-              </TableRowColumn>
-            ) : null
+                <TableRowColumn>
+                  {this.renderOptions(category, subscribed_as)}
+                </TableRowColumn>
+              ) : null
           }
 
         </TableRow>
@@ -359,10 +391,33 @@ class SubscriptionForm extends Component {
   }
 
   render() {
+    const Categories = this.props.parentProps.auth_user.selectedInstitute.categories;
+    const dataSourceConfig = {
+      text: 'category_type',
+      value: 'category_guid'
+    };
     return (
       <div>
         {this.renderCreateCategoryForm()}
-        <Subheader>Subscriptions Manager</Subheader>
+        <div className="row">
+          <Subheader
+            className="col-xs-8"
+            style={{
+              paddingTop: '15px',
+              paddingLeft: '25px'
+            }}>Subscriptions Manager</Subheader>
+          <AutoComplete
+            style={this.styles.Autocomplete}
+            listStyle={{maxHeight: 100, overflow: 'auto', fontSize: 14,}}
+            hintText="Search Category"
+            //onUpdateInput={(searchText) => this.handleUpdateInput(searchText)}
+            onNewRequest={(chosenRequest) => this.handleNewRequest(chosenRequest)}
+            openOnFocus={true}
+            onClose={() => this.handleEmptySearch()}
+            dataSource={Categories}
+            dataSourceConfig={dataSourceConfig}
+            filter={AutoComplete.fuzzyFilter}/>
+        </div>
         <div style={{padding: '0 16px 25px'}}>
           <Table fixedHeader={true} selectable={false}>
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
