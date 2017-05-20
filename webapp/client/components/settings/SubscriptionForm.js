@@ -407,6 +407,7 @@ class SubscriptionForm extends Component {
           </Col>
           <Col xs={8} style={{paddingLeft: '12px'}}>
             <AutoComplete
+              listStyle={{maxHeight: 200, overflow: 'auto'}}
               textFieldStyle={this.styles.formField}
               hintText="Search Category"
               fullWidth={true}
