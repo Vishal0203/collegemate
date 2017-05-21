@@ -248,7 +248,7 @@ class PostController extends Controller
         }
 
         if (!$upvote) {
-            Notification::send($post->user, new PostUpvoteNotification($post));
+            Notification::send($post->user, new PostUpvoteNotification($post, $institute_guid));
         }
 
         return response()->json(['upvotes_count' => $post->upvotesCount(), 'upvoted' => !$upvote]);
@@ -288,7 +288,7 @@ class PostController extends Controller
         Event::fire(new PostUpdate($post, $reply['reply_guid'], $institute_guid, 'new-reply'));
 
         if (\Auth::user()->id != $post->user->id) {
-            Notification::send($post->user, new PostReplyNotification($post));
+            Notification::send($post->user, new PostReplyNotification($post, $institute_guid));
         }
 
         return response()->json(compact('reply'));

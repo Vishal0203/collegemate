@@ -199,10 +199,13 @@ class Notifications extends React.Component {
   }
 
   aggregateNotifications() {
-    const user = this.props.auth_user.user;
+    const {user, selectedInstitute} = this.props.auth_user;
     let notifications = {};
-
-    user.unread_notifications.map((notification) => {
+    let unread_notifications = user.unread_notifications.filter((notification)=> {
+      return !notification.data.institute_guid ||
+        notification.data.institute_guid === selectedInstitute.inst_profile_guid
+    });
+    unread_notifications.map((notification) => {
       const {id, created_at} = notification;
       const {post_guid, post_heading, comment_guid, category_guid, category_type} = notification.data;
       switch (notification.type) {

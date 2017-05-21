@@ -15,15 +15,19 @@ class AnnouncementNotification extends Notification implements ShouldQueue
 
     public $category;
     public $notification;
+    public $institute_guid;
     /**
      * Create a new notification instance.
-     *
+     * @param App/Category $category
+     * @param App/Notification $notification
+     * @param string $institute_guid
      * @return void
      */
-    public function __construct($category, $notification)
+    public function __construct($category, $notification, $institute_guid)
     {
         $this->category = $category;
         $this->notification = $notification;
+        $this->institute_guid = $institute_guid;
     }
 
     /**
@@ -49,7 +53,8 @@ class AnnouncementNotification extends Notification implements ShouldQueue
         return [
             'category_guid' => $this->category['category_guid'],
             'category_type' => $this->category['category_type'],
-            'notification_guid' => $this->notification['notification_guid']
+            'notification_guid' => $this->notification['notification_guid'],
+            'institute_guid' => $this->institute_guid
         ];
     }
 
@@ -59,7 +64,8 @@ class AnnouncementNotification extends Notification implements ShouldQueue
             'data' => [
                 'category_guid' => $this->category['category_guid'],
                 'category_type' => $this->category['category_type'],
-                'notification_guid' => $this->notification['notification_guid']
+                'notification_guid' => $this->notification['notification_guid'],
+                'institute_guid' => $this->institute_guid
             ],
             'message' => 'Announcement published in '. $this->category['category_type']
         ]);

@@ -66,7 +66,7 @@ class CommentController extends Controller
         ));
 
         if ($post->user['id'] != $user['id']) {
-            Notification::send($post->user, new PostCommentNotification($post));
+            Notification::send($post->user, new PostCommentNotification($post, $request['institute_guid']));
         }
 
         return response()->json(compact('comment'), 201);
@@ -165,7 +165,7 @@ class CommentController extends Controller
         return response()->json(['Error' => 'Not Authorized.'], 403);
     }
 
-    public function upvote($post_guid, $comment_guid)
+    public function upvote(Request $request, $post_guid, $comment_guid)
     {
         $comment = Comment::where('comment_guid', $comment_guid)->first();
         $user = \Auth::user();
@@ -186,7 +186,7 @@ class CommentController extends Controller
         }
 
         if (!$upvote) {
-            Notification::send($comment->user, new CommentUpvoteNotification($comment));
+            Notification::send($comment->user, new CommentUpvoteNotification($comment, $request['institute_guid']));
         }
 
         return response()->json(['upvotes_count' => $comment->upvotesCount(), 'upvoted' => !$upvote]);
@@ -217,7 +217,7 @@ class CommentController extends Controller
         ));
 
         if (\Auth::user()->id != $comment->user->id) {
-            Notification::send($comment->user, new CommentReplyNotification($comment));
+            Notification::send($comment->user, new CommentReplyNotification($comment, $request['institute_guid']));
         }
         return response()->json(compact('reply'));
     }
