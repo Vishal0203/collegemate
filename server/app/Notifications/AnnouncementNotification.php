@@ -4,8 +4,10 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use App\Mail\NewAnnouncement;
 
 class AnnouncementNotification extends Notification implements ShouldQueue
 {
@@ -32,7 +34,7 @@ class AnnouncementNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        return ['mail','database', 'broadcast'];
     }
 
 
@@ -61,5 +63,15 @@ class AnnouncementNotification extends Notification implements ShouldQueue
             ],
             'message' => 'Announcement published in '. $this->category['category_type']
         ]);
+    }
+/**
+ * Get the mail representation of the notification.
+ *
+ * @param  mixed  $notifiable
+ * @return \Illuminate\Notifications\Messages\MailMessage
+ */
+    public function toMail($notifiable)
+    {
+        return (new NewAnnouncement($notifiable, $this->category))->to($notifiable->email);
     }
 }

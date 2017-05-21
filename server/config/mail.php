@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'no-reply@todevs.com', 'name' => 'Vishal Sharma'],
+    'from' => ['address' => env('EMAIL_ADDRESS'), 'name' => env('APP_NAME')],
 
     /*
     |--------------------------------------------------------------------------

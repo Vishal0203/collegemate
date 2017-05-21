@@ -101,4 +101,9 @@ class User extends Model implements
 
         return $attributes;
     }
+    public function routeNotificationForMail()
+    {
+
+        return $this->email;
+    }
 }
