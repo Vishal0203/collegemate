@@ -46,17 +46,25 @@ class ApprovalNotification extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        return ['user' => $this->user];
+        return [
+            'user' => $this->user,
+            'institute_guid' => $this->institute['inst_profile_guid']
+        ];
     }
 
     public function toBroadcast($notifiable)
     {
         $insitute_id = $this->institute->id;
+        $user = $this->user->load(['userProfile', 'institutes' => function ($query) use ($insitute_id) {
+            $query->where('institute_id', $insitute_id)->first();
+        }]);
+
         return new BroadcastMessage([
             'message' => 'Pending approvals in your Institute',
-            'data' => $this->user->load(['userProfile', 'institutes' => function ($query) use ($insitute_id) {
-                $query->where('institute_id', $insitute_id)->first();
-            }])
+            'data' => [
+                'user' => $user,
+                'institute_guid' => $this->institute['inst_profile_guid']
+            ]
         ]);
     }
 }

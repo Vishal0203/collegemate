@@ -79,7 +79,6 @@ class UserProfileController extends Controller
         }
 
         $staff = $institute->staff()->where('id', '!=', $user['id'])->get();
-        // Todo: Send approval request to staff, admin and superuser
         $userInstitute = UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->first();
         if ($userInstitute->invitation_status == 'pending') {
             Notification::send($staff, new ApprovalNotification($user, $institute));

@@ -92,7 +92,11 @@ class NotificationController extends Controller
         }
 
         Event::fire(new NewAnnouncement($notification, $institute_guid));
-        Notification::send($category->subscribers, new AnnouncementNotification($category, $notification));
+        Notification::send($category->subscribers, new AnnouncementNotification(
+            $category,
+            $notification,
+            $institute_guid
+        ));
 
         return response()->json($request['event_date'], 200);
     }
