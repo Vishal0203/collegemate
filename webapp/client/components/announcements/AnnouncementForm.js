@@ -6,7 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import Checkbox from 'material-ui/Checkbox';
 import {grey600} from 'material-ui/styles/colors';
 import Formsy from 'formsy-react';
-import {FormsySelect, FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
+import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
 import RichEditor from '../rte/RichEditor';
 import {EditorState, CompositeDecorator} from 'draft-js';
 import {stateToHTML} from 'draft-js-export-html';
@@ -161,18 +161,12 @@ class AnnouncementForm extends React.Component {
                     <MenuItem key={i} value={category.category_guid} primaryText={category.category_type}/>)}
                 </FormsySelect>
                 <DatePicker
-                  hintText="Event Date"
-                  name="event_date"
                   ref="eventDate"
+                  name="eventDate"
                   style={{display: 'none'}}
                   shouldDisableDate={(date) => {
                     return (moment(date).diff(moment().startOf('day'), 'days') < 0)
                   }}
-                  formatDate={new global.Intl.DateTimeFormat('en-US', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  }).format}
                   onDismiss={() => this.setState({eventChecked: false})}
                   onChange={(event, date) => this.setState({eventDate: date})}
                 />

@@ -20,7 +20,7 @@ fi
 
 cd ../webapp
 printf "\nInstalling node dependencies ... "
-npm install --only=dev &> /dev/null
+yarn install &> /dev/null
 printf "Done"
 
 printf "\n=== RUNNING WEBAPP VALIDATION === "

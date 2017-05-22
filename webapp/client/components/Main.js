@@ -91,10 +91,12 @@ class Main extends React.Component {
       )
     } else {
       return (
-        <Row center="xs" className="initial-loader">
-          <Loader color="#126B6F" size="16px" margin="5px"/>
-          <h3 style={{marginTop: 20}}>{this.renderQuote()}</h3>
-        </Row>
+        <div style={{display: 'table', width: '100vw', height: '100vh'}}>
+          <Row center="xs" className="initial-loader">
+            <Loader color="#126B6F" size="16px" margin="5px"/>
+            <h3 style={{marginTop: 20}}>{this.renderQuote()}</h3>
+          </Row>
+        </div>
       )
     }
   }
