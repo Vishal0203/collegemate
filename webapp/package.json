@@ -8,13 +8,10 @@
     "build": "npm run clean && npm run build:webpack",
     "test": "NODE_ENV=production mocha './tests/**/*.spec.js' --compilers js:babel-core/register",
     "clean": "rimraf ../server/public/dist",
-    "start": "npm install && node devServer.js",
+    "start": "yarn install && node devServer.js",
     "tunnel": "browser-sync start --proxy localhost:7777 --tunnel wesbos"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Vishal0203/collegemate.git"
-  },
+  "repository": "git+https://github.com/Vishal0203/collegemate.git",
   "author": "Vishal Sharma",
   "license": "ISC",
   "bugs": {
@@ -34,7 +31,7 @@
     "formsy-material-ui": "^0.6.0",
     "formsy-react": "^0.19.2",
     "halogenium": "^1.1.1",
-    "material-ui": "^0.18.0",
+    "material-ui": "0.18.0",
     "material-ui-chip-input": "^0.14.0",
     "moment": "^2.16.0",
     "moment-timezone": "^0.5.9",

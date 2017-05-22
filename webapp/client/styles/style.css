@@ -187,11 +187,10 @@ body {
 }
 
 .initial-loader {
-    position: absolute;
-    display: block;
+    display: table-cell;
+    height: inherit;
+    vertical-align: middle;
     font-family: 'Roboto', sans-serif;
-    top: 42%;
-    left: 44%;
 }
 
 .notification-text {
