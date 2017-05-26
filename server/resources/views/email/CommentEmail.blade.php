@@ -5,6 +5,10 @@
             Hi {{ucfirst($userName)}}, 
 
             You have got a comment on your post {{ucfirst($postHeading)}}.
-            <a href="{{getenv('APP_URL')}}/#/interactions/{{$postguid}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none; ">View on portal</a>
+            @if (strcmp ( getenv('APP_ENV'), "local") == 0)
+        <a href="{{getenv('APP_URL')}}/#/interactions/{{$postguid}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">View on portal</a>
+            @else
+        <a href="{{getenv('HOST_URL')}}/#/interactions/{{$postguid}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">View on portal</a>
+            @endif            
                     </pre>
 @endsection
