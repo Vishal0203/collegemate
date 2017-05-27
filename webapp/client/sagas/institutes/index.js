@@ -31,8 +31,8 @@ function *registerToInstitute(params) {
     yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
     // subscribe to categories
     for (let i in subscribed_categories) {
-      const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
-      yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
+      const channelName = `category_${subscribed_categories[i].category_guid}:announcement-updates`;
+      yield put(userActions.subscribeChannel(channelName, announcementActions.announcementUpdates));
     }
     // subscribe to posts
     const institute_guid = response.data.user.default_institute.inst_profile_guid;

@@ -1,5 +1,7 @@
 export const CREATE_ANNOUNCEMENT_REQUEST = 'CREATE_ANNOUNCEMENT_REQUEST';
+export const ANNOUNCEMENT_UPDATES = 'ANNOUNCEMENT_UPDATES';
 export const NEW_ANNOUNCEMENT_ADDED = 'NEW_ANNOUNCEMENT_ADDED';
+export const ANNOUNCEMENT_DELETED = 'ANNOUNCEMENT_DELETED';
 export const CREATE_ANNOUNCEMENT_TOGGLE = 'CREATE_ANNOUNCEMENT_TOGGLE';
 
 export const ADD_FILTER = 'ADD_FILTER';
@@ -16,6 +18,8 @@ export const FETCH_EVENTS_RESPONSE = 'FETCH_EVENTS_RESPONSE';
 export const FETCH_SINGLE_ANNOUNCEMENT_REQUEST = 'FETCH_SINGLE_ANNOUNCEMENT_REQUEST';
 export const FETCH_SINGLE_ANNOUNCEMENT_RESPONSE = 'FETCH_SINGLE_ANNOUNCEMENT_RESPONSE';
 
+export const DELETE_ANNOUNCEMENT_REQUEST = 'DELETE_ANNOUNCEMENT_REQUEST';
+
 export function announcementFormToggle() {
   return {
     type: CREATE_ANNOUNCEMENT_TOGGLE
@@ -29,9 +33,23 @@ export function createAnnouncementRequest(formData) {
   };
 }
 
+export function announcementUpdates(update) {
+  return {
+    type: ANNOUNCEMENT_UPDATES,
+    update
+  }
+}
+
 export function newAnnouncementAdded(notification) {
   return {
     type: NEW_ANNOUNCEMENT_ADDED,
+    notification
+  }
+}
+
+export function announcementDeleted(notification) {
+  return {
+    type: ANNOUNCEMENT_DELETED,
     notification
   }
 }
@@ -105,5 +123,12 @@ export function fetchSingleAnnouncementResponse(response) {
   return {
     type: FETCH_SINGLE_ANNOUNCEMENT_RESPONSE,
     response
+  }
+}
+
+export function deleteAnnouncementRequest(url) {
+  return {
+    type: DELETE_ANNOUNCEMENT_REQUEST,
+    url
   }
 }

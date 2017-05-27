@@ -94,7 +94,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::resource(
             'notification',
             'NotificationController',
-            ['only' => ['index','store', 'show']]
+            ['only' => ['index','store', 'show', 'destroy']]
         );
 
         Route::post('post/{post_guid}/upvote', 'PostController@upvote');

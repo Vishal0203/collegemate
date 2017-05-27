@@ -1,10 +1,11 @@
 import React from 'react';
 import {Card, CardHeader, CardText} from 'material-ui/Card/index';
 import Avatar from 'material-ui/Avatar';
+import Dialog from 'material-ui/Dialog';
 import moment from 'moment/moment';
 import FlatButton from 'material-ui/FlatButton';
 import Tooltip from 'material-ui/internal/Tooltip';
-import {grey600} from 'material-ui/styles/colors';
+import {grey500, grey600} from 'material-ui/styles/colors';
 import {getDateDiff} from '../extras/utils';
 
 export class AnnouncementContent extends React.Component {
@@ -19,7 +20,8 @@ export class AnnouncementContent extends React.Component {
       attachmentTooltip: {
         show: false,
         label: ''
-      }
+      },
+      showDeleteConfirmation: false
     }
   }
 
@@ -50,6 +52,12 @@ export class AnnouncementContent extends React.Component {
       divider: {
         width: '97%',
         backgroundColor: 'rgba(224, 224, 224, 0.6)'
+      },
+      actionButton: {
+        color: grey500,
+        paddingRight: 9,
+        fontWeight: 300,
+        display: 'inline-block'
       },
       eventLabel: {
         display: 'inline-block',
@@ -89,6 +97,13 @@ export class AnnouncementContent extends React.Component {
     })
   }
 
+  deleteAnnouncement(notificationGuid) {
+    const institute_guid = this.props.parentProps.auth_user.selectedInstitute.inst_profile_guid;
+    let url = `institute/${institute_guid}/notification/${notificationGuid}`;
+    this.props.parentProps.actions.deleteAnnouncementRequest(url);
+    this.setState({showDeleteConfirmation: false});
+  }
+
   showAttachments(announcement) {
     if (announcement.notification_files.length > 0) {
       const institute_guid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
@@ -118,9 +133,60 @@ export class AnnouncementContent extends React.Component {
     }
   }
 
+  renderDeleteConfirmation() {
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={() => this.setState({showDeleteConfirmation: false})}
+      />,
+      <FlatButton
+        label="Delete"
+        secondary={true}
+        keyboardFocused={true}
+        onTouchTap={() => this.deleteAnnouncement(this.props.announcement.notification_guid)}
+      />
+    ];
+    return (
+      <Dialog
+        title="Are you sure?"
+        actions={actions}
+        modal={false}
+        open={this.state.showDeleteConfirmation}
+        onRequestClose={() => this.setState({showDeleteConfirmation: false})}
+      >
+        Are you sure you want to delete this announcement? This can't be reverted.
+      </Dialog>
+    );
+  }
+
+  renderDelete() {
+    const {publisher} = this.props.announcement;
+    const user = this.props.parentProps.auth_user;
+    let deletePost = null;
+    if (
+      publisher.user_guid === user.user.user_guid ||
+      user.selectedInstitute.user_institute_info[0].role !== 'inst_student'
+    ) {
+      deletePost = (
+        <span>
+          <div style={this.styles.actionButton}>
+            <label style={{cursor: 'pointer'}}
+                   onClick={() => this.setState({showDeleteConfirmation: true})}>
+              <span style={{color: grey600}}>&nbsp;&nbsp;|&nbsp;&nbsp;delete</span>
+            </label>
+          </div>
+          {this.renderDeleteConfirmation()}
+        </span>
+      );
+    }
+    return deletePost;
+  }
+
   render() {
     const {announcement, avatarColor} = this.props;
     const timezone = moment.tz.guess();
+    const time = moment.tz(announcement.created_at, null).format();
 
     return (
       <div>
@@ -139,7 +205,7 @@ export class AnnouncementContent extends React.Component {
                onMouseLeave={() => {
                  this.setState({timeTooltip: {show: false, label: ''}})
                }}>
-            <label> {getDateDiff(announcement.created_at)} </label>
+            <label> {moment(time).tz(timezone).fromNow()} </label>
           </div>
           <Tooltip show={this.state.timeTooltip.show}
                    label={this.state.timeTooltip.label}
@@ -158,6 +224,7 @@ export class AnnouncementContent extends React.Component {
           <span style={{textTransform: 'capitalize'}}>
             {announcement.publisher.first_name} {announcement.publisher.last_name}, {announcement.publisher.institutes[0].designation}
           </span>
+          {this.renderDelete()}
           <span style={{position: 'absolute', right: 16}}>
             {announcement.event_date ?
               <div style={this.styles.eventLabel}>
