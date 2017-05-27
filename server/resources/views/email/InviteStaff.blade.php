@@ -6,6 +6,10 @@
 
             Welcome to {{getenv('APP_NAME')}}. 
             You have been invited to join institute {{ $instituteName}}.
-            <a href="{{getenv('APP_URL')}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">Join Now</a>
+            @if (strcmp ( getenv('APP_ENV'), "local") == 0)
+        <a href="{{getenv('APP_URL')}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">Join Now</a>
+            @else
+        <a href="{{getenv('HOST_URL')}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">Join Now</a>
+            @endif            
                     </pre>
 @endsection

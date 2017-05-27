@@ -5,6 +5,10 @@
             Hi {{ucfirst($userName)}}, 
 
             A new announcement has been made in category {{ucfirst($categoryType)}}.
-            <a href="{{getenv('APP_URL')}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">View on portal</a>
+            @if (strcmp ( getenv('APP_ENV'), "local") == 0)
+        <a href="{{getenv('APP_URL')}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">View on portal</a>
+            @else
+        <a href="{{getenv('HOST_URL')}}" style="display: inline-block;width: 115px;height: 25px;background: #89C05C;padding: 4px 10px;text-align: center;border-radius: 5px;color: white;font-weight: bold;text-decoration: none;">View on portal</a>
+            @endif
                     </pre>
 @endsection
