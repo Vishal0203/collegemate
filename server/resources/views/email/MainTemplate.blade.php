@@ -21,8 +21,8 @@
                 </td>
             </tr>
              <tr>
-                <td align="left" style="padding-left: 10%">
-                    <img align="center" src="{{ $message->embed(public_path().'/todevs_sign.png') }}" height=70 width=150>
+                <td align="left" style="padding-left: 46px">
+                    <img align="center" src="{{ $message->embed(public_path().'/todevs_sign.png') }}" height=56>
                 </td>
             </tr>
         </table>

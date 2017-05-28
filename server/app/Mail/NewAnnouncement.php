@@ -13,15 +13,23 @@ class NewAnnouncement extends Mailable
 
     protected $user;
     protected $category;
+    protected $announcer;
+    protected $announcement_heading;
+
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param $user
+     * @param $category
+     * @param $announcer
+     * @param $announcement_heading
      */
-    public function __construct($user, $category)
+    public function __construct($user, $category, $announcer, $announcement_heading)
     {
         $this->user = $user;
         $this->category = $category;
+        $this->announcer = $announcer;
+        $this->announcement_heading = $announcement_heading;
     }
 
     /**
@@ -32,10 +40,12 @@ class NewAnnouncement extends Mailable
     public function build()
     {
         return $this->view('email.AnnouncementEmail')
-                    ->subject('Announcemnet Notification')
-                    ->with([
-                        'userName' => $this->user->first_name,
-                        'categoryType' => $this->category['category_type'],
-                    ]);
+            ->subject('Announcement Notification')
+            ->with([
+                'username' => $this->user->first_name,
+                'categoryType' => $this->category['category_type'],
+                'announcer' => $this->announcer,
+                'heading' => $this->announcement_heading
+            ]);
     }
 }
