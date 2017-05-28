@@ -16,12 +16,14 @@ class AnnouncementNotification extends Notification implements ShouldQueue
     public $category;
     public $notification;
     public $institute_guid;
+
     /**
      * Create a new notification instance.
-     * @param App/Category $category
-     * @param App/Notification $notification
+     * @param $category
+     * @param $notification
      * @param string $institute_guid
-     * @return void
+     * @internal param $App /Category $category
+     * @internal param $App /Notification $notification
      */
     public function __construct($category, $notification, $institute_guid)
     {
@@ -33,19 +35,19 @@ class AnnouncementNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
      * @return array
      */
     public function via($notifiable)
     {
-        return ['mail','database', 'broadcast'];
+        return ['mail', 'database', 'broadcast'];
     }
 
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)
@@ -67,17 +69,27 @@ class AnnouncementNotification extends Notification implements ShouldQueue
                 'notification_guid' => $this->notification['notification_guid'],
                 'institute_guid' => $this->institute_guid
             ],
-            'message' => 'Announcement published in '. $this->category['category_type']
+            'message' => 'Announcement published in ' . $this->category['category_type']
         ]);
     }
-/**
- * Get the mail representation of the notification.
- *
- * @param  mixed  $notifiable
- * @return \Illuminate\Notifications\Messages\MailMessage
- */
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed $notifiable
+     * @return NewAnnouncement
+     */
     public function toMail($notifiable)
     {
-        return (new NewAnnouncement($notifiable, $this->category))->to($notifiable->email);
+        $this->notification->load('publisher');
+        $announcer = $this->notification->publisher['first_name'] . ' ' . $this->notification->publisher['last_name'];
+        return (
+        new NewAnnouncement(
+            $notifiable,
+            $this->category,
+            $announcer,
+            $this->notification['notification_head']
+        )
+        )->to($notifiable->email);
     }
 }

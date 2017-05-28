@@ -13,10 +13,12 @@ class NewCommentOnPost extends Mailable
 
     protected $user;
     protected $post;
+
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param $user
+     * @param $post
      */
     public function __construct($user, $post)
     {
@@ -32,7 +34,7 @@ class NewCommentOnPost extends Mailable
     public function build()
     {
         return $this->view('email.CommentEmail')
-                    ->subject('Comment in your Post')
+                    ->subject('A new answer on your post')
                     ->with([
                         'userName' => $this->user->first_name,
                         'postHeading' => $this->post['post_heading'],
