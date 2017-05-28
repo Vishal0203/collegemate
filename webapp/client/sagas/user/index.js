@@ -14,8 +14,8 @@ function *loadUserData(response) {
   yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
   // subscribe to categories
   for (let i in subscribed_categories) {
-    const channelName = `category_${subscribed_categories[i].category_guid}:new-announcement`;
-    yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
+    const channelName = `category_${subscribed_categories[i].category_guid}:announcement-updates`;
+    yield put(userActions.subscribeChannel(channelName, announcementActions.announcementUpdates));
   }
   // subscribe to posts
   const institute_guid = response.data.user.default_institute.inst_profile_guid;
@@ -103,8 +103,8 @@ function *createAnnouncementCategory(params) {
     const selected_institute = yield select(selectors.selected_institute);
     yield put(announcementActions.setAnnouncementCategories(selected_institute.subscriptions));
 
-    const channelName = `category_${response.data.category.category_guid}:new-announcement`;
-    yield put(userActions.subscribeChannel(channelName, announcementActions.newAnnouncementAdded));
+    const channelName = `category_${response.data.category.category_guid}:announcement-updates`;
+    yield put(userActions.subscribeChannel(channelName, announcementActions.announcementUpdates));
 
     yield put(announcementActions.reloadAnnouncements());
     yield put(toggleSnackbar(`New announcement category ${response.data.category.category_type} has been created.`));
@@ -221,7 +221,7 @@ function *watchInstituteChangeRequest() {
   yield *takeLatest(userActions.CHANGE_SELECTED_INSTITUTE_REQUEST, changeInstiute)
 }
 
-export default function* userSaga() {
+export default function *userSaga() {
   yield [
     fork(watchGoogleAuth),
     fork(watchUserLogout),

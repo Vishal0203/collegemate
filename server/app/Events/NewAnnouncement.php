@@ -27,7 +27,7 @@ class NewAnnouncement extends Event implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'new-announcement';
+        return 'announcement-updates';
     }
 
     /**
@@ -52,6 +52,7 @@ class NewAnnouncement extends Event implements ShouldBroadcast
         return array_merge(
             $this->notification->toArray(),
             [
+                'type' => 'NewAnnouncement',
                 'message' => 'Announcement published in ' . $this->notification['category']['category_type'],
                 'snackbar' => true
             ]

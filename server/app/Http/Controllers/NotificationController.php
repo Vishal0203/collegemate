@@ -16,6 +16,7 @@ use Event;
 use App\Events\NewAnnouncement;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AnnouncementNotification;
+use App\Events\DeletedAnnouncement;
 use Carbon\Carbon;
 
 class NotificationController extends Controller
@@ -175,5 +176,37 @@ class NotificationController extends Controller
         $events = NotificationData::whereIn('category_id', $category_ids->toArray())
             ->where('event_date', '>=', $start)->where('event_date', '<=', $end)->orderBy('event_date', 'asc')->get();
         return response()->json(compact('events'), 200);
+    }
+
+    public function destroy($institute_guid, $notification_guid, Request $request)
+    {
+        $user = \Auth::user();
+        $notification = NotificationData::where('notification_guid', $notification_guid)->first();
+        $notificationFiles = $notification->notificationFiles()->get();
+        if (!$notification) {
+            return response()->json(['error' => 'Announcement does not exist'], 400);
+        }
+        if ($notification['created_by'] !== $user['id'] && $request->get('auth_user_role') == 'inst_student') {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $s3 = AWS::createClient('s3');
+        foreach ($notificationFiles as $notificationFile) {
+            $object_key = 'notification_files/' .
+                $notification['notification_guid'] . '/' . $notificationFile['file'];
+            $s3->deleteObject(array(
+                'Bucket'     => 'collegemate',
+                'Key'        => $object_key,
+            ));
+        }
+        $object_key = 'notification_files/' . $notification['notification_guid'] . '/';
+        $s3->deleteObject(array(
+            'Bucket'     => 'collegemate',
+            'Key'        => $object_key,
+        ));
+        $category = $notification->category;
+        $notification->notificationFiles()->delete();
+        $notification->delete();
+        Event::fire(new DeletedAnnouncement($notification_guid, $category['category_guid']));
+        return response()->json(['success' => 'Announcement removed successfully'], 200);
     }
 }

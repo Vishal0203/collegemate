@@ -90,6 +90,45 @@ export default function announcementReducer(state = initialState, action) {
         loadingMore: false
       };
     }
+    case actions.DELETE_ANNOUNCEMENT_REQUEST: {
+      return {...state, loadingMore: true}
+    }
+    case actions.ANNOUNCEMENT_DELETED: {
+      const skip = state.skip - 1;
+      const match = state.filters.filter(function (filter) {
+        return filter.category_guid === action.notification.category_guid
+      });
+      if (match.length === 0) {
+        return {
+          ...state,
+          loadingMore: false
+        };
+      }
+      const events = state.events.filter(
+        (event) => event.notification_guid !== action.notification.notification_guid
+      );
+      const eventsInWeek = state.eventsCalendar.eventsInWeek.filter(
+        (event) => event.notification_guid !== action.notification.notification_guid
+      );
+      const eventsInMonth = state.eventsCalendar.eventsInMonth.filter(
+        (event) => event.notification_guid !== action.notification.notification_guid
+      );
+      const itemsData = state.items.data.filter(
+        (announcement) => announcement.notification_guid !== action.notification.notification_guid
+      );
+      return {
+        ...state,
+        skip,
+        items: {...state.items, data: itemsData},
+        events,
+        eventsCalendar: {
+          ...state.eventsCalendar,
+          eventsInWeek,
+          eventsInMonth
+        },
+        loadingMore: false
+      };
+    }
     case actions.FETCH_ANNOUNCEMENTS_RESPONSE: {
       return {
         ...state,
