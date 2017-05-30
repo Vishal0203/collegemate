@@ -103,7 +103,6 @@ class User extends Model implements
     }
     public function routeNotificationForMail()
     {
-
         return $this->email;
     }
 }

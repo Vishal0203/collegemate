@@ -214,6 +214,9 @@ export class AnnouncementContent extends React.Component {
                    verticalPosition="bottom"
                    touch={true}
           />
+          <div className="time-container" style={{top: 40, color: grey500}}>
+            <label>&#10003; Seen by {announcement.views} {announcement.views > 1 ? 'members' : 'member'}</label>
+          </div>
         </CardHeader>
 
         <CardText style={this.styles.notificationDescription}>

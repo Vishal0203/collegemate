@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\NotificationData;
 use App\User;
 use App\Institute;
 use App\UserInstitute;
@@ -97,14 +98,29 @@ class UserProfileController extends Controller
     {
         $user = \Auth::user();
         $notificationIds = $request["notification_ids"];
-        $user->unreadNotifications()->whereIn('id', $notificationIds)->update(['read_at' => Carbon::now()]);
+        $notification = $user->unreadNotifications()->whereIn('id', $notificationIds)->get()->first();
+        $this->checkForAnnouncementViewsUpdate($notification);
+
+        $notification->update(['read_at' => Carbon::now()]);
         return response()->json(['success' => 'Marked notification as read'], 200);
     }
 
     public function readAllNotifications(Request $request)
     {
         $user = \Auth::user();
-        $user->unreadNotifications()->update(['read_at' => Carbon::now()]);
+        $notifications = $user->unreadNotifications()->get();
+        foreach ($notifications as $notification) {
+            $this->checkForAnnouncementViewsUpdate($notification);
+            $notification->update(['read_at' => Carbon::now()]);
+        }
         return response()->json(['success' => 'Marked all as read'], 200);
+    }
+
+    private function checkForAnnouncementViewsUpdate($notification)
+    {
+        if ($notification['type'] == 'App\Notifications\AnnouncementNotification') {
+            $announcement_guid = $notification['data']['notification_guid'];
+            NotificationData::where('notification_guid', $announcement_guid)->increment('views');
+        }
     }
 }
