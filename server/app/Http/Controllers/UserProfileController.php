@@ -98,10 +98,12 @@ class UserProfileController extends Controller
     {
         $user = \Auth::user();
         $notificationIds = $request["notification_ids"];
-        $notification = $user->unreadNotifications()->whereIn('id', $notificationIds)->get()->first();
-        $this->checkForAnnouncementViewsUpdate($notification);
+        $notifications = $user->unreadNotifications()->whereIn('id', $notificationIds)->get();
+        foreach ($notifications as $notification) {
+            $this->checkForAnnouncementViewsUpdate($notification);
+            $notification->update(['read_at' => Carbon::now()]);
+        }
 
-        $notification->update(['read_at' => Carbon::now()]);
         return response()->json(['success' => 'Marked notification as read'], 200);
     }
 
