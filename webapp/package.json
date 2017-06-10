@@ -31,6 +31,7 @@
     "formsy-material-ui": "^0.6.0",
     "formsy-react": "^0.19.2",
     "halogenium": "^1.1.1",
+    "marked": "^0.3.6",
     "material-ui": "0.18.0",
     "material-ui-chip-input": "^0.14.0",
     "moment": "^2.16.0",

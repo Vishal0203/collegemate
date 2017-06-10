@@ -5,6 +5,8 @@
   <title>{{ $app_name }}</title>
   <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">
 </head>
 <body>
 <div id="root"></div>
@@ -31,6 +33,8 @@
   ga('send', 'pageview');
 
 </script>
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
 <script src="./dist/bundle.js?{{ $version }}"></script>
 </body>
 </html>

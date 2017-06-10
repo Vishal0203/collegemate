@@ -7,33 +7,21 @@ import Checkbox from 'material-ui/Checkbox';
 import {grey600} from 'material-ui/styles/colors';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
-import RichEditor from '../rte/RichEditor';
-import {EditorState, CompositeDecorator} from 'draft-js';
-import {stateToHTML} from 'draft-js-export-html';
-import {Link, findLinkEntities} from '../rte/CommonUtils';
 import DatePicker from 'material-ui/DatePicker';
 import moment from 'moment/moment';
+import {simplemde_config} from '../extras/utils';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
 
-    const decorator = new CompositeDecorator([
-      {
-        strategy: findLinkEntities,
-        component: Link,
-      },
-    ]);
-
     this.state = {
-      editorState: EditorState.createEmpty(decorator),
       canSubmit: false,
       eventChecked: false,
-      eventDate: moment()
+      eventDate: moment(),
+      simplemde: null
     };
-
-    this.onChange = (editorState) => this.setState({editorState});
   }
 
   get styles() {
@@ -43,8 +31,7 @@ class AnnouncementForm extends React.Component {
       },
       notificationDescription: {
         padding: '0px 16px 16px 16px',
-        fontWeight: 300,
-        fontSize: '10px'
+        fontSize: 16
       },
       chooseButton: {
         cursor: 'pointer',
@@ -70,6 +57,15 @@ class AnnouncementForm extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({
+      simplemde: new SimpleMDE({
+        ...simplemde_config,
+        element: document.getElementById('announcement-rte')
+      })
+    });
+  }
+
   handleAnnouncementSubmit(data) {
     if (data.is_event && !this.refs.eventDate.state.date) {
       this.parentProps.actions.toggleSnackbar('Please select the event Date');
@@ -80,10 +76,10 @@ class AnnouncementForm extends React.Component {
       ...data,
       instituteGuid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
       eventDate: this.state.eventChecked ? moment(this.state.eventDate).format('YYYY-MM-DD') : null,
-      notificationBody: stateToHTML(this.state.editorState.getCurrentContent()),
+      notificationBody: this.state.simplemde.value(),
       notificationAttachments: this.refs.notificationAttachments.files
     };
-    if (formData.notificationBody === '<p><br></p>') {
+    if (formData.notificationBody === '') {
       this.parentProps.actions.toggleSnackbar('Announcement body can\'t be left empty.')
     } else {
       this.parentProps.actions.createAnnouncementRequest(formData);
@@ -151,10 +147,7 @@ class AnnouncementForm extends React.Component {
                 autoComplete="off"
               />
 
-              <RichEditor
-                editorState={this.state.editorState}
-                onChange={this.onChange}
-              />
+              <textarea id="announcement-rte"/>
               <Row style={{paddingLeft: 10}}>
                 <FormsySelect style={{marginTop: 10}} name="notificationCategory" hintText="Choose Category" required>
                   {notifying_categories.map((category, i) =>

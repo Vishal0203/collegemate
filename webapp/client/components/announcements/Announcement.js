@@ -28,11 +28,11 @@ export class AnnouncementContent extends React.Component {
   get styles() {
     return {
       notificationDescription: {
-        padding: '0 18px 5px',
+        padding: '0 18px',
         textAlign: 'justify'
       },
       notificationAttachment: {
-        padding: '5px 16px 2px'
+        padding: '0 16px 2px'
       },
       notificationPublisher: {
         padding: '10px 16px 12px 16px',
