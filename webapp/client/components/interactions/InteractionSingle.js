@@ -8,7 +8,6 @@ import StickyDiv from 'react-stickydiv';
 import Chip from 'material-ui/Chip';
 import {Card, CardHeader, CardText} from 'material-ui/Card/index';
 import {grey500, grey600} from 'material-ui/styles/colors';
-import Tooltip from 'material-ui/internal/Tooltip';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
@@ -23,15 +22,12 @@ import PostUpdateDialog from './PostUpdateDialog';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
 import ReplyForm from './ReplyForm';
+import {markdownToHtml} from '../extras/utils';
 
 class InteractionSingle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timeTooltip: {
-        show: false,
-        label: ''
-      },
       showConfirmation: false,
       postGuid: null,
       replyForm: false
@@ -173,15 +169,6 @@ class InteractionSingle extends Component {
 
   toggleConfirmation(visiblity) {
     this.setState({showConfirmation: visiblity});
-  }
-
-  timeTooltipMouseEnter(timezone, time) {
-    this.setState({
-      timeTooltip: {
-        show: true,
-        label: `${moment(time).tz(timezone).format('h:mm a, MMMM Do YYYY')}`
-      }
-    })
   }
 
   renderChips(post) {
@@ -357,19 +344,8 @@ class InteractionSingle extends Component {
           {deletePost}
         </span>
         <div style={{float: 'right', right: '20px', display: 'inline-block', textAlign: 'right', height: 26}}>
-          <div style={this.styles.timeContainer}
-               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, time)}
-               onMouseLeave={() => {
-                 this.setState({timeTooltip: {show: false, label: ''}})
-               }}>
+          <div style={this.styles.timeContainer}>
             <label> Asked {moment(time).tz(timezone).fromNow()} </label>
-            <Tooltip show={this.state.timeTooltip.show}
-                     label={this.state.timeTooltip.label}
-                     style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
-                     horizontalPosition="left"
-                     verticalPosition="bottom"
-                     touch={true}
-            />
           </div>
         </div>
       </div>
@@ -414,7 +390,8 @@ class InteractionSingle extends Component {
               </div>
               <div style={{width: '86%', flexBasis: '86%', textAlign: 'justify'}}>
                 <CardText style={{padding: '10px 23px 10px 0'}}>
-                  <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(post.post_description)}/>
+                  <div className="post-content"
+                       dangerouslySetInnerHTML={this.createMarkup(markdownToHtml(post.post_description))}/>
                 </CardText>
                 <PostUpdateDialog
                   parentProps={this.props}
@@ -480,26 +457,16 @@ class InteractionSingle extends Component {
                 <Col xs={4}>
                   <StickyDiv zIndex={1} offsetTop={65}>
                     <div style={{marginTop: 0}} className="right-content">
-                      <MobileTearSheet height={300}>
+                      <MobileTearSheet height={230}>
                         <div>
                           <h4 style={{marginBottom: 5}}>How to answer?</h4>
                           <ul className="how-to-list" style={{fontSize: 14}}>
                             <li>It is recommended to use formal language while answering the questions.</li>
-                            <li>Avoid using short forms and extra full stops.</li>
-                            <li><span>Use</span>
-                              <i className="material-icons" style={{position: 'relative', fontSize: 20, top: '5px'}}>
-                                format_bold
-                              </i>
-                              as stressor.
-                            </li>
-                            <li><span>Use </span>
-                              <i className="material-icons" style={{position: 'relative', fontSize: 20, top: '2px'}}>
-                                format_quote
-                              </i>
-                              <span> tool to refer something in question.</span>
-                            </li>
+                            <li>Use &nbsp;<span className="fa fa-bold"/>&nbsp; as stressor.</li>
+                            <li>Use &nbsp;<span className="fa fa-quote-left"/> &nbsp;tool to refer something in question.</li>
                             <li>
-                              Use <code>shift+enter</code> to continue typing in code block.
+                              Use &nbsp;<a style={{textDecoration: 'none', color: 'black'}} href="https://simplemde.com/markdown-guide" target="_blank" className="fa fa-question-circle"/>&nbsp;
+                              in editor tools to understand how to use the Editor.
                             </li>
                           </ul>
                         </div>

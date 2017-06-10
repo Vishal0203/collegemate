@@ -5,41 +5,48 @@ import FlatButton from 'material-ui/FlatButton';
 import ChipInput from 'material-ui-chip-input';
 import Chip from 'material-ui/Chip';
 import Formsy from 'formsy-react';
-import {FormsySelect, FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
-import RichEditor from '../rte/RichEditor';
-import {EditorState, CompositeDecorator} from 'draft-js';
-import {stateToHTML} from 'draft-js-export-html';
-import {stateFromHTML} from 'draft-js-import-html';
-import {Link, findLinkEntities} from '../rte/CommonUtils';
+import {FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
+import {simplemde_config} from '../extras/utils';
 
 class InteractionForm extends React.Component {
   constructor(props) {
     super(props);
     this.parentProps = props.parentProps;
 
-    const decorator = new CompositeDecorator([
-      {
-        strategy: findLinkEntities,
-        component: Link,
-      },
-    ]);
-
     if (props.type === 'PostUpdate') {
       const post = props.parentProps.interactions.selectedPost;
       this.state = {
         tags: post.tags,
-        editorState: EditorState.createWithContent(stateFromHTML(post.post_description), decorator)
+        simplemde: null
       };
     }
     else {
       this.state = {
         tags: [],
-        editorState: EditorState.createEmpty(decorator),
-        canSubmit: true
+        canSubmit: true,
+        simplemde: null
       };
     }
+  }
 
-    this.onChange = (editorState) => this.setState({editorState});
+  componentDidMount() {
+    if(this.props.type === 'PostUpdate') {
+      const post = this.props.parentProps.interactions.selectedPost;
+      this.setState({
+        simplemde: new SimpleMDE({
+          ...simplemde_config,
+          initialValue: post.post_description,
+          element: document.getElementById('interaction-rte')
+        })
+      })
+    } else {
+      this.setState({
+        simplemde: new SimpleMDE({
+          ...simplemde_config,
+          element: document.getElementById('interaction-rte')
+        })
+      })
+    }
   }
 
   get styles() {
@@ -49,8 +56,7 @@ class InteractionForm extends React.Component {
       },
       formDescription: {
         padding: '0 16px 0 16px',
-        fontWeight: 300,
-        fontSize: '10px'
+        fontSize: 16
       },
       toggleButton: {
         margin: '12px 0 8px 6px',
@@ -93,11 +99,11 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: stateToHTML(this.state.editorState.getCurrentContent()),
+      post_description: this.state.simplemde.value(),
       tags
     };
 
-    if (formData.post_description === '<p><br></p>') {
+    if (formData.post_description === '') {
       this.parentProps.actions.toggleSnackbar('Post description can\'t be left empty.')
     } else {
       this.parentProps.actions.createPostRequest(instituteGuid, formData);
@@ -108,10 +114,10 @@ class InteractionForm extends React.Component {
     const postGuid = this.parentProps.interactions.selectedPost.post_guid;
     const formData = {
       institute_guid: this.parentProps.auth_user.selectedInstitute.inst_profile_guid,
-      comment: stateToHTML(this.state.editorState.getCurrentContent())
+      comment: this.state.simplemde.value()
     };
 
-    if (formData.comment === '<p><br></p>') {
+    if (formData.comment === '') {
       this.parentProps.actions.toggleSnackbar('Forgot to write the comment?')
     } else {
       this.parentProps.actions.addCommentRequest(postGuid, formData);
@@ -126,11 +132,11 @@ class InteractionForm extends React.Component {
     const instituteGuid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
     const formData = {
       ...data,
-      post_description: stateToHTML(this.state.editorState.getCurrentContent()),
+      post_description: this.state.simplemde.value(),
       tags
     };
 
-    if (formData.post_description === '<p><br></p>') {
+    if (formData.post_description === '') {
       this.parentProps.actions.toggleSnackbar('Post description can\'t be left empty.')
     } else {
       this.parentProps.actions.updatePostRequest(instituteGuid, postGuid, formData);
@@ -270,11 +276,7 @@ class InteractionForm extends React.Component {
         <Col xs={12}>
           {postHeader}
 
-          <RichEditor
-            editorState={this.state.editorState}
-            onChange={this.onChange}
-          />
-
+          <textarea id="interaction-rte"/>
           {anonymousToggle}
 
           {tags}

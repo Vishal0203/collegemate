@@ -1,4 +1,5 @@
 import moment from 'moment/moment';
+import marked from 'marked';
 
 export function humanizeRoles(role) {
   const role_map = {
@@ -37,3 +38,36 @@ export function getDateDiff(date, startwithUpeerCase) {
   }
   return (startwithUpeerCase ? timeDiff.charAt(0).toUpperCase() + timeDiff.slice(1) : timeDiff)
 }
+
+export function markdownToHtml(text) {
+  marked.setOptions({
+    highlight: function (code) {
+      return window.hljs.highlightAuto(code).value;
+    }
+  });
+
+  return marked(text);
+}
+
+export const simplemde_config = {
+  hideIcons: ['side-by-side', 'fullscreen', 'heading'],
+  insertTexts: {
+    horizontalRule: ['', '\n\n-----\n\n'],
+    image: ['![](http://', ')'],
+    link: ['[', '](http://)'],
+    table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n'],
+  },
+  parsingConfig: {
+    allowAtxHeaderWithoutSpace: true,
+    strikethrough: false,
+    underscoresBreakWords: true,
+  },
+  renderingConfig: {
+    codeSyntaxHighlighting: true,
+  },
+  showIcons: ['code', 'guide'],
+  spellChecker: false,
+  status: false,
+  tabSize: 4,
+  toolbarTips: true
+};

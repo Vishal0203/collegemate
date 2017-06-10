@@ -168,10 +168,11 @@ class InteractionsContainer extends Component {
                           <h4 style={{marginBottom: 5}}>How to ask question?</h4>
                           <ul className="how-to-list" style={{fontSize: 14}}>
                             <li>It is recommended to use formal language while asking a question.</li>
-                            <li>Avoid using short forms and extra full stops.</li>
                             <li>
-                              Use <code>ctrl+enter</code> or <code>cmd+enter</code> to leave the <code>Code Block</code>.
+                              Use &nbsp;<a style={{textDecoration: 'none', color: 'black'}} href="https://simplemde.com/markdown-guide" target="_blank" className="fa fa-question-circle"/>&nbsp;
+                              in editor tools to understand how to use the Editor.
                             </li>
+                            <li>Use the preview mode to see the preview of your question.</li>
                           </ul>
                         </div>
                       </MobileTearSheet>

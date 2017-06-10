@@ -4,43 +4,25 @@ import {Row, Col} from 'react-flexbox-grid'
 import {CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
 import {grey500, grey600} from 'material-ui/styles/colors';
-import Tooltip from 'material-ui/internal/Tooltip';
 import {renderVotes} from './InteractionSingle'
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import Divider from 'material-ui/Divider';
-import RichEditor from '../rte/RichEditor';
-import {EditorState, CompositeDecorator} from 'draft-js';
-import {stateToHTML} from 'draft-js-export-html';
-import {stateFromHTML} from 'draft-js-import-html';
-import {Link, findLinkEntities} from '../rte/CommonUtils';
 import ReplyForm from './ReplyForm';
+import {markdownToHtml, simplemde_config} from '../extras/utils';
 
 
 class Comment extends Component {
   constructor(props) {
     super(props);
 
-    const decorator = new CompositeDecorator([
-      {
-        strategy: findLinkEntities,
-        component: Link,
-      },
-    ]);
-
     this.state = {
-      timeTooltip: {
-        show: false,
-        label: ''
-      },
-      editorState: EditorState.createWithContent(stateFromHTML(props.comment.comment), decorator),
+      simplemde: null,
       edit: false,
       showConfirmation: false,
       replyForm: false
     };
-
-    this.onChange = (editorState) => this.setState({editorState});
   }
 
   get styles() {
@@ -103,15 +85,6 @@ class Comment extends Component {
     return {__html: commentContent};
   };
 
-  timeTooltipMouseEnter(timezone, time) {
-    this.setState({
-      timeTooltip: {
-        show: true,
-        label: `${moment(time).tz(timezone).format('h:mm a, MMMM Do YYYY')}`
-      }
-    })
-  }
-
   toggleConfirmation() {
     this.setState({showConfirmation: !this.state.showConfirmation});
   }
@@ -136,7 +109,15 @@ class Comment extends Component {
     const comment = this.props.comment;
     switch (operation) {
       case 'show': {
-        this.setState({edit: true});
+        this.setState({edit: true}, () => {
+          this.setState({
+            simplemde: new SimpleMDE({
+              ...simplemde_config,
+              initialValue: comment.comment,
+              element: document.getElementById('comment-rte')
+            })
+          })
+        });
         break;
       }
       case 'submit': {
@@ -144,7 +125,7 @@ class Comment extends Component {
         const postGuid = this.props.parentProps.interactions.selectedPost.post_guid;
         const formData = {
           institute_guid: instituteGuid,
-          comment: stateToHTML(this.state.editorState.getCurrentContent()),
+          comment: this.state.simplemde.value(),
         };
         this.props.parentProps.actions.editCommentRequest(postGuid, comment, formData);
         this.setState({edit: false});
@@ -191,10 +172,9 @@ class Comment extends Component {
 
   renderEditComment() {
     return (
-      <RichEditor
-        editorState={this.state.editorState}
-        onChange={this.onChange}
-      />
+      <div>
+        <textarea id="comment-rte"/>
+      </div>
     );
   }
 
@@ -306,7 +286,8 @@ class Comment extends Component {
     let commentContent = null;
     if (this.state.edit === false) {
       commentContent = (
-        <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(comment.comment)}/>
+        <div className="post-content"
+             dangerouslySetInnerHTML={this.createMarkup(markdownToHtml(comment.comment))}/>
       );
     }
     else {
@@ -340,19 +321,8 @@ class Comment extends Component {
         </span>,
         <div key={4} style={{float: 'right', display: 'inline-block', textAlign: 'right', height: 44}}>
           <label style={{fontWeight: 400, textTransform: 'capitalize'}}>{username}</label>
-          <div style={this.styles.timeContainer}
-               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, moment.tz(comment.created_at, null).format())}
-               onMouseLeave={() => {
-                 this.setState({timeTooltip: {show: false, label: ''}})
-               }}>
+          <div style={this.styles.timeContainer}>
             <label> {`Answered ${moment(time).tz(timezone).fromNow()}`} </label>
-            <Tooltip show={this.state.timeTooltip.show}
-                     label={this.state.timeTooltip.label}
-                     style={{right: 6, top: 3, fontSize: 12, fontWeight: 400}}
-                     horizontalPosition="left"
-                     verticalPosition="bottom"
-                     touch={true}
-            />
           </div>
         </div>
       ]

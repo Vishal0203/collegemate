@@ -75,3 +75,26 @@
 .post-header > div > span:first-letter {
     text-transform: capitalize;
 }
+
+.post-content img {
+    max-width: 100%;
+}
+
+.CodeMirror {
+    min-height: 150px !important;
+}
+
+.CodeMirror-scroll {
+    min-height: 150px !important;
+}
+
+.CodeMirror-cursor {
+    min-height: 19px;
+}
+
+.editor-preview blockquote {
+    padding: 0 1rem;
+    margin-left: 0;
+    color: #819198;
+    border-left: 0.3rem solid #dce6f0;
+}
