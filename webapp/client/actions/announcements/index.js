@@ -1,8 +1,11 @@
 export const CREATE_ANNOUNCEMENT_REQUEST = 'CREATE_ANNOUNCEMENT_REQUEST';
+export const UPDATE_ANNOUNCEMENT_REQUEST = 'UPDATE_ANNOUNCEMENT_REQUEST';
+
 export const ANNOUNCEMENT_UPDATES = 'ANNOUNCEMENT_UPDATES';
 export const NEW_ANNOUNCEMENT_ADDED = 'NEW_ANNOUNCEMENT_ADDED';
 export const ANNOUNCEMENT_DELETED = 'ANNOUNCEMENT_DELETED';
 export const CREATE_ANNOUNCEMENT_TOGGLE = 'CREATE_ANNOUNCEMENT_TOGGLE';
+export const UPDATE_ANNOUNCEMENT_TOGGLE = 'UPDATE_ANNOUNCEMENT_TOGGLE';
 
 export const ADD_FILTER = 'ADD_FILTER';
 export const REMOVE_FILTER = 'REMOVE_FILTER';
@@ -26,9 +29,22 @@ export function announcementFormToggle() {
   }
 }
 
+export function updateAnnouncementToggle() {
+  return {
+    type: UPDATE_ANNOUNCEMENT_TOGGLE
+  }
+}
+
 export function createAnnouncementRequest(formData) {
   return {
     type: CREATE_ANNOUNCEMENT_REQUEST,
+    formData
+  };
+}
+
+export function updateAnnouncementRequest(formData) {
+  return {
+    type: UPDATE_ANNOUNCEMENT_REQUEST,
     formData
   };
 }

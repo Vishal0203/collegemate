@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Paper from 'material-ui/Paper';
+import {Card, CardTitle, Paper} from 'material-ui';
 import {Grid, Col, Row} from 'react-flexbox-grid';
 import RaisedButton from 'material-ui/RaisedButton';
 import AnnouncementForm from './announcements/AnnouncementForm';
@@ -26,6 +26,14 @@ class Header extends Component {
     }
   }
 
+  get styles() {
+    return {
+      formTitle:  {
+        padding: '12px 16px 0px 16px',
+      }
+    }
+  }
+
   render() {
     const {title, type, parentProps, hasButton, buttonLabel} = this.props;
 
@@ -40,7 +48,11 @@ class Header extends Component {
           form = (
             <Grid>
               <div key="announcementForm-0" className="wrap" style={{marginTop: '20px'}}>
-                <AnnouncementForm onCancelClick={() => this.toggleForm('Announcement')} parentProps={parentProps}/>
+                <Card style={{marginTop: 15, marginBottom: 200}}>
+                  <CardTitle titleStyle={{fontSize: 20}} style={this.styles.formTitle}
+                             title="Make an Announcement" subtitle="All fields are required"/>
+                  <AnnouncementForm onCancelClick={() => this.toggleForm('Announcement')} parentProps={parentProps}/>
+                </Card>
               </div>
             </Grid>
           );

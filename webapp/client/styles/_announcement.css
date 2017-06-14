@@ -1,0 +1,21 @@
+.file-chip {
+    border: thin solid rgba(57, 67, 91, 0.15) !important;
+    background-color: rgba(225, 225, 225, 0.45) !important;
+    margin: 0 8px 0 0 !important;
+    float: left;
+}
+
+.file-chip > span {
+    line-height: 21px !important;
+    color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.file-chip > svg {
+    margin: 5px 4px 0 -6px !important;
+    height: 12px !important;
+    width: 12px !important;
+}
+
+.announcement-header > div:nth-child(2) {
+    max-width: 70%;
+}

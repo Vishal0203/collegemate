@@ -6,7 +6,7 @@ use App\NotificationData;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class NewAnnouncement extends Event implements ShouldBroadcast
+class AnnouncementUpdate extends Event implements ShouldBroadcast
 {
     use SerializesModels;
 
@@ -52,8 +52,8 @@ class NewAnnouncement extends Event implements ShouldBroadcast
         return array_merge(
             $this->notification->toArray(),
             [
-                'type' => 'NewAnnouncement',
-                'message' => 'Announcement published in ' . $this->notification['category']['category_type'],
+                'type' => 'AnnouncementUpdate',
+                'message' => 'Announcement has been updated',
                 'snackbar' => true
             ]
         );

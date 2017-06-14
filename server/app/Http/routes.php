@@ -37,7 +37,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         'InstituteController',
         ['only' => ['index', 'store', 'destroy']]
     );
-    
+
     Route::resource(
         'tags',
         'TagsController',
@@ -74,7 +74,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::resource(
             'category',
             'CategoryController',
-            ['only' => ['index', 'store', 'update' , 'destroy']]
+            ['only' => ['index', 'store', 'update', 'destroy']]
         );
 
         Route::post('invitation/bulk_invite', 'InvitationController@bulkInvite');
@@ -84,17 +84,19 @@ Route::group(['prefix' => 'api/v1_0'], function () {
             'InvitationController',
             ['only' => ['show', 'update', 'destroy']]
         );
-        
+
         Route::get('get_counts', 'DashboardController@getCounts');
         Route::get('get_countPerCategory', 'DashboardController@getCountPerCategory');
 
         Route::get('get_next_events', 'NotificationController@getNextEvents');
         Route::get('get_events_in_range', 'NotificationController@getEventsInRange');
         Route::get('category_notifications', 'NotificationController@categoryNotifications');
+
+        Route::post('notification/{notification_guid}', 'NotificationController@update');
         Route::resource(
             'notification',
             'NotificationController',
-            ['only' => ['index','store', 'show', 'destroy']]
+            ['except' => ['edit', 'create', 'update']]
         );
 
         Route::post('post/{post_guid}/upvote', 'PostController@upvote');
@@ -102,7 +104,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::resource(
             'post',
             'PostController',
-            ['only' => ['index', 'store', 'show' ,'update', 'destroy']]
+            ['only' => ['index', 'store', 'show', 'update', 'destroy']]
         );
 
         Route::resource(

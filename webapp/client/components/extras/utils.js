@@ -41,7 +41,7 @@ export function getDateDiff(date, startwithUpeerCase) {
 
 export function markdownToHtml(text) {
   marked.setOptions({
-    highlight: function (code) {
+    highlight: (code) => {
       return window.hljs.highlightAuto(code).value;
     }
   });

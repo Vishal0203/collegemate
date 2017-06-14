@@ -2,6 +2,7 @@
 @import "_header.css";
 @import "_animations.css";
 @import "_interactions.css";
+@import "_announcement.css";
 @import "_institute.css";
 
 body {
@@ -76,10 +77,6 @@ body {
     font-weight: 300;
     color: rgba(0, 0, 0, 0.541176);
     position: absolute;
-}
-
-.time-container:first-letter {
-    text-transform: uppercase;
 }
 
 .attachment-btn {

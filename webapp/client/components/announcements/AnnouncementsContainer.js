@@ -28,6 +28,7 @@ import {
 } from '../../actions/users/index';
 import {toggleSnackbar} from '../../actions/commons/index'
 import {hashHistory} from 'react-router';
+import AnnouncementForm from './AnnouncementForm';
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ class AnnouncementsContainer extends Component {
         show: false,
         label: ''
       },
+      editableAnnouncement: null,
       showCategorySettings: false
     };
   }
@@ -124,11 +126,23 @@ class AnnouncementsContainer extends Component {
     this.props.actions.addFilter(category);
   }
 
+  onAnnouncementEditClick(announcement) {
+    this.setState({editableAnnouncement: announcement}, () => {
+      this.props.actions.updateAnnouncementToggle()
+    })
+  }
+
   renderAnnouncements() {
     if (this.props.announcements.items.data.length) {
       return this.props.announcements.items.data.map((announcement, i) =>
-        <Announcement key={i} parentProps={this.props} announcement={announcement}
-                      avatarColor={this.getAvatarColor(announcement.category.category_type)}/>
+        <Announcement
+          key={i}
+          terimakabhosda="betichod"
+          onEditClick={() => this.onAnnouncementEditClick(announcement)}
+          parentProps={this.props}
+          announcement={announcement}
+          avatarColor={this.getAvatarColor(announcement.category.category_type)}
+        />
       )
     }
 
@@ -238,6 +252,21 @@ class AnnouncementsContainer extends Component {
                                   loadMore={() => this.loadMore()} loader={loader}>
                     {this.renderAnnouncements()}
                   </InfiniteScroll>
+                  <Dialog
+                    title="Update Announcement"
+                    modal={false}
+                    open={this.props.announcements.showUpdateAnnouncementForm}
+                    autoScrollBodyContent={true}
+                    contentStyle={{width: '85%', maxWidth: 'none'}}
+                    bodyStyle={{padding: '0 5px 12px'}}
+                    onRequestClose={this.props.actions.updateAnnouncementToggle}
+                  >
+                    <AnnouncementForm
+                      update={this.state.editableAnnouncement}
+                      onCancelClick={this.props.actions.updateAnnouncementToggle}
+                      parentProps={this.props}
+                    />
+                  </Dialog>
                 </Col>
                 <Col xs={4}>
                   <div className="right-content">
@@ -262,7 +291,8 @@ class AnnouncementsContainer extends Component {
                           <IconButton iconStyle={{color: grey500, fontSize: 20}}
                                       style={{width: 29, height: 29, padding: 0}}
                                       tooltip="Subscriptions">
-                            <FontIcon className="material-icons" onTouchTap={() => this.toggleAnnouncementSettings(true)}>
+                            <FontIcon className="material-icons"
+                                      onTouchTap={() => this.toggleAnnouncementSettings(true)}>
                               settings
                             </FontIcon>
                           </IconButton>

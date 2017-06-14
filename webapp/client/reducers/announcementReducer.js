@@ -8,6 +8,7 @@ const initialState = {
   categories: [],
   filters: [],
   toggleForm: false,
+  showUpdateAnnouncementForm: false,
   loadingMore: false,
   nextPageUrl: null,
   hasMore: true,
@@ -94,9 +95,8 @@ export default function announcementReducer(state = initialState, action) {
       return {...state, loadingMore: true}
     }
     case actions.ANNOUNCEMENT_DELETED: {
-      const skip = state.skip - 1;
       const match = state.filters.filter(function (filter) {
-        return filter.category_guid === action.notification.category_guid
+        return filter.category_guid === action.notification.category.category_guid
       });
       if (match.length === 0) {
         return {
@@ -116,6 +116,8 @@ export default function announcementReducer(state = initialState, action) {
       const itemsData = state.items.data.filter(
         (announcement) => announcement.notification_guid !== action.notification.notification_guid
       );
+
+      const skip = itemsData.length === state.items.data.length ? state.skip : state.skip - 1;
       return {
         ...state,
         skip,
@@ -207,6 +209,9 @@ export default function announcementReducer(state = initialState, action) {
     }
     case actions.CREATE_ANNOUNCEMENT_TOGGLE: {
       return {...state, toggleForm: !state.toggleForm};
+    }
+    case actions.UPDATE_ANNOUNCEMENT_TOGGLE: {
+      return {...state, showUpdateAnnouncementForm: !state.showUpdateAnnouncementForm};
     }
     case actions.RELOAD_ANNOUNCEMENTS: {
       return {
