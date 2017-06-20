@@ -7,6 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {grey500, grey600} from 'material-ui/styles/colors';
 import {getDateDiff} from '../extras/utils';
+import {markdownToHtml} from '../extras/utils';
 
 export class AnnouncementContent extends React.Component {
   constructor(props) {
@@ -220,7 +221,7 @@ export class AnnouncementContent extends React.Component {
         </CardHeader>
 
         <CardText style={this.styles.notificationDescription}>
-          <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(announcement.notification_body)}/>
+          <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(markdownToHtml(announcement.notification_body))}/>
         </CardText>
         {this.showAttachments(announcement)}
         <CardText style={this.styles.notificationPublisher}>
