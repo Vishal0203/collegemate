@@ -45,10 +45,12 @@ class DeletedAnnouncement extends Event implements ShouldBroadcast
     {
         return array_merge(
             [
-                'type' => 'DeletedAnnouncement',
-                'message' => 'Announcement deleted in your institute',
+                'type' => 'AnnouncementDelete',
+                'message' => 'Announcement is updated',
                 'notification_guid' => $this->notification_guid,
-                'category_guid' => $this->category_guid,
+                'category' => [
+                    'category_guid' => $this->category_guid
+                ],
                 'snackbar' => false
             ]
         );

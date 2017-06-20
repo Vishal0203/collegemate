@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewAnnouncement extends Mailable implements ShouldQueue
+class UpdatedAnnouncement extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -39,8 +39,8 @@ class NewAnnouncement extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->view('email.AnnouncementEmail')
-            ->subject('Announcement Notification')
+        return $this->view('email.AnnouncementUpdateEmail')
+            ->subject('Announcement Update Notification')
             ->with([
                 'username' => $this->user->first_name,
                 'categoryType' => $this->category['category_type'],

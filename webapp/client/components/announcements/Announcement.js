@@ -6,8 +6,7 @@ import moment from 'moment/moment';
 import FlatButton from 'material-ui/FlatButton';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {grey500, grey600} from 'material-ui/styles/colors';
-import {getDateDiff} from '../extras/utils';
-import {markdownToHtml} from '../extras/utils';
+import {getDateDiff, markdownToHtml} from '../extras/utils';
 
 export class AnnouncementContent extends React.Component {
   constructor(props) {
@@ -81,10 +80,11 @@ export class AnnouncementContent extends React.Component {
   };
 
   timeTooltipMouseEnter(timezone, time) {
+    let moment_time = moment.tz(time, null).format();
     this.setState({
       timeTooltip: {
         show: true,
-        label: `${moment(time).tz(timezone).format('h:mm a, MMMM Do YYYY')}`
+        label: `${moment(moment_time).tz(timezone).format('h:mm a, MMMM Do YYYY')}`
       }
     })
   }
@@ -161,37 +161,42 @@ export class AnnouncementContent extends React.Component {
     );
   }
 
-  renderDelete() {
+  renderActions() {
     const {publisher} = this.props.announcement;
     const user = this.props.parentProps.auth_user;
-    let deletePost = null;
+    let postActions = null;
     if (
       publisher.user_guid === user.user.user_guid ||
       user.selectedInstitute.user_institute_info[0].role !== 'inst_student'
     ) {
-      deletePost = (
+      postActions = (
         <span>
           <div style={this.styles.actionButton}>
+            <span>&nbsp;&nbsp;|</span>
+            <label style={{cursor: 'pointer'}} onClick={this.props.onEditClick}>
+              <span style={{color: '#a5a5a5', paddingLeft: 8}}>edit</span>
+            </label>
             <label style={{cursor: 'pointer'}}
                    onClick={() => this.setState({showDeleteConfirmation: true})}>
-              <span style={{color: grey600}}>&nbsp;&nbsp;|&nbsp;&nbsp;delete</span>
+              <span style={{color: '#a5a5a5', paddingLeft: 8}}>delete</span>
             </label>
           </div>
           {this.renderDeleteConfirmation()}
         </span>
       );
     }
-    return deletePost;
+    return postActions;
   }
 
   render() {
     const {announcement, avatarColor} = this.props;
     const timezone = moment.tz.guess();
-    const time = moment.tz(announcement.created_at, null).format();
+    const time = moment.tz(announcement.updated_at, null).format();
 
     return (
       <div>
         <CardHeader
+          className="announcement-header"
           title={announcement.notification_head}
           subtitle={`${announcement.category.category_type}`}
           avatar={
@@ -202,11 +207,11 @@ export class AnnouncementContent extends React.Component {
           titleStyle={{marginTop: 3}}
           subtitleStyle={{textTransform: 'capitalize', marginTop: 4}}>
           <div className="time-container"
-               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, announcement.created_at)}
+               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, announcement.updated_at)}
                onMouseLeave={() => {
                  this.setState({timeTooltip: {show: false, label: ''}})
                }}>
-            <label> {moment(time).tz(timezone).fromNow()} </label>
+            <label> {announcement.editor ? '(edited) ' : ''} {moment(time).tz(timezone).fromNow()} </label>
           </div>
           <Tooltip show={this.state.timeTooltip.show}
                    label={this.state.timeTooltip.label}
@@ -228,7 +233,7 @@ export class AnnouncementContent extends React.Component {
           <span style={{textTransform: 'capitalize'}}>
             {announcement.publisher.first_name} {announcement.publisher.last_name}, {announcement.publisher.institutes[0].designation}
           </span>
-          {this.renderDelete()}
+          {this.renderActions()}
           <span style={{position: 'absolute', right: 16}}>
             {announcement.event_date ?
               <div style={this.styles.eventLabel}>
@@ -251,9 +256,11 @@ class Announcement extends React.Component {
   render() {
     return (
       <Card style={{marginTop: 15, marginBottom: 15, paddingBottom: 8}}>
-        <AnnouncementContent parentProps={this.parentProps}
-                             announcement={this.props.announcement}
-                             avatarColor={this.props.avatarColor}/>
+        <AnnouncementContent
+          onEditClick={this.props.onEditClick}
+          parentProps={this.parentProps}
+          announcement={this.props.announcement}
+          avatarColor={this.props.avatarColor}/>
       </Card>
     );
   }

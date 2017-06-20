@@ -10,7 +10,11 @@ import Menu from 'material-ui/Menu';
 import {CardText} from 'material-ui/Card/index';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton/IconButton';
-import {readNotificationRequest, readAllNotificationsRequest, openCategoryAnnouncements} from '../actions/notifications/index';
+import {
+  readNotificationRequest,
+  readAllNotificationsRequest,
+  openCategoryAnnouncements
+} from '../actions/notifications/index';
 import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 import {bindActionCreators} from 'redux';
@@ -19,6 +23,7 @@ import {ellipsis} from './extras/utils';
 
 export const POST_COMMENT_NOTIFICATION = 'App\\Notifications\\PostCommentNotification';
 export const ANNOUNCEMENT_NOTIFICATION = 'App\\Notifications\\AnnouncementNotification';
+export const ANNOUNCEMENT_UPDATE_NOTIFICATION = 'App\\Notifications\\AnnouncementUpdateNotification';
 export const POST_UPVOTE_NOTIFICATION = 'App\\Notifications\\PostUpvoteNotification';
 export const COMMENT_UPVOTE_NOTIFICATION = 'App\\Notifications\\CommentUpvoteNotification';
 export const POST_REPLY_NOTIFICATION = 'App\\Notifications\\PostReplyNotification';
@@ -51,7 +56,7 @@ class Notifications extends React.Component {
         textAlign: 'center'
       },
       readIcon: {
-        cursor:'pointer',
+        cursor: 'pointer',
         height: 50,
         lineHeight: '50px'
       },
@@ -61,7 +66,7 @@ class Notifications extends React.Component {
       },
       notificationText: {
         paddingLeft: 14,
-        cursor:'pointer',
+        cursor: 'pointer',
       },
       badgeStyle: {
         top: 24,
@@ -105,7 +110,8 @@ class Notifications extends React.Component {
     if (notification.type === POST_NOTIFICATION || notification.type === COMMENT_NOTIFICATION) {
       hashHistory.push(`/interactions/${notification.post_guid}`);
     }
-    else if (notification.type === ANNOUNCEMENT_NOTIFICATION) {
+    else if (notification.type === ANNOUNCEMENT_NOTIFICATION ||
+      notification.type === ANNOUNCEMENT_UPDATE_NOTIFICATION) {
       hashHistory.push('/');
       const category = {category_guid: notification.category_guid, category_type: notification.category_type};
       this.props.actions.openCategoryAnnouncements(category);
@@ -120,20 +126,22 @@ class Notifications extends React.Component {
     if (count === 1) {
       return entity;
     }
-    switch(entity) {
-      case 'reply': return 'replies';
-      default: return `${entity}s`
+    switch (entity) {
+      case 'reply':
+        return 'replies';
+      default:
+        return `${entity}s`
     }
   }
 
   getNotificationCountsText(updates) {
     const keys = Object.keys(updates).sort();
-    if(keys.length === 1) {
+    if (keys.length === 1) {
       return `${updates[keys[0]]} ${this.getPlural(keys[0], updates[keys[0]])} `;
     }
     let countsText = '';
-    let i=0;
-    for(; i < keys.length-1; i++) {
+    let i = 0;
+    for (; i < keys.length - 1; i++) {
       countsText += `${updates[keys[i]]} ${this.getPlural(keys[i], updates[keys[i]])}, `;
     }
     return `${countsText}and ${updates[keys[i]]} ${this.getPlural(keys[i], updates[keys[i]])} `;
@@ -156,6 +164,13 @@ class Notifications extends React.Component {
           <p className="notification-text">
             {notification.count} new {notification.count === 1 ? 'announcement' : 'announcements'} in
             category <strong>{notification.category_type}</strong>
+          </p>
+        );
+        break;
+      case ANNOUNCEMENT_UPDATE_NOTIFICATION:
+        notificationMessage = (
+          <p className="notification-text">
+            Announcement <strong>{ellipsis(notification.old_notification_head, 30)}</strong> has been updated
           </p>
         );
         break;
@@ -194,28 +209,37 @@ class Notifications extends React.Component {
         },
         id: [...notifications[aggregateOn].id, id],
         post_guid, post_heading, created_at
-      } :
-      {id: [notification.id], type, updates: {[incrementOn]: 1}, post_guid, post_heading, created_at};
+      } : {id: [notification.id], type, updates: {[incrementOn]: 1}, post_guid, post_heading, created_at};
   }
 
   aggregateNotifications() {
     const {user, selectedInstitute} = this.props.auth_user;
     let notifications = {};
-    let unread_notifications = user.unread_notifications.filter((notification)=> {
+    let unread_notifications = user.unread_notifications.filter((notification) => {
       return !notification.data.institute_guid ||
         notification.data.institute_guid === selectedInstitute.inst_profile_guid
     });
     unread_notifications.map((notification) => {
       const {id, created_at} = notification;
-      const {post_guid, post_heading, comment_guid, category_guid, category_type} = notification.data;
+      const {
+        post_guid, post_heading, comment_guid,
+        category_guid, category_type, notification_guid
+      } = notification.data;
       switch (notification.type) {
         case ANNOUNCEMENT_NOTIFICATION:
           notifications[category_guid] = notifications[category_guid] ? {
             ...notifications[category_guid],
             count: notifications[category_guid].count + 1,
             id: [...notifications[category_guid].id, notification.id]
-          } :
-          {id: [id], type: notification.type, category_type, count: 1, category_guid, created_at};
+          } : {id: [id], type: notification.type, category_type, count: 1, category_guid, created_at};
+          break;
+        case ANNOUNCEMENT_UPDATE_NOTIFICATION:
+          const old_notification_head = notification.data.old_notification_head;
+          notifications[notification_guid] = notifications[notification_guid] ? {
+            ...notifications[notification_guid],
+            id: [...notifications[notification_guid].id, notification.id],
+            old_notification_head
+          } : {id: [id], type: notification.type, old_notification_head, category_guid, created_at};
           break;
         case POST_COMMENT_NOTIFICATION:
           this.addInteractionNotification({
@@ -269,7 +293,8 @@ class Notifications extends React.Component {
             aggregateOn: notification.type,
             incrementOn: 'count',
             type: APPROVAL_NOTIFICATION
-          })
+          });
+          break;
       }
     });
     return notifications;
@@ -281,11 +306,17 @@ class Notifications extends React.Component {
         <CardText style={this.styles.notification}>
           <Row>
             <Col xs={1}>
-              <i className="material-icons" style={{height: 50, lineHeight: '50px', color:grey600}} >
-                {notifications[key].type === ANNOUNCEMENT_NOTIFICATION ? 'announcement' : 'question_answer'}
+              <i className="material-icons" style={{height: 50, lineHeight: '50px', color: grey600}}>
+                {
+                  (
+                    notifications[key].type === ANNOUNCEMENT_NOTIFICATION ||
+                    notifications[key].type === ANNOUNCEMENT_UPDATE_NOTIFICATION
+                  ) ? 'announcement' : 'question_answer'
+                }
               </i>
             </Col>
-            <Col xs={10} style={this.styles.notificationText} onTouchTap={() => this.openNotification(notifications[key])}>
+            <Col xs={10} style={this.styles.notificationText}
+                 onTouchTap={() => this.openNotification(notifications[key])}>
               {this.notificationText(notifications[key])}
               <Row style={{margin: 'auto'}}>
                 <div style={this.styles.timeStamp}>
@@ -295,7 +326,8 @@ class Notifications extends React.Component {
             </Col>
             <Col xs={1}>
               <Row end="xs">
-                <DoneIcon style={this.styles.readIcon} color={grey400} onTouchTap={() => this.readNotification(notifications[key])}/>
+                <DoneIcon style={this.styles.readIcon} color={grey400}
+                          onTouchTap={() => this.readNotification(notifications[key])}/>
               </Row>
             </Col>
           </Row>
@@ -308,7 +340,7 @@ class Notifications extends React.Component {
   renderNotificationIcon(notifications, notificationMenuContent) {
     let badgeVisibility = null;
     let notificationIconColor = '#FAFAFB';
-    if(Object.keys(notifications).length === 0) {
+    if (Object.keys(notifications).length === 0) {
       badgeVisibility = {display: 'none'};
       notificationIconColor = 'rgba(255, 255, 255, 0.4)';
     }
@@ -352,7 +384,7 @@ class Notifications extends React.Component {
       notificationMenuContent = [
         this.renderNotifications(notifications),
         <CardText key="Notification_Footer" style={this.styles.footer}>
-          <span style = {{cursor:'pointer'}} onTouchTap={() => this.readAllNotifications()}>
+          <span style={{cursor: 'pointer'}} onTouchTap={() => this.readAllNotifications()}>
             Mark all as read
           </span>
         </CardText>
@@ -380,7 +412,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({readNotificationRequest, readAllNotificationsRequest, openCategoryAnnouncements}, dispatch)
+    actions: bindActionCreators({
+      readNotificationRequest,
+      readAllNotificationsRequest,
+      openCategoryAnnouncements
+    }, dispatch)
   };
 }
 

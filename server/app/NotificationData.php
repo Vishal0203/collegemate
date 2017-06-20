@@ -11,9 +11,9 @@ class NotificationData extends Model
     protected $table = 'notification_data';
 
     protected $fillable = ['notification_guid', 'notification_head', 'notification_body', 'notification_level',
-        'event_date', 'category_id', 'created_by'];
+        'event_date', 'category_id', 'created_by', 'edited_by'];
 
-    protected $hidden = ['id', 'category_id', 'created_by', 'updated_at'];
+    protected $hidden = ['id', 'category_id', 'created_by', 'edited_by'];
 
     public function category()
     {
@@ -24,7 +24,12 @@ class NotificationData extends Model
     {
         return $this->belongsTo('App\User', 'created_by');
     }
-    
+
+    public function editor()
+    {
+        return $this->belongsTo('App\User', 'edited_by');
+    }
+
     public function notificationFiles()
     {
         return $this->hasMany('App\NotificationFiles', 'notification_id');

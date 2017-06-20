@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AnnouncementUpdate;
+use App\Helper\S3Helper;
 use Illuminate\Http\Request;
 
 use App\NotificationFiles;
 use App\Institute;
 use App\NotificationData;
-use Illuminate\Support\Facades\Auth;
 use Input;
-use AWS;
 use App\Category;
 use Faker;
 use Event;
 use App\Events\NewAnnouncement;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AnnouncementNotification;
+use App\Notifications\AnnouncementUpdateNotification;
 use App\Events\DeletedAnnouncement;
 use Carbon\Carbon;
 
@@ -41,6 +42,72 @@ class NotificationController extends Controller
             ->orderBy('created_at', 'DESC')->take(10)->get();
 
         return response()->json(compact('notifications'), 200);
+    }
+
+    /**
+     * @param $institute_guid
+     * @param $notification_guid
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update($institute_guid, $notification_guid, Request $request)
+    {
+        if ($request['event_date'] && Carbon::createFromFormat('Y-m-d', $request['event_date']) === false) {
+            return response()->json(['Error' => 'Invalid Date Format - event_date.'], 400);
+        }
+
+        $category_guid = $request['category_guid'];
+        $category = Category::where('category_guid', $category_guid)->get(['id'])->first();
+
+        $notification = NotificationData::where('notification_guid', $notification_guid)
+            ->withCount(['notificationFiles'])->get()->first();
+
+        $oldNotificationHead = $notification->notification_head;
+
+        $notification->notification_head = $request['notification_head'];
+        $notification->notification_body = $request['notification_body'];
+        $notification->event_date = $request['event_date'];
+        $notification->category_id = $category['id'];
+        $notification->edited_by = \Auth::user()->id;
+        $notification->save();
+
+        $removed_files = $request['removed_files'] ? $request['removed_files'] : [];
+        $notification_files = NotificationFiles::whereIn('url_code', $removed_files)->get();
+
+        if ($notification['notification_files_count'] === count($removed_files)) {
+            S3Helper::deleteAllFiles($notification_guid, $notification_files);
+            $notification->notificationFiles()->delete();
+        } else {
+            foreach ($notification_files as $file) {
+                S3Helper::deleteFile($notification_guid, $file);
+                $file->delete();
+            }
+        }
+
+        if ($request->hasFile('notification_files')) {
+            $notification_files = [];
+            foreach ($request->file('notification_files') as $file) {
+                $newFile = new NotificationFiles([
+                    'file' => $file->getClientOriginalName(),
+                    'url_code' => uniqid()
+                ]);
+
+                S3Helper::uploadFile($notification_guid, $file);
+                array_push($notification_files, $newFile);
+            }
+            $notification->notificationFiles()->saveMany($notification_files);
+        }
+
+        $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
+        Notification::send($notificationAudience, new AnnouncementUpdateNotification(
+            $category,
+            $notification,
+            $oldNotificationHead,
+            $institute_guid
+        ));
+
+        Event::fire(new AnnouncementUpdate($notification, $institute_guid, true));
+        return response()->json(['message' => 'The announcement has been updated.']);
     }
 
     /**
@@ -78,22 +145,16 @@ class NotificationController extends Controller
                     'url_code' => uniqid()
                 ]);
 
-                $object_key = 'notification_files/' .
-                    $notification['notification_guid'] . '/' . $file->getClientOriginalName();
-
-                $s3 = AWS::createClient('s3');
-                $s3->putObject(array(
-                    'Bucket'     => 'collegemate',
-                    'Key'        => $object_key,
-                    'Body' => file_get_contents($file->getRealPath()),
-                ));
+                S3Helper::uploadFile($notification['notification_guid'], $file);
                 array_push($notification_files, $newFile);
             }
             $notification->notificationFiles()->saveMany($notification_files);
         }
 
         Event::fire(new NewAnnouncement($notification, $institute_guid));
-        Notification::send($category->subscribers, new AnnouncementNotification(
+
+        $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
+        Notification::send($notificationAudience, new AnnouncementNotification(
             $category,
             $notification,
             $institute_guid
@@ -141,9 +202,10 @@ class NotificationController extends Controller
                         ->select('id', 'designation')->get();
                 }]);
             },
+            'editor',
             'notificationFiles',
             'category'
-        ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
+        ])->orderBy('updated_at', 'DESC')->skip($skip)->take(10)->get();
 
         $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
         $nextPage = $page + 1;
@@ -189,20 +251,8 @@ class NotificationController extends Controller
         if ($notification['created_by'] !== $user['id'] && $request->get('auth_user_role') == 'inst_student') {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        $s3 = AWS::createClient('s3');
-        foreach ($notificationFiles as $notificationFile) {
-            $object_key = 'notification_files/' .
-                $notification['notification_guid'] . '/' . $notificationFile['file'];
-            $s3->deleteObject(array(
-                'Bucket'     => 'collegemate',
-                'Key'        => $object_key,
-            ));
-        }
-        $object_key = 'notification_files/' . $notification['notification_guid'] . '/';
-        $s3->deleteObject(array(
-            'Bucket'     => 'collegemate',
-            'Key'        => $object_key,
-        ));
+
+        S3Helper::deleteAllFiles($notification['notification_guid'], $notificationFiles);
         $category = $notification->category;
         $notification->notificationFiles()->delete();
         $notification->delete();

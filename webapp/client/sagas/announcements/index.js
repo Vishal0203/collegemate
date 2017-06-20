@@ -1,4 +1,4 @@
-import {takeEvery, takeLatest, eventChannel} from 'redux-saga';
+import {takeEvery, takeLatest} from 'redux-saga';
 import {put, call, select, fork} from 'redux-saga/effects';
 
 import * as userActions from '../../actions/users/index';
@@ -8,7 +8,6 @@ import * as announcementActions from '../../actions/announcements/index';
 
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
-import {hashHistory} from 'react-router';
 
 function *createAnnouncement(params) {
   let data = new FormData();
@@ -19,16 +18,54 @@ function *createAnnouncement(params) {
     data.append('event_date', params.formData.eventDate);
   }
   for (let i = 0; i < params.formData.notificationAttachments.length; i++) {
-    data.append('notification_files[]', params.formData.notificationAttachments[i]);
+    if (!params.formData.notificationAttachments[i].url_code) {
+      data.append('notification_files[]', params.formData.notificationAttachments[i]);
+    }
   }
   const response = yield call(
     HttpHelper, `institute/${params.formData.instituteGuid}/notification`, 'POST', data, null
   );
 
-  if (response.status == 200) {
+  if (response.status === 200) {
     yield put(announcementActions.announcementFormToggle())
   }
   else {
+    yield put(toggleErrorDialog());
+  }
+}
+
+function *updateAnnouncement(params) {
+  let data = new FormData();
+  data.append('category_guid', params.formData.notificationCategory);
+  data.append('notification_head', params.formData.notificationHeader);
+  data.append('notification_body', params.formData.notificationBody);
+
+  if (params.formData.eventDate) {
+    data.append('event_date', params.formData.eventDate);
+  }
+  // sending array of files to be deleted
+  for (let i = 0; i < params.formData.removedFiles.length; i++) {
+    data.append('removed_files[]', params.formData.removedFiles[i]);
+  }
+  // sending array of files to be uploaded
+  for (let i = 0; i < params.formData.notificationAttachments.length; i++) {
+    if (!params.formData.notificationAttachments[i].url_code) {
+      data.append('notification_files[]', params.formData.notificationAttachments[i]);
+    }
+  }
+
+  const response = yield call(
+    HttpHelper,
+    `institute/${params.formData.instituteGuid}/notification/${params.formData.notificationGuid}`,
+    'POST',
+    data,
+    null
+  );
+
+  if (response.status === 200) {
+    yield put(announcementActions.updateAnnouncementToggle());
+    yield put(toggleSnackbar(response.data.message));
+  } else {
     yield put(toggleErrorDialog());
   }
 }
@@ -59,9 +96,15 @@ function *announcementUpdates(params) {
   const type = params.update.type;
   delete params.update.type;
   switch (type) {
-    case 'NewAnnouncement': yield put(announcementActions.newAnnouncementAdded(params.update));
+    case 'NewAnnouncement':
+      yield put(announcementActions.newAnnouncementAdded(params.update));
       break;
-    case 'DeletedAnnouncement': yield put(announcementActions.announcementDeleted(params.update));
+    case 'AnnouncementUpdate':
+      yield put(announcementActions.announcementDeleted(params.update));
+      yield put(announcementActions.newAnnouncementAdded(params.update));
+      break;
+    case 'AnnouncementDelete':
+      yield put(announcementActions.announcementDeleted(params.update));
       break;
   }
 }
@@ -109,11 +152,15 @@ function *unsubscribeAnnouncement(params) {
 }
 
 /*
-Watchers
+ Watchers
  */
 
 function *watchCreateAnnouncement() {
   yield *takeEvery(announcementActions.CREATE_ANNOUNCEMENT_REQUEST, createAnnouncement);
+}
+
+function *watchUpdateAnnouncement() {
+  yield *takeEvery(announcementActions.UPDATE_ANNOUNCEMENT_REQUEST, updateAnnouncement);
 }
 
 function *watchAnnouncementFetch() {
@@ -147,6 +194,7 @@ function *watchAnnouncementChannelUnsubscribe() {
 export default function *announcementSaga() {
   yield [
     fork(watchCreateAnnouncement),
+    fork(watchUpdateAnnouncement),
     fork(watchAnnouncementFetch),
     fork(watchAnnouncementUpdates),
     fork(watchAnnouncementDelete),
