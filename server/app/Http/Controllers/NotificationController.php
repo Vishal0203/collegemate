@@ -205,7 +205,7 @@ class NotificationController extends Controller
             'editor',
             'notificationFiles',
             'category'
-        ])->orderBy('updated_at', 'DESC')->skip($skip)->take(10)->get();
+        ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
 
         $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
         $nextPage = $page + 1;
