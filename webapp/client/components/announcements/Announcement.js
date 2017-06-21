@@ -191,7 +191,7 @@ export class AnnouncementContent extends React.Component {
   render() {
     const {announcement, avatarColor} = this.props;
     const timezone = moment.tz.guess();
-    const time = moment.tz(announcement.created_at, null).format();
+    const time = moment.tz(announcement.edited_at, null).format();
 
     return (
       <div>
@@ -207,7 +207,7 @@ export class AnnouncementContent extends React.Component {
           titleStyle={{marginTop: 3}}
           subtitleStyle={{textTransform: 'capitalize', marginTop: 4}}>
           <div className="time-container"
-               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, announcement.created_at)}
+               onMouseEnter={() => this.timeTooltipMouseEnter(timezone, announcement.edited_at)}
                onMouseLeave={() => {
                  this.setState({timeTooltip: {show: false, label: ''}})
                }}>

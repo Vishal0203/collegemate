@@ -69,6 +69,7 @@ class NotificationController extends Controller
         $notification->event_date = $request['event_date'];
         $notification->category_id = $category['id'];
         $notification->edited_by = \Auth::user()->id;
+        $notification->edited_at = Carbon::now()->toDateTimeString();
         $notification->save();
 
         $removed_files = $request['removed_files'] ? $request['removed_files'] : [];
@@ -98,13 +99,15 @@ class NotificationController extends Controller
             $notification->notificationFiles()->saveMany($notification_files);
         }
 
-        $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
-        Notification::send($notificationAudience, new AnnouncementUpdateNotification(
-            $category,
-            $notification,
-            $oldNotificationHead,
-            $institute_guid
-        ));
+        if ($request['notify']) {
+            $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
+            Notification::send($notificationAudience, new AnnouncementUpdateNotification(
+                $category,
+                $notification,
+                $oldNotificationHead,
+                $institute_guid
+            ));
+        }
 
         Event::fire(new AnnouncementUpdate($notification, $institute_guid, true));
         return response()->json(['message' => 'The announcement has been updated.']);
@@ -133,6 +136,7 @@ class NotificationController extends Controller
             'notification_head' => $request['notification_head'],
             'notification_body' => $request['notification_body'],
             'event_date' => $request['event_date'],
+            'edited_at' => Carbon::now()->toDateTimeString(),
             'created_by' => \Auth::user()->id
         ]);
 
@@ -205,7 +209,7 @@ class NotificationController extends Controller
             'editor',
             'notificationFiles',
             'category'
-        ])->orderBy('created_at', 'DESC')->skip($skip)->take(10)->get();
+        ])->orderBy('edited_at', 'DESC')->skip($skip)->take(10)->get();
 
         $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
         $nextPage = $page + 1;

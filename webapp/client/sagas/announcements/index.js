@@ -39,6 +39,7 @@ function *updateAnnouncement(params) {
   data.append('category_guid', params.formData.notificationCategory);
   data.append('notification_head', params.formData.notificationHeader);
   data.append('notification_body', params.formData.notificationBody);
+  data.append('notify', params.formData.notify);
 
   if (params.formData.eventDate) {
     data.append('event_date', params.formData.eventDate);

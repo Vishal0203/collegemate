@@ -29,6 +29,7 @@ class AnnouncementForm extends React.Component {
       this.state = {
         ...this.state,
         removedFiles: [],
+        notify: true,
         formData: {
           notificationHeader: props.update.notification_head,
           categoryGuid: props.update.category.category_guid
@@ -92,7 +93,8 @@ class AnnouncementForm extends React.Component {
     const formData = {
       ...data,
       removedFiles: this.state.removedFiles,
-      notificationGuid: this.props.update.notification_guid
+      notificationGuid: this.props.update.notification_guid,
+      notify: this.state.notify
     };
     this.parentProps.actions.updateAnnouncementRequest(formData);
   }
@@ -143,7 +145,7 @@ class AnnouncementForm extends React.Component {
   }
 
   onFileSelect(e) {
-    this.setState({selectedFiles: [...this.state.selectedFiles,  ...Array.from(e.target.files)]});
+    this.setState({selectedFiles: [...this.state.selectedFiles, ...Array.from(e.target.files)]});
   }
 
   removeSelectedFile(filename, key = 'name') {
@@ -158,9 +160,44 @@ class AnnouncementForm extends React.Component {
     this.setState({selectedFiles: this.filesData});
   }
 
+  onUpdateWithoutNotify() {
+    this.setState(
+      {notify: false},
+      this.refs.announcement_form.submit
+    )
+  }
+
+  renderAnnouncementActions() {
+    const {onCancelClick} = this.props;
+    const save = this.props.update ?
+      <FlatButton
+        key="0"
+        label='Update'
+        secondary={true}
+        onClick={() => this.onUpdateWithoutNotify()}
+        disabled={!this.state.canSubmit}
+      /> :
+      <FlatButton
+        key="0"
+        label='Cancel'
+        secondary={true}
+        onClick={onCancelClick}
+      />;
+
+    return [
+      save,
+      <FlatButton
+        key="1"
+        label={this.props.update ? 'Update and Notify' : 'Announce'}
+        primary={true}
+        type="submit"
+        disabled={!this.state.canSubmit}
+      />
+    ]
+  }
+
   render() {
     const {notifying_categories} = this.parentProps.auth_user.selectedInstitute;
-    const {onCancelClick} = this.props;
 
     const renderSelectedFiles = () => {
       return this.state.selectedFiles.map((file, i) => {
@@ -181,6 +218,7 @@ class AnnouncementForm extends React.Component {
 
     return (
       <Formsy.Form
+        ref="announcement_form"
         onValid={this.enableButton.bind(this)}
         onInvalid={this.disableButton.bind(this)}
         onValidSubmit={(data) => this.handleAnnouncementSubmit(data)}
@@ -259,17 +297,7 @@ class AnnouncementForm extends React.Component {
             label="Make this an event"
             onCheck={(event, isInputChecked) => this.toggleEvent(isInputChecked)}
           />
-          <FlatButton
-            label="Cancel"
-            secondary={true}
-            onClick={onCancelClick}
-          />
-          <FlatButton
-            label={this.props.update ? 'Update' : 'Announce'}
-            primary={true}
-            type="submit"
-            disabled={!this.state.canSubmit}
-          />
+          {this.renderAnnouncementActions()}
         </CardActions>
       </Formsy.Form>
     );
