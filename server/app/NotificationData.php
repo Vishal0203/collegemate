@@ -11,9 +11,9 @@ class NotificationData extends Model
     protected $table = 'notification_data';
 
     protected $fillable = ['notification_guid', 'notification_head', 'notification_body', 'notification_level',
-        'event_date', 'category_id', 'created_by', 'edited_by'];
+        'event_date', 'category_id', 'created_by', 'edited_by', 'edited_at'];
 
-    protected $hidden = ['id', 'category_id', 'created_by', 'edited_by'];
+    protected $hidden = ['id', 'category_id', 'created_by', 'edited_by', 'updated_at'];
 
     public function category()
     {
