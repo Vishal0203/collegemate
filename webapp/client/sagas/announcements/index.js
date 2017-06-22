@@ -101,7 +101,6 @@ function *announcementUpdates(params) {
       yield put(announcementActions.newAnnouncementAdded(params.update));
       break;
     case 'AnnouncementUpdate':
-      console.log(params.update);
       if (params.update.notify_users === 'true') {
         yield put(announcementActions.announcementDeleted(params.update));
         yield put(announcementActions.newAnnouncementAdded(params.update));

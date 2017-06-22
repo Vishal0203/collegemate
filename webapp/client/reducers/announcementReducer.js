@@ -95,7 +95,6 @@ export default function announcementReducer(state = initialState, action) {
       let notification = state.items.data.map((notification) => notification.notification_guid)
         .indexOf(action.notification.notification_guid);
 
-      debugger;
       state.items.data[notification] = action.notification;
       return {...state}
     }
