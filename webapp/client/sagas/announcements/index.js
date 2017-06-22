@@ -101,8 +101,13 @@ function *announcementUpdates(params) {
       yield put(announcementActions.newAnnouncementAdded(params.update));
       break;
     case 'AnnouncementUpdate':
-      yield put(announcementActions.announcementDeleted(params.update));
-      yield put(announcementActions.newAnnouncementAdded(params.update));
+      console.log(params.update);
+      if (params.update.notify_users === 'true') {
+        yield put(announcementActions.announcementDeleted(params.update));
+        yield put(announcementActions.newAnnouncementAdded(params.update));
+      } else {
+        yield put(announcementActions.announcementUpdateNoNotify(params.update));
+      }
       break;
     case 'AnnouncementDelete':
       yield put(announcementActions.announcementDeleted(params.update));

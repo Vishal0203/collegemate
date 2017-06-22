@@ -69,7 +69,9 @@ class NotificationController extends Controller
         $notification->event_date = $request['event_date'];
         $notification->category_id = $category['id'];
         $notification->edited_by = \Auth::user()->id;
-        $notification->edited_at = Carbon::now()->toDateTimeString();
+        if ($request['notify'] == 'true') {
+            $notification->edited_at = Carbon::now()->toDateTimeString();
+        }
         $notification->save();
 
         $removed_files = $request['removed_files'] ? $request['removed_files'] : [];
@@ -99,7 +101,7 @@ class NotificationController extends Controller
             $notification->notificationFiles()->saveMany($notification_files);
         }
 
-        if ($request['notify']) {
+        if ($request['notify'] == 'true') {
             $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
             Notification::send($notificationAudience, new AnnouncementUpdateNotification(
                 $category,
@@ -109,7 +111,7 @@ class NotificationController extends Controller
             ));
         }
 
-        Event::fire(new AnnouncementUpdate($notification, $institute_guid, true));
+        Event::fire(new AnnouncementUpdate($notification, $institute_guid, $request['notify'], true));
         return response()->json(['message' => 'The announcement has been updated.']);
     }
 

@@ -91,6 +91,14 @@ export default function announcementReducer(state = initialState, action) {
         loadingMore: false
       };
     }
+    case actions.ANNOUNCEMENT_UPDATE_NO_NOTIFY: {
+      let notification = state.items.data.map((notification) => notification.notification_guid)
+        .indexOf(action.notification.notification_guid);
+
+      debugger;
+      state.items.data[notification] = action.notification;
+      return {...state}
+    }
     case actions.DELETE_ANNOUNCEMENT_REQUEST: {
       return {...state, loadingMore: true}
     }
