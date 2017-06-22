@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="google-site-verification" content="o1_bHyir_x0M5pDoMTDpc4ZHo2Hl0QXCrv5xNFaZkdw" />
   <title>{{ $app_name }}</title>
   <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

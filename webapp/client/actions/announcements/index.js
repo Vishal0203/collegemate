@@ -2,6 +2,7 @@ export const CREATE_ANNOUNCEMENT_REQUEST = 'CREATE_ANNOUNCEMENT_REQUEST';
 export const UPDATE_ANNOUNCEMENT_REQUEST = 'UPDATE_ANNOUNCEMENT_REQUEST';
 
 export const ANNOUNCEMENT_UPDATES = 'ANNOUNCEMENT_UPDATES';
+export const ANNOUNCEMENT_UPDATE_NO_NOTIFY = 'ANNOUNCEMENT_UPDATE_NO_NOTIFY';
 export const NEW_ANNOUNCEMENT_ADDED = 'NEW_ANNOUNCEMENT_ADDED';
 export const ANNOUNCEMENT_DELETED = 'ANNOUNCEMENT_DELETED';
 export const CREATE_ANNOUNCEMENT_TOGGLE = 'CREATE_ANNOUNCEMENT_TOGGLE';
@@ -53,6 +54,13 @@ export function announcementUpdates(update) {
   return {
     type: ANNOUNCEMENT_UPDATES,
     update
+  }
+}
+
+export function announcementUpdateNoNotify(notification) {
+  return {
+    type: ANNOUNCEMENT_UPDATE_NO_NOTIFY,
+    notification
   }
 }
 
