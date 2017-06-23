@@ -5,15 +5,13 @@ import * as userActions from '../actions/users';
 import * as categoryActions from '../actions/categories';
 import initGapi from '../store/configureGapi';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Snackbar from 'material-ui/Snackbar';
 import Navbar from './Navbar';
 import muiTheme from '../styles/theme/collegemate.theme';
 import {toggleSnackbar, toggleErrorDialog} from '../actions/commons/index';
 import {hashHistory} from 'react-router';
 import {Row} from 'react-flexbox-grid';
 import Loader from 'halogenium/ScaleLoader';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import {Dialog, Snackbar, FlatButton} from 'material-ui';
 import tz from 'moment-timezone';
 
 class Main extends React.Component {
@@ -38,8 +36,7 @@ class Main extends React.Component {
               actions.oauthLogin({
                 id_token: GoogleUser.getAuthResponse().id_token
               });
-            }
-            else {
+            } else {
               hashHistory.push('/login');
             }
           });
@@ -72,7 +69,7 @@ class Main extends React.Component {
         <MuiThemeProvider muiTheme={muiTheme}>
           <div>
             <Navbar currentLocation={this.props.location.pathname} parentProps={this.props}/>
-            { React.cloneElement(this.props.children, this.props) }
+            {React.cloneElement(this.props.children, this.props)}
             <Snackbar
               open={this.props.snackbar.open}
               message={this.props.snackbar.text}

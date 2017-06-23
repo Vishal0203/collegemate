@@ -2,14 +2,9 @@ import Paper from 'material-ui/Paper';
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {grey500} from 'material-ui/styles/colors';
-import {Grid, Row, Col} from 'react-flexbox-grid';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import {feedbackSubmit} from '../actions/commons/index';
+import {grey500} from 'material-ui/styles/colors';
+import {Dialog, FlatButton, TextField, SelectField, MenuItem} from 'material-ui';
 
 class Branding extends Component {
   constructor(props) {

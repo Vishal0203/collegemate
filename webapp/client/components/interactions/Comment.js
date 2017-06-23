@@ -1,16 +1,10 @@
 import React, {Component} from 'react';
 import moment from 'moment/moment';
-import {Row, Col} from 'react-flexbox-grid'
-import {CardText} from 'material-ui/Card';
-import IconButton from 'material-ui/IconButton';
+import {Row} from 'react-flexbox-grid'
 import {grey500, grey600} from 'material-ui/styles/colors';
-import {renderVotes} from './InteractionSingle'
-import FlatButton from 'material-ui/FlatButton';
-import FontIcon from 'material-ui/FontIcon';
-import Dialog from 'material-ui/Dialog';
-import Divider from 'material-ui/Divider';
 import ReplyForm from './ReplyForm';
 import {markdownToHtml, simplemde_config} from '../extras/utils';
+import {Divider, Dialog, FontIcon, FlatButton, CardText, IconButton} from 'material-ui';
 
 
 class Comment extends Component {

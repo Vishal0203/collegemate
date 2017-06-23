@@ -1,16 +1,12 @@
 import React from 'react';
-import {CardActions, CardText} from 'material-ui/Card/index';
-import MenuItem from 'material-ui/MenuItem';
 import {Col, Row} from 'react-flexbox-grid';
-import FlatButton from 'material-ui/FlatButton';
-import Checkbox from 'material-ui/Checkbox';
 import {grey600} from 'material-ui/styles/colors';
 import Formsy from 'formsy-react';
 import {FormsySelect, FormsyText} from 'formsy-material-ui/lib';
 import DatePicker from 'material-ui/DatePicker';
 import moment from 'moment/moment';
 import {simplemde_config} from '../extras/utils';
-import {Chip} from 'material-ui';
+import {CardActions, CardText, MenuItem, FlatButton, Checkbox, Chip} from 'material-ui';
 
 class AnnouncementForm extends React.Component {
   constructor(props) {

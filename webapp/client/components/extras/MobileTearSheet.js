@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Paper from 'material-ui/Paper';
+import {Paper} from 'material-ui';
 
 class MobileTearSheet extends Component {
 
@@ -53,7 +53,7 @@ class MobileTearSheet extends Component {
             {this.props.children}
           </div>
         </Paper>
-        <img style={prepareStyles(styles.bottomTear)} src={require('../../styles/images/bottom-tear.svg')} />
+        <img style={prepareStyles(styles.bottomTear)} src={require('../../styles/images/bottom-tear.svg')}/>
       </div>
     );
   }

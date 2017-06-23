@@ -7,18 +7,12 @@ import Header from '../Header';
 import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
-import Chip from 'material-ui/Chip';
-import Divider from 'material-ui/Divider';
 import StickyDiv from 'react-stickydiv';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import {grey500} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
-import Paper from 'material-ui/Paper';
 import Branding from '../Branding';
 import Events from './Events';
+import {grey500} from 'material-ui/styles/colors';
+import {Divider, Chip, Paper, FontIcon, IconButton, FlatButton, Dialog} from 'material-ui';
 
 import SubscriptionForm from '../settings/SubscriptionForm';
 import {

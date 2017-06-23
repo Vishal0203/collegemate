@@ -1,10 +1,7 @@
 import React from 'react';
 import {Editor, EditorState, RichUtils, getDefaultKeyBinding} from 'draft-js';
 import CodeUtils from 'draft-js-code';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import Popover from 'material-ui/Popover';
-import IconButton from 'material-ui/IconButton';
+import {IconButton, Popover, TextField, FlatButton} from 'material-ui';
 import StyleButton from './StyleButton';
 
 export default class RichEditor extends React.Component {

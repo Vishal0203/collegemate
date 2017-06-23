@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-import {Card, CardTitle, CardText} from 'material-ui/Card';
-import Chip from 'material-ui/Chip';
-import Divider from 'material-ui/Divider';
+import {Card, CardTitle, CardText, Chip, Divider} from 'material-ui';
 import Header from '../Header';
 
 class Career extends Component {
