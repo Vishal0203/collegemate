@@ -45,6 +45,7 @@ function *handleAuthResponse(response) {
   }
 
   yield put(userActions.userLoginResponse(response.data));
+  hashHistory.replace('/announcements');
 }
 
 function *userAuthentication() {

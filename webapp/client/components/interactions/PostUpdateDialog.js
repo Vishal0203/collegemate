@@ -1,7 +1,5 @@
-import React ,{Component} from 'react';
-import {Card, CardText, CardTitle} from 'material-ui/Card';
-import {Col, Row} from 'react-flexbox-grid';
-import Dialog from 'material-ui/Dialog';
+import React, {Component} from 'react';
+import {Dialog} from 'material-ui';
 import InteractionForm from './InteractionForm'
 
 class PostUpdateDialog extends Component {

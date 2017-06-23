@@ -2,13 +2,10 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Grid} from 'react-flexbox-grid';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import Paper from 'material-ui/Paper';
 import * as instituteActions from '../../actions/institutes/index';
 import * as snackbarActions from '../../actions/commons/index';
-import RaisedButton from 'material-ui/RaisedButton';
-import AutoComplete from 'material-ui/AutoComplete';
 import CreateInstituteForm from './CreateInstituteForm'
+import {AutoComplete, RaisedButton, Paper, Tabs, Tab} from 'material-ui';
 
 class InstituteContainer extends Component {
   constructor(props) {

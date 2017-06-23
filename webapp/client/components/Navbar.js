@@ -1,28 +1,20 @@
 import React from 'react';
-import {Link} from 'react-router';
-import Avatar from 'material-ui/Avatar';
-import Paper from 'material-ui/Paper';
-import {Tabs, Tab} from 'material-ui/Tabs/index';
-import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar/index';
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton/IconButton';
-import Popover from 'material-ui/Popover';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import FontIcon from 'material-ui/FontIcon';
-import {CardText} from 'material-ui/Card/index';
-import Divider from 'material-ui/Divider';
-import {hashHistory} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import {userLogout} from '../actions/users/index'
 import {toggleSnackbar} from '../actions/commons/index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import Notifications from './Notifications';
 import {humanizeRoles} from './extras/utils';
 import {grey500} from 'material-ui/styles/colors';
+import Notifications from './Notifications';
+import {
+  CardText, Divider, FontIcon, MenuItem, Menu, Popover,
+  IconMenu, Toolbar, ToolbarGroup, ToolbarTitle, IconButton,
+  Tabs, Tab, Paper, Avatar
+} from 'material-ui';
+
 
 class Navbar extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -124,7 +116,7 @@ class Navbar extends React.Component {
         return (
           <ToolbarGroup className="tab-container">
             <Tabs className="tabs" inkBarStyle={{position: 'absolute', bottom: 0}} value={tabIndex}>
-              <Tab data-route="/"
+              <Tab data-route="/announcements"
                    onActive={(tab) => hashHistory.push(tab.props['data-route'])}
                    className="tab"
                    label="Announcements"
@@ -231,7 +223,7 @@ class Navbar extends React.Component {
 
   getTabIndex(pathname) {
     const INTERACTION_REGEX = /^\/interactions(\/.*)?/i;
-    if (pathname === '/') {
+    if (pathname === '/announcements') {
       return 'announcements'
     }
     if (INTERACTION_REGEX.test(pathname)) {

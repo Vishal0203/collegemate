@@ -1,11 +1,10 @@
 import React from 'react';
 import {hashHistory} from 'react-router';
-import {Card, CardHeader, CardText, CardTitle, CardActions} from 'material-ui/Card/index';
 import moment from 'moment/moment';
-import Chip from 'material-ui/Chip';
-import {Grid, Row, Col} from 'react-flexbox-grid';
+import {Row} from 'react-flexbox-grid';
 import {green600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
+import {Card, CardHeader, CardText, Chip} from 'material-ui';
 
 class InteractionPost extends React.Component {
   constructor(props) {

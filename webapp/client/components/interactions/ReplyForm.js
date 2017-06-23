@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
 import {FormsyText} from 'formsy-material-ui/lib';
-import {CardText} from 'material-ui/Card/index';
 import {grey500, grey600} from 'material-ui/styles/colors';
+import {CardText} from 'material-ui';
 
-class ReplyForm extends React.Component {
+class ReplyForm extends Component {
   static propTypes = {
     formPadding: PropTypes.object,
     onSubmit: PropTypes.func,

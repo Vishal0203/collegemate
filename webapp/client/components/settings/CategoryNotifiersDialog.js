@@ -1,18 +1,14 @@
 import React, {Component} from 'react';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
 import {Row, Col} from 'react-flexbox-grid';
 import {grey500} from 'material-ui/styles/colors';
 import {FormsyText} from 'formsy-material-ui/lib';
-import Subheader from 'material-ui/Subheader';
-import Avatar from 'material-ui/Avatar';
 import ChipInput from 'material-ui-chip-input';
 import Loader from 'halogenium/ScaleLoader';
-import RaisedButton from 'material-ui/RaisedButton';
-import Chip from 'material-ui/Chip';
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
+import {
+  FontIcon, Dialog, IconButton, Chip, RaisedButton, Avatar,
+  Subheader, FlatButton, Table, TableBody, TableHeader,
+  TableHeaderColumn, TableRow, TableRowColumn
+} from 'material-ui';
 
 class CategoryNotifiersDialog extends Component {
   constructor(props) {
@@ -325,7 +321,7 @@ class CategoryNotifiersDialog extends Component {
     let privateCategorySubscribers = null;
     if (category.private) {
       privateCategorySubscribers = this.getLoader('current_subscribers');
-      if(parentProps.category.subscribers.loaded) {
+      if (parentProps.category.subscribers.loaded) {
         privateCategorySubscribers = (
           <div style={{padding: '0 16px'}} key="category_subscribers">
             <Subheader>Current Subscribers</Subheader>

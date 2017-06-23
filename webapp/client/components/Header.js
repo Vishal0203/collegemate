@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Card, CardTitle, Paper} from 'material-ui';
+import {Card, CardTitle, Paper, RaisedButton} from 'material-ui';
 import {Grid, Col, Row} from 'react-flexbox-grid';
-import RaisedButton from 'material-ui/RaisedButton';
 import AnnouncementForm from './announcements/AnnouncementForm';
 import InteractionForm from './interactions/InteractionForm';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -28,7 +27,7 @@ class Header extends Component {
 
   get styles() {
     return {
-      formTitle:  {
+      formTitle: {
         padding: '12px 16px 0px 16px',
       }
     }
@@ -63,7 +62,8 @@ class Header extends Component {
               <Col xs={12}>
                 <Row center="xs" className="header-or">or</Row>
                 <Row center="xs">
-                  <RaisedButton label={buttonLabel} primary={true} className="header-button" onClick={() => this.toggleForm('Announcement')}/>
+                  <RaisedButton label={buttonLabel} primary={true} className="header-button"
+                                onClick={() => this.toggleForm('Announcement')}/>
                 </Row>
               </Col>
             </div>
@@ -78,7 +78,8 @@ class Header extends Component {
           form = (
             <Grid>
               <div key="interactionForm-0" className="wrap" style={{marginTop: '20px'}}>
-                <InteractionForm onCancelClick={() => this.toggleForm('Interaction')} type="Interactions" parentProps={parentProps}/>
+                <InteractionForm onCancelClick={() => this.toggleForm('Interaction')} type="Interactions"
+                                 parentProps={parentProps}/>
               </div>
             </Grid>
           )
@@ -89,7 +90,8 @@ class Header extends Component {
               <Col xs={12}>
                 <Row center="xs" className="header-or">or</Row>
                 <Row center="xs">
-                  <RaisedButton label={buttonLabel} primary={true} className="header-button" onClick={() => this.toggleForm('Interaction')}/>
+                  <RaisedButton label={buttonLabel} primary={true} className="header-button"
+                                onClick={() => this.toggleForm('Interaction')}/>
                 </Row>
               </Col>
             </div>
@@ -104,7 +106,8 @@ class Header extends Component {
           form = (
             <Grid>
               <div key="interactionForm-0" className="wrap" style={{marginTop: '20px'}}>
-                <InteractionForm onCancelClick={() => this.toggleForm('InteractionSingle')} type="InteractionSingle" parentProps={parentProps}/>
+                <InteractionForm onCancelClick={() => this.toggleForm('InteractionSingle')} type="InteractionSingle"
+                                 parentProps={parentProps}/>
               </div>
             </Grid>
           )
@@ -115,7 +118,8 @@ class Header extends Component {
               <Col xs={12}>
                 <Row center="xs" className="header-or">or</Row>
                 <Row center="xs">
-                  <RaisedButton label={buttonLabel} primary={true} className="header-button" onClick={() => this.toggleForm('InteractionSingle')}/>
+                  <RaisedButton label={buttonLabel} primary={true} className="header-button"
+                                onClick={() => this.toggleForm('InteractionSingle')}/>
                 </Row>
               </Col>
             </div>
@@ -124,7 +128,7 @@ class Header extends Component {
         break;
       }
     }
-    
+
 
     return (
       <Paper style={headerHeight} className="header" zDepth={0}>

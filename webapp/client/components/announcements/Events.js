@@ -1,11 +1,10 @@
 import React from 'react';
-import {Card, CardTitle, CardText} from 'material-ui/Card';
-import Divider from 'material-ui/Divider';
 import {getDateDiff} from '../extras/utils';
-import {grey600, grey700} from 'material-ui/styles/colors';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import AnnouncementDialog from './AnnouncementDialog';
 import {hashHistory} from 'react-router';
+import {grey600, grey700} from 'material-ui/styles/colors';
+import {Card, CardTitle, Divider} from 'material-ui';
 
 class Events extends React.Component {
   constructor(props) {
@@ -69,8 +68,8 @@ class Events extends React.Component {
     this.setState({
       announcementDialog: {
         showAnnouncementDialog: !this.state.showAnnouncementDialog,
-        selectedAnnouncement: event? event.notification_guid: null,
-        title: event? `Event ${getDateDiff(event.event_date)}`: null
+        selectedAnnouncement: event ? event.notification_guid : null,
+        title: event ? `Event ${getDateDiff(event.event_date)}` : null
       }
     });
   }
@@ -118,7 +117,7 @@ class Events extends React.Component {
           <div style={{padding: '10px'}}><label style={{fontWeight: 500}}>Upcoming Events</label></div>
           <Divider style={{marginTop: 2}}/>
           <div style={{paddingBottom: 10}}>
-            {this.props.events.length > 0 ? eventsContainer: noEvents}
+            {this.props.events.length > 0 ? eventsContainer : noEvents}
           </div>
         </MobileTearSheet>
         {

@@ -5,15 +5,6 @@ import moment from 'moment/moment';
 import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import StickyDiv from 'react-stickydiv';
-import Chip from 'material-ui/Chip';
-import {Card, CardHeader, CardText} from 'material-ui/Card/index';
-import {grey500, grey600} from 'material-ui/styles/colors';
-import Divider from 'material-ui/Divider';
-import FlatButton from 'material-ui/FlatButton';
-import FontIcon from 'material-ui/FontIcon';
-import IconButton from 'material-ui/IconButton';
-import Dialog from 'material-ui/Dialog';
-import Avatar from 'material-ui/Avatar';
 import {toggleSnackbar} from '../../actions/commons/index';
 import * as interactionActions from '../../actions/interactions/index'
 import Header from '../Header';
@@ -23,6 +14,11 @@ import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
 import ReplyForm from './ReplyForm';
 import {markdownToHtml} from '../extras/utils';
+import {grey500, grey600} from 'material-ui/styles/colors';
+import {
+  Avatar, Dialog, IconButton, FontIcon, FlatButton, Divider, Card,
+  CardHeader, CardText, Chip
+} from 'material-ui';
 
 class InteractionSingle extends Component {
   constructor(props) {
@@ -463,9 +459,13 @@ class InteractionSingle extends Component {
                           <ul className="how-to-list" style={{fontSize: 14}}>
                             <li>It is recommended to use formal language while answering the questions.</li>
                             <li>Use &nbsp;<span className="fa fa-bold"/>&nbsp; as stressor.</li>
-                            <li>Use &nbsp;<span className="fa fa-quote-left"/> &nbsp;tool to refer something in question.</li>
+                            <li>Use &nbsp;<span className="fa fa-quote-left"/> &nbsp;tool to refer something in
+                              question.
+                            </li>
                             <li>
-                              Use &nbsp;<a style={{textDecoration: 'none', color: 'black'}} href="https://simplemde.com/markdown-guide" target="_blank" className="fa fa-question-circle"/>&nbsp;
+                              Use &nbsp;<a style={{textDecoration: 'none', color: 'black'}}
+                                           href="https://simplemde.com/markdown-guide" target="_blank"
+                                           className="fa fa-question-circle"/>&nbsp;
                               in editor tools to understand how to use the Editor.
                             </li>
                           </ul>

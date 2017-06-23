@@ -1,13 +1,12 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import {Row} from 'react-flexbox-grid';
 import Loader from 'halogenium/ScaleLoader';
 import {AnnouncementContent} from './Announcement';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
 import {fetchSingleAnnouncementRequest} from '../../actions/announcements/index';
+import {FlatButton, Dialog} from 'material-ui';
 
 class AnnouncementDialog extends React.Component {
   constructor(props) {
@@ -48,8 +47,8 @@ class AnnouncementDialog extends React.Component {
     let dialogContent = (singleAnnouncementLoader || singleAnnouncement === null) ?
       loader :
       (<AnnouncementContent parentProps={this.props}
-                     announcement={singleAnnouncement}
-                     avatarColor={this.getAvatarColor(singleAnnouncement.category.category_type)}/>);
+                            announcement={singleAnnouncement}
+                            avatarColor={this.getAvatarColor(singleAnnouncement.category.category_type)}/>);
     return (
       <Dialog
         title={this.props.title}

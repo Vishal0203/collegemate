@@ -1,18 +1,12 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import Avatar from 'material-ui/Avatar';
-import {bindActionCreators} from 'redux';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {grey600} from 'material-ui/styles/colors';
-import {Card, CardTitle, CardText} from 'material-ui/Card/index';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
 import moment from 'moment/moment';
 import Formsy from 'formsy-react';
-import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
 import Header from '../Header';
 import SubscriptionForm from './SubscriptionForm'
+import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
+import {Card, CardTitle, Paper, RaisedButton, MenuItem, Avatar} from 'material-ui';
 
 class SettingsContainer extends Component {
   constructor(props) {

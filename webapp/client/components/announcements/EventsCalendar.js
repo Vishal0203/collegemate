@@ -3,21 +3,14 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment/moment';
-import Paper from 'material-ui/Paper';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-import {
-  Step,
-  Stepper,
-  StepButton,
-  StepContent,
-} from 'material-ui/Stepper';
-import Divider from 'material-ui/Divider';
 import Loader from 'halogenium/ScaleLoader';
 import StickyDiv from 'react-stickydiv';
 import * as eventActions  from '../../actions/events/index';
 import AnnouncementDialog from './AnnouncementDialog';
 import {toggleSnackbar} from '../../actions/commons/index';
 import {getDateDiff} from '../extras/utils';
+import {Step, Stepper, StepButton, StepContent, Paper, Divider} from 'material-ui';
 
 class EventsCalendar extends React.Component {
   constructor(props) {
@@ -63,7 +56,7 @@ class EventsCalendar extends React.Component {
 
   getStepTitle(events) {
     const ellipsisTitle = events[0].notification_head.length > 28 ?
-      `${events[0].notification_head.substring(0,28)}...` : events[0].notification_head;
+      `${events[0].notification_head.substring(0, 28)}...` : events[0].notification_head;
     const moreEvents = events.length > 1 ? ` + ${events.length - 1} more` : '';
     return `${ellipsisTitle}${moreEvents}`;
   }
@@ -91,7 +84,7 @@ class EventsCalendar extends React.Component {
       announcementDialog: {
         showAnnouncementDialog: !this.state.showAnnouncementDialog,
         selectedAnnouncement: notification_guid,
-        title: event? `Event ${getDateDiff(event_date)}`: null
+        title: event ? `Event ${getDateDiff(event_date)}` : null
       }
     });
   }
@@ -108,7 +101,7 @@ class EventsCalendar extends React.Component {
 
   renderWeekEvents() {
 
-    if(this.props.announcements.eventsCalendar.eventsWeekLoader) {
+    if (this.props.announcements.eventsCalendar.eventsWeekLoader) {
       return this.renderLoader();
     }
 
@@ -120,10 +113,11 @@ class EventsCalendar extends React.Component {
         [event]
     });
 
-    const steps = Object.keys(multipleEvents).map( (key, i) =>
+    const steps = Object.keys(multipleEvents).map((key, i) =>
       <Step key={`event_${i}`}>
         <StepButton onTouchTap={() => this.setState({stepIndex: i})}
-                    icon={<EventStepperIcon>{moment(multipleEvents[key][0].event_date).format('ddd')}</EventStepperIcon>}
+                    icon={
+                      <EventStepperIcon>{moment(multipleEvents[key][0].event_date).format('ddd')}</EventStepperIcon>}
                     className="eventStep"
         >
           {
@@ -137,7 +131,7 @@ class EventsCalendar extends React.Component {
                 <li key={event.notification_guid}
                     style={{fontSize: 14, padding: 5, cursor: 'pointer'}}
                     onTouchTap={() => this.toggleAnnouncementDialog(event.notification_guid, event.event_date)}>
-                {event.notification_head}
+                  {event.notification_head}
                 </li>
               )
             )}
@@ -175,7 +169,8 @@ class EventsCalendar extends React.Component {
                   <Col xs={4}>
                     <StickyDiv zIndex={1} offsetTop={65}>
                       <div style={{margin: '8px 20px'}}>
-                        <div style={{padding: '10px 0px 10px 5px'}}><label style={{fontWeight: 500}}>Events this week</label></div>
+                        <div style={{padding: '10px 0px 10px 5px'}}><label style={{fontWeight: 500}}>Events this
+                          week</label></div>
                         <Divider style={{marginTop: 2}}/>
                         {this.renderWeekEvents()}
                       </div>
@@ -188,7 +183,7 @@ class EventsCalendar extends React.Component {
                         defaultDate={this.state.currentCalendarDate}
                         views={['month']}
                         popup={true}
-                        onNavigate={(date) =>this.fetchMonthEvents(date)}
+                        onNavigate={(date) => this.fetchMonthEvents(date)}
                         onSelectEvent={(event) =>
                           this.toggleAnnouncementDialog(event.notification_guid, event.event_date)}
                         titleAccessor="notification_head"
@@ -237,8 +232,7 @@ class EventStepperIcon extends React.Component {
     }
   }
 
-  render()
-  {
+  render() {
     return (
       <div style={this.styles.stepperIcon}>
         {this.props.children}

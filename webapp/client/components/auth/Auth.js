@@ -3,13 +3,11 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../../actions/users/index';
 import initGapi from '../../store/configureGapi';
-import {hashHistory, Link} from 'react-router';
-import Paper from 'material-ui/Paper';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {hashHistory} from 'react-router';
 import muiTheme from '../../styles/theme/collegemate.theme';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar/index';
-import FlatButton from 'material-ui/FlatButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {Toolbar, ToolbarGroup, ToolbarTitle, FlatButton, Paper} from 'material-ui';
 
 class Auth extends React.Component {
   constructor(props) {
@@ -49,7 +47,7 @@ class Auth extends React.Component {
           .then(() => {
             const GoogleAuth = window.gapi.auth2.getAuthInstance();
             if (GoogleAuth.isSignedIn.get()) {
-              hashHistory.push('/');
+              hashHistory.push('/announcements');
             } else {
               _scope.setState({gapi: true});
             }
@@ -63,7 +61,7 @@ class Auth extends React.Component {
     GoogleAuth.signIn({scope: 'profile email', prompt: 'select_account'})
       .then(
         (res) => {
-          hashHistory.push('/');
+          hashHistory.push('/announcements');
         },
         (err) => {
           console.log(err)
@@ -110,7 +108,7 @@ class Auth extends React.Component {
                         </Col>
                         <Col xs={6}>
                           <i className="material-icons footer-icon">question_answer</i>
-                          <div className="footer-heading" >Interactions</div>
+                          <div className="footer-heading">Interactions</div>
                           <div style={{marginTop: 10, fontSize: 13, fontWeight: 300}}>
                             Have a question? Shoot it right away! <br/>
                             You can also interact with your college officials, your <br/>

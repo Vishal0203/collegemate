@@ -1,24 +1,19 @@
 import React from 'react';
-import Badge from 'material-ui/Badge';
+import {connect} from 'react-redux';
+import {hashHistory} from 'react-router';
+import {bindActionCreators} from 'redux';
 import moment from 'moment/moment';
+import {Badge, Popover, Menu, CardText, Divider, IconButton, FontIcon} from 'material-ui';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
-import {Grid, Row, Col} from 'react-flexbox-grid'
 import DoneIcon from 'material-ui/svg-icons/action/done';
 import {grey600, grey400} from 'material-ui/styles/colors';
-import Popover from 'material-ui/Popover';
-import Menu from 'material-ui/Menu';
-import {CardText} from 'material-ui/Card/index';
-import Divider from 'material-ui/Divider';
-import IconButton from 'material-ui/IconButton/IconButton';
+import {Row, Col} from 'react-flexbox-grid'
 import {
   readNotificationRequest,
   readAllNotificationsRequest,
   openCategoryAnnouncements
 } from '../actions/notifications/index';
-import {connect} from 'react-redux';
-import {hashHistory} from 'react-router';
-import {bindActionCreators} from 'redux';
-import FontIcon from 'material-ui/FontIcon';
+
 import {ellipsis} from './extras/utils';
 
 export const POST_COMMENT_NOTIFICATION = 'App\\Notifications\\PostCommentNotification';
@@ -112,7 +107,7 @@ class Notifications extends React.Component {
     }
     else if (notification.type === ANNOUNCEMENT_NOTIFICATION ||
       notification.type === ANNOUNCEMENT_UPDATE_NOTIFICATION) {
-      hashHistory.push('/');
+      hashHistory.push('/announcements');
       const category = {category_guid: notification.category_guid, category_type: notification.category_type};
       this.props.actions.openCategoryAnnouncements(category);
     }

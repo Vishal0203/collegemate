@@ -1,23 +1,15 @@
 import React, {Component} from 'react';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
-import Toggle from 'material-ui/Toggle';
-import Subheader from 'material-ui/Subheader';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import {Row, Col} from 'react-flexbox-grid';
-import RaisedButton from 'material-ui/RaisedButton';
 import {FormsyText, FormsyCheckbox} from 'formsy-material-ui/lib';
 import ChipInput from 'material-ui-chip-input';
-import FontIcon from 'material-ui/FontIcon';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import Chip from 'material-ui/Chip'
-import IconButton from 'material-ui/IconButton';
 import {grey500, grey600, red500} from 'material-ui/styles/colors'
 import CategoryNotifiersDialog from './CategoryNotifiersDialog';
-import AutoComplete from 'material-ui/AutoComplete';
-import * as snackbarActions  from '../../actions/commons/index';
+import {
+  AutoComplete, FontIcon, MenuItem, IconMenu, IconButton, Chip,
+  RaisedButton, FlatButton, Dialog, Subheader, Toggle, Table,
+  TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn
+} from 'material-ui';
 
 class SubscriptionForm extends Component {
   constructor(props) {
@@ -74,6 +66,7 @@ class SubscriptionForm extends Component {
       searchText: ''
     });
   }
+
   handleToggle(evt, category_guid) {
     if (evt.target.getAttribute('data-toggled') === 'true') {
       this.props.parentProps.actions.unsubscribeAnnouncementRequest(category_guid)
@@ -214,7 +207,7 @@ class SubscriptionForm extends Component {
                   iconStyle={{width: 20, height: 20, marginRight: 10}}
                   name="private"
                   label="Make this a private category"
-                  labelStyle={{fontSize: 12, fontWeight:400, width:'100%', bottom:'2px'}}
+                  labelStyle={{fontSize: 12, fontWeight: 400, width: '100%', bottom: '2px'}}
                   onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
                 />
               </div>
@@ -359,7 +352,8 @@ class SubscriptionForm extends Component {
       category_list.push(
         <TableRow key={index} style={{height: 55}}>
           <TableRowColumn style={{textTransform: 'capitalize', lineHeight: '16px'}}>
-            {category.category_type} {category.private ? <span style={this.styles.privateLabel}>Private</span> : <span/>}
+            {category.category_type} {category.private ? <span style={this.styles.privateLabel}>Private</span> :
+            <span/>}
             <p style={{margin: '4px 0', fontSize: 'smaller', color: grey500}}>
               {category.creator.first_name} {category.creator.last_name}
             </p>
@@ -377,10 +371,10 @@ class SubscriptionForm extends Component {
           </TableRowColumn>
           {
             this.props.showOptions ? (
-                <TableRowColumn>
-                  {this.renderOptions(category, subscribed_as)}
-                </TableRowColumn>
-              ) : null
+              <TableRowColumn>
+                {this.renderOptions(category, subscribed_as)}
+              </TableRowColumn>
+            ) : null
           }
 
         </TableRow>

@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Main from './components/Main';
-import {Router, Route, IndexRoute, hashHistory} from 'react-router';
+import {Router, Route, IndexRoute, hashHistory, Redirect} from 'react-router';
 import Auth from './components/auth/Auth'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import EventsCalendar from './components/announcements/EventsCalendar';
@@ -28,17 +28,18 @@ store.runSaga(rootSaga);
 const router = (
   <Provider store={store}>
     <Router history={history}>
+      <Redirect from="/" to="/announcements"/>
       <Route path='/login' component={Auth}/>
       <Route path='/' component={Main}>
-        <IndexRoute component={AnnouncementsContainer}/>
+        <Route path="/announcements" component={AnnouncementsContainer}/>
         <Route path='/interactions'>
           <IndexRoute component={InteractionsContainer}/>
           <Route path='/interactions/:postGuid' component={InteractionSingle}/>
         </Route>
+        <Route path='/events' component={EventsCalendar}/>
         <Route path='/settings' component={SettingsContainer}/>
         <Route path='/institute' component={InstituteContainer}/>
         <Route path='/institute_settings' component={InstituteSettingsContainer}/>
-        <Route path='/events' component={EventsCalendar}/>
       </Route>
     </Router>
   </Provider>

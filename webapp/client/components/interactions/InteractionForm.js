@@ -1,12 +1,10 @@
 import React from 'react';
-import {Card, CardActions, CardText, CardTitle} from 'material-ui/Card';
 import {Col, Row} from 'react-flexbox-grid';
-import FlatButton from 'material-ui/FlatButton';
 import ChipInput from 'material-ui-chip-input';
-import Chip from 'material-ui/Chip';
 import Formsy from 'formsy-react';
 import {FormsyText, FormsyToggle} from 'formsy-material-ui/lib';
 import {simplemde_config} from '../extras/utils';
+import {FlatButton, Card, CardActions, CardText, CardTitle, Chip} from 'material-ui';
 
 class InteractionForm extends React.Component {
   constructor(props) {
@@ -30,7 +28,7 @@ class InteractionForm extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.type === 'PostUpdate') {
+    if (this.props.type === 'PostUpdate') {
       const post = this.props.parentProps.interactions.selectedPost;
       this.setState({
         simplemde: new SimpleMDE({

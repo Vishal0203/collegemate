@@ -5,16 +5,14 @@ import {bindActionCreators} from 'redux';
 import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
-import Chip from 'material-ui/Chip';
-import Divider from 'material-ui/Divider';
 import StickyDiv from 'react-stickydiv';
 import * as interactionActions  from '../../actions/interactions/index';
 import InteractionPost from './InteractionPost';
 import {toggleSnackbar} from '../../actions/commons/index';
-import Paper from 'material-ui/Paper';
 import MobileTearSheet from '../extras/MobileTearSheet';
 import Branding from '../Branding';
 import {hashHistory} from 'react-router';
+import {Paper, Divider, Chip} from 'material-ui';
 
 class InteractionsContainer extends Component {
 
@@ -85,7 +83,7 @@ class InteractionsContainer extends Component {
   renderInteractions() {
     if (this.props.interactions.items.posts.length) {
       return this.props.interactions.items.posts.map((post, i) =>
-        <InteractionPost key={i} parentProps={this.props} post={post} />
+        <InteractionPost key={i} parentProps={this.props} post={post}/>
       );
     }
 
@@ -169,7 +167,9 @@ class InteractionsContainer extends Component {
                           <ul className="how-to-list" style={{fontSize: 14}}>
                             <li>It is recommended to use formal language while asking a question.</li>
                             <li>
-                              Use &nbsp;<a style={{textDecoration: 'none', color: 'black'}} href="https://simplemde.com/markdown-guide" target="_blank" className="fa fa-question-circle"/>&nbsp;
+                              Use &nbsp;<a style={{textDecoration: 'none', color: 'black'}}
+                                           href="https://simplemde.com/markdown-guide" target="_blank"
+                                           className="fa fa-question-circle"/>&nbsp;
                               in editor tools to understand how to use the Editor.
                             </li>
                             <li>Use the preview mode to see the preview of your question.</li>

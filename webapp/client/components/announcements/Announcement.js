@@ -1,12 +1,9 @@
 import React from 'react';
-import {Card, CardHeader, CardText} from 'material-ui/Card/index';
-import Avatar from 'material-ui/Avatar';
-import Dialog from 'material-ui/Dialog';
 import moment from 'moment/moment';
-import FlatButton from 'material-ui/FlatButton';
-import Tooltip from 'material-ui/internal/Tooltip';
-import {grey500, grey600} from 'material-ui/styles/colors';
 import {getDateDiff, markdownToHtml} from '../extras/utils';
+import {grey500, grey600} from 'material-ui/styles/colors';
+import Tooltip from 'material-ui/internal/Tooltip';
+import {Avatar, Dialog, Card, CardHeader, CardText, FlatButton} from 'material-ui';
 
 export class AnnouncementContent extends React.Component {
   constructor(props) {
@@ -226,7 +223,8 @@ export class AnnouncementContent extends React.Component {
         </CardHeader>
 
         <CardText style={this.styles.notificationDescription}>
-          <div className="post-content" dangerouslySetInnerHTML={this.createMarkup(markdownToHtml(announcement.notification_body))}/>
+          <div className="post-content"
+               dangerouslySetInnerHTML={this.createMarkup(markdownToHtml(announcement.notification_body))}/>
         </CardText>
         {this.showAttachments(announcement)}
         <CardText style={this.styles.notificationPublisher}>

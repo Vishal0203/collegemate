@@ -2,20 +2,15 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-import {
-  Step,
-  Stepper,
-  StepButton,
-  StepContent
-} from 'material-ui/Stepper/index';
 import * as snackbarActions  from '../../actions/commons/index';
 import {
   submitStaffAdditionRequest
 }  from '../../actions/users/index';
-import {studentApprovalRequest,staffApprovalRequest} from '../../actions/institutes/index';
-import {studentApprovalAction,staffApprovalAction} from '../../actions/institutes/index';
+import {studentApprovalRequest, staffApprovalRequest} from '../../actions/institutes/index';
+import {studentApprovalAction, staffApprovalAction} from '../../actions/institutes/index';
 import ManageStudents from './ManageStudents';
 import ManageStaff from './ManageStaff';
+import {Step, Stepper, StepButton, StepContent} from 'material-ui';
 
 class InstituteSettingsContainer extends Component {
   constructor(props) {

@@ -1,17 +1,13 @@
 import React, {Component} from 'react';
-import {Grid, Row, Col} from 'react-flexbox-grid';
-import {Card, CardTitle, CardText, CardActions} from 'material-ui/Card/index';
-import RaisedButton from 'material-ui/RaisedButton'
+import {Col} from 'react-flexbox-grid';
 import {FormsyText} from 'formsy-material-ui/lib';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table/index';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import {grey500, grey600} from 'material-ui/styles/colors';
 import {hashHistory} from 'react-router';
-import FontIcon from 'material-ui/FontIcon';
-import Avatar from 'material-ui/Avatar';
-import ListItem from 'material-ui/List/ListItem';
-import IconButton from 'material-ui/IconButton';
+import {grey500, grey600} from 'material-ui/styles/colors';
+import {
+  Card, CardTitle, CardText, CardActions, IconButton, ListItem,
+  Avatar, FontIcon, FlatButton, Dialog, Table, TableBody, TableRow,
+  TableRowColumn, RaisedButton
+} from 'material-ui';
 
 class ManageStaff extends Component {
   constructor(props) {
@@ -103,9 +99,11 @@ class ManageStaff extends Component {
       this.refs.chosenFiles.innerHTML = '';
     }
     else {
-      const data = {memberId: this.state.memberId,
+      const data = {
+        memberId: this.state.memberId,
         email: this.state.email,
-        designation: this.state.designation};
+        designation: this.state.designation
+      };
       const request = {hasFile: false, invite_data: data};
       this.parentProps.actions.submitStaffAdditionRequest(request);
     }
@@ -120,29 +118,31 @@ class ManageStaff extends Component {
   handleApproval(user_guid, status) {
     this.parentProps.actions.staffApprovalAction(user_guid, status);
   }
+
   handleChange(e) {
     this.setState({[e.target.name]: e.target.value});
   }
+
   renderRows() {
-    const { pending_staffs } = this.parentProps.auth_user.selectedInstitute;
+    const {pending_staffs} = this.parentProps.auth_user.selectedInstitute;
     if (pending_staffs && pending_staffs.length !== 0) {
       return pending_staffs.map((staff, i) => {
         const name = `${staff.first_name} ${staff.last_name}`;
         return (
           <TableRow key={i}>
-            <TableRowColumn style={{ padding: '0 12px' }}>
+            <TableRowColumn style={{padding: '0 12px'}}>
               <ListItem
                 disabled={true}
                 primaryText={name}
                 secondaryText={staff.email}
-                leftAvatar={<Avatar src={staff.user_profile.user_avatar} size={45} />}
+                leftAvatar={<Avatar src={staff.user_profile.user_avatar} size={45}/>}
               >
               </ListItem>
             </TableRowColumn>
-            <TableRowColumn style={{ color: grey600 }}>
+            <TableRowColumn style={{color: grey600}}>
               {staff.pivot.member_id}
             </TableRowColumn>
-            <TableRowColumn style={{ color: grey600, width: 80 }}>
+            <TableRowColumn style={{color: grey600, width: 80}}>
               <IconButton>
                 <FontIcon className="material-icons" onClick={() => this.handleApproval(staff.user_guid, 'declined')}>
                   clear
@@ -162,21 +162,22 @@ class ManageStaff extends Component {
     if (pending_staffs && pending_staffs.length === 0) {
       return (
         <TableRow>
-          <TableRowColumn style={{ fontSize: 14 }}>
+          <TableRowColumn style={{fontSize: 14}}>
             There are no pending requests.
           </TableRowColumn>
         </TableRow>
       )
     }
   }
+
   renderStaffApprovals() {
     this.parentProps = this.props.parentProps;
     return (
       <Card style={{marginBottom: 40, marginTop: 20}}>
-        <CardTitle titleStyle={{ fontSize: 20 }} style={this.styles.formTitle}
-                   title="Approve Staff Members" subtitle="Check for email and employee id to validate" />
+        <CardTitle titleStyle={{fontSize: 20}} style={this.styles.formTitle}
+                   title="Approve Staff Members" subtitle="Check for email and employee id to validate"/>
 
-        <CardText style={{ padding: '16px 0' }}>
+        <CardText style={{padding: '16px 0'}}>
           <Table fixedHeader={true} selectable={false}>
             <TableBody displayRowCheckbox={false}>
               {this.renderRows()}
@@ -253,9 +254,9 @@ class ManageStaff extends Component {
               No file chosen
             </em>
             {this.state.showButton ? (
-                <i className="material-icons"
-                   style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
-                   onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
+              <i className="material-icons"
+                 style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
+                 onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
             <p style={{margin: '16px 0 0', fontSize: 12, color: grey500}}>
               Download sample <a href={sample_sheet}>spreadsheet</a> to import via excel
             </p>
@@ -282,7 +283,7 @@ class ManageStaff extends Component {
           open={this.state.open}
           onRequestClose={() => this.toggleConfirmationDialog()}
         >
-          {this.state.showButton ?('Your file will be uploaded') :
+          {this.state.showButton ? ('Your file will be uploaded') :
             ('Staff will have access to create categories and ' +
             'add other staff to Institute. This action is irreversible!')}
         </Dialog>
