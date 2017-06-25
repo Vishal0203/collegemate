@@ -2,17 +2,17 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Announcement from './Announcement'
-import * as announcementActions  from '../../actions/announcements/index';
+import * as announcementActions from '../../actions/announcements/index';
 import Header from '../Header';
 import Loader from 'halogenium/ScaleLoader';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'redux-infinite-scroll';
 import StickyDiv from 'react-stickydiv';
 import letterAvatarColors from '../../styles/theme/letterAvatarColors';
-import Branding from '../Branding';
+import Branding from '../footer/Branding';
 import Events from './Events';
 import {grey500} from 'material-ui/styles/colors';
-import {Divider, Chip, Paper, FontIcon, IconButton, Card, CardHeader, FlatButton, Dialog} from 'material-ui';
+import {Divider, Chip, Paper, IconButton, FlatButton, Dialog} from 'material-ui';
 import Slider from 'react-slick';
 import SubscriptionForm from '../InstituteSettings/SubscriptionForm';
 import {
@@ -25,6 +25,7 @@ import {hashHistory} from 'react-router';
 import AnnouncementForm from './AnnouncementForm';
 import JobAnnouncement from './JobAnnouncement';
 import SlickNavButton from './SlickNavButton';
+import Settings from 'material-ui/svg-icons/action/settings'
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
@@ -179,13 +180,14 @@ class AnnouncementsContainer extends Component {
       autoplay: false,
       autoplaySpeed: 6000,
       arrows: true,
-      nextArrow: <SlickNavButton onTouchTap={() => this.setState({sliderChanged: true})} />,
+      nextArrow: <SlickNavButton onTouchTap={() => this.setState({sliderChanged: true})}/>,
       prevArrow: <SlickNavButton onTouchTap={() => this.setState({sliderChanged: true})}/>,
       useCSS: true,
       adaptiveHeight: true,
       afterChange: () => this.setState({sliderChanged: false})
     };
-    const defaultAnnouncements = this.props.announcements.defaultAnnouncements.map( announcement =>
+
+    const defaultAnnouncements = this.props.announcements.defaultAnnouncements.map((announcement) =>
       <div key={announcement.notification_guid}>
         <JobAnnouncement
           onEditClick={() => this.onAnnouncementEditClick(announcement)}
@@ -195,10 +197,18 @@ class AnnouncementsContainer extends Component {
         />
       </div>
     );
-    if (this.props.announcements.defaultAnnouncements.length) {      
+
+    if (this.props.announcements.defaultAnnouncements.length) {
       return (
         <div>
-          <span style={{color: '#000', display: 'block', fontWeight: '500', fontFamily: 'Roboto, sans-serif', fontSize: '15px', marginTop: '25px'}}>
+          <span style={{
+            color: '#000',
+            display: 'block',
+            fontWeight: '500',
+            fontFamily: 'Roboto, sans-serif',
+            fontSize: '15px',
+            marginTop: '25px'
+          }}>
             Announcements you might be interested in
           </span>
           <Divider style={{marginTop: 2, marginBottom: 2}}/>
@@ -206,7 +216,6 @@ class AnnouncementsContainer extends Component {
             {defaultAnnouncements}
           </Slider>
         </div>
-        //</Card>
       );
     }
     return null;
@@ -272,6 +281,7 @@ class AnnouncementsContainer extends Component {
         onTouchTap={() => this.toggleAnnouncementSettings(false)}
       />,
     ];
+
     return (
       <Dialog
         title="Category Settings"
@@ -283,7 +293,6 @@ class AnnouncementsContainer extends Component {
       >
         <SubscriptionForm parentProps={this.props} showOptions={false}/>
       </Dialog>
-
     );
   }
 
@@ -305,7 +314,7 @@ class AnnouncementsContainer extends Component {
               <Row>
                 <Col xs={8}>
                   <div>
-                  {this.renderDefaultAnnouncements()}
+                    {this.renderDefaultAnnouncements()}
                   </div>
                   <InfiniteScroll hasMore={this.props.announcements.hasMore}
                                   loadingMore={this.props.announcements.loadingMore}
@@ -351,14 +360,11 @@ class AnnouncementsContainer extends Component {
                           <IconButton iconStyle={{color: grey500, fontSize: 20}}
                                       style={{width: 29, height: 29, padding: 0}}
                                       tooltip="Subscriptions">
-                            <FontIcon className="material-icons"
-                                      onTouchTap={() => this.toggleAnnouncementSettings(true)}>
-                              settings
-                            </FontIcon>
+                            <Settings onTouchTap={() => this.toggleAnnouncementSettings(true)}/>
                           </IconButton>
                         </div>
                       </div>
-                      <Branding />
+                      <Branding/>
                     </StickyDiv>
                   </div>
                 </Col>

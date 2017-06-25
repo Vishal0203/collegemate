@@ -27,8 +27,8 @@ class NotificationController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('belongs_to_institute');
+        $this->middleware('auth', ['except' => ['getJobsForLanding']]);
+        $this->middleware('belongs_to_institute', ['except' => ['getJobsForLanding']]);
     }
 
     /**
@@ -255,6 +255,14 @@ class NotificationController extends Controller
         $events = NotificationData::whereIn('category_id', $category_ids->toArray())
             ->where('event_date', '>=', $start)->where('event_date', '<=', $end)->orderBy('event_date', 'asc')->get();
         return response()->json(compact('events'), 200);
+    }
+
+    public function getJobsForLanding(Request $request)
+    {
+        $jobs = NotificationData::whereHas('category', function ($category) {
+            $category->where('is_default', true);
+        })->orderBy('edited_at', 'DESC')->take(3)->get();
+        return response()->json(compact('jobs'), 200);
     }
 
     public function apply($institute_guid, $notification_guid, Request $request)

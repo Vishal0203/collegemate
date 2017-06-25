@@ -37,7 +37,7 @@ class Main extends React.Component {
                 id_token: GoogleUser.getAuthResponse().id_token
               });
             } else {
-              hashHistory.push('/login');
+              hashHistory.push('/welcome');
             }
           });
       });

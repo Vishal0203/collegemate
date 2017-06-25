@@ -1,0 +1,24 @@
+{
+  "students": [
+    {
+      "primaryText": "Announcements",
+      "secondaryText": "Subscribe to the notifications you want to be updated or be an announcer of a topic."
+    },
+    {
+      "primaryText": "Job updates",
+      "secondaryText": "Get direct updates about jobs from companies almost regularly on College Mate and apply with just a click."
+    },
+    {
+      "primaryText": "Online Resume",
+      "secondaryText": "Build an online resume with College Mate and share it with hiring companies."
+    },
+    {
+      "primaryText": "Stay Connected",
+      "secondaryText": "Stay in touch with alumni of your college and get your questions answered."
+    },
+    {
+      "primaryText": "Q & A",
+      "secondaryText": "Get all your doubts clarified using College Mate's Q&A portal and also by our guest speakers."
+    }
+  ]
+}

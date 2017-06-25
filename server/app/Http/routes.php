@@ -32,6 +32,14 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::post('feedback', 'FeedbackController@create');
 
     Route::resource(
+        'testimonials',
+        'TestimonialController',
+        ['only' => ['store', 'index']]
+    );
+
+    Route::get('get_jobs_landing', 'NotificationController@getJobsForLanding');
+
+    Route::resource(
         'projects',
         'UserProjectController',
         ['except' => ['show', 'edit', 'create']]

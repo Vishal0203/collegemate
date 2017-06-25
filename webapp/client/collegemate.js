@@ -5,6 +5,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import Main from './components/Main';
 import {Router, Route, IndexRoute, hashHistory, Redirect} from 'react-router';
 import Auth from './components/auth/Auth'
+import Testimonials from './components/footer/Testimonials'
 import AnnouncementsContainer from './components/announcements/AnnouncementsContainer';
 import EventsCalendar from './components/announcements/EventsCalendar';
 import SettingsContainer from './components/settings/SettingsContainer';
@@ -31,7 +32,7 @@ const router = (
   <Provider store={store}>
     <Router history={history}>
       <Redirect from="/" to="/announcements"/>
-      <Route path='/login' component={Auth}/>
+      <Route path='/welcome' component={Auth}/>
       <Route path='/' component={Main}>
         <Route path="/announcements" component={AnnouncementsContainer}/>
         <Route path='/interactions'>
@@ -42,6 +43,7 @@ const router = (
         <Route path='/settings' component={SettingsContainer}/>
         <Route path='/institute' component={InstituteContainer}/>
         <Route path='/institute_settings' component={InstituteSettingsContainer}/>
+        <Route path='/testimonial' component={Testimonials}/>
       </Route>
     </Router>
   </Provider>

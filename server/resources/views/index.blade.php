@@ -11,7 +11,6 @@
 
   <title>{{ $app_name }}</title>
   <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">
 </head>

@@ -11,7 +11,7 @@ import Header from '../Header';
 import Comment from './Comment'
 import PostUpdateDialog from './PostUpdateDialog';
 import MobileTearSheet from '../extras/MobileTearSheet';
-import Branding from '../Branding';
+import Branding from '../footer/Branding';
 import ReplyForm from './ReplyForm';
 import {markdownToHtml} from '../extras/utils';
 import {grey500, grey600} from 'material-ui/styles/colors';

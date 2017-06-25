@@ -76,7 +76,7 @@ class User extends Model implements
 
     public function receivesBroadcastNotificationsOn()
     {
-        return new Channel('users_'. $this->user_guid);
+        return new Channel('users_' . $this->user_guid);
     }
 
     public function feedbacks()
@@ -92,6 +92,11 @@ class User extends Model implements
     public function projects()
     {
         return $this->hasMany('App\UserProject');
+    }
+
+    public function testimonials()
+    {
+        return $this->hasMany('App\Testimonial');
     }
 
     public function toArray()
@@ -116,6 +121,7 @@ class User extends Model implements
 
         return $attributes;
     }
+
     public function routeNotificationForMail()
     {
         return $this->email;

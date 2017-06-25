@@ -10,7 +10,7 @@ import * as interactionActions  from '../../actions/interactions/index';
 import InteractionPost from './InteractionPost';
 import {toggleSnackbar} from '../../actions/commons/index';
 import MobileTearSheet from '../extras/MobileTearSheet';
-import Branding from '../Branding';
+import Branding from '../footer/Branding';
 import {hashHistory} from 'react-router';
 import {Paper, Divider, Chip} from 'material-ui';
 

@@ -6,10 +6,13 @@ import ChipInput from 'material-ui-chip-input';
 import {grey500, grey600, red500} from 'material-ui/styles/colors'
 import CategoryNotifiersDialog from '../settings/CategoryNotifiersDialog';
 import {
-  AutoComplete, FontIcon, MenuItem, IconMenu, IconButton, Chip,
+  AutoComplete, MenuItem, IconMenu, IconButton, Chip,
   RaisedButton, FlatButton, Dialog, Subheader, Toggle, Table,
   TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn
 } from 'material-ui';
+import MoreHoriz from 'material-ui/svg-icons/navigation/more-horiz';
+import Settings from 'material-ui/svg-icons/action/settings';
+import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
 
 class SubscriptionForm extends Component {
   constructor(props) {
@@ -270,7 +273,7 @@ class SubscriptionForm extends Component {
         <IconMenu
           iconButtonElement={
             <IconButton>
-              <FontIcon className="material-icons" color={grey500}>more_horiz</FontIcon>
+              <MoreHoriz color={grey500}/>
             </IconButton>
           }
           anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -282,12 +285,7 @@ class SubscriptionForm extends Component {
             primaryText="Settings"
             onTouchTap={() => this.toggleCategoryNotifiersDialog(category, subscribed_as)}
             leftIcon={
-              <FontIcon
-                className="material-icons"
-                style={{fontSize: 22}}
-                color={grey500}>
-                settings
-              </FontIcon>
+              <Settings color={grey500} style={{fontSize: 22}}/>
             }
           />
           <MenuItem
@@ -295,12 +293,7 @@ class SubscriptionForm extends Component {
             primaryText="Delete"
             onTouchTap={() => this.toggleDeletionConfirmationDialog(category)}
             leftIcon={
-              <FontIcon
-                className="material-icons"
-                style={{fontSize: 22}}
-                color={grey500}>
-                delete_forever
-              </FontIcon>
+              <DeleteForever color={grey500} style={{fontSize: 22}}/>
             }
           />
         </IconMenu>
@@ -308,7 +301,7 @@ class SubscriptionForm extends Component {
     } else {
       return (
         <IconButton onTouchTap={() => this.toggleCategoryNotifiersDialog(category, subscribed_as)}>
-          <FontIcon className="material-icons" color={grey500}>more_horiz</FontIcon>
+          <MoreHoriz color={grey500}/>
         </IconButton>
       )
     }
