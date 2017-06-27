@@ -2,7 +2,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="author" content="ToDevs">
   <meta name="google-site-verification" content="o1_bHyir_x0M5pDoMTDpc4ZHo2Hl0QXCrv5xNFaZkdw" />
+  <meta name="description" content="College Mate provides a platform for educational institutes to easily connect to industries, hence bridging the gap between students and the industries in India." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="College placements, Fresher jobs, Inter college network, college to company network,
+  Connect to companies, College notice board, Subscribed announcements, Private Q&A forum for college, Connect to companies directly, Connect to colleges directly" />
+
   <title>{{ $app_name }}</title>
   <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
