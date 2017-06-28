@@ -38,14 +38,13 @@ function *handleAuthResponse(response) {
   yield put(userActions.subscribeChannel(`private-users_${user_guid}:new-notification`, notificationActions.newNotification));
   if (response.data.user.default_institute) {
     yield call(loadUserData, response);
+    hashHistory.replace('/announcements');
   }
   else {
-    hashHistory.replace('/institute');
     yield put(toggleSnackbar('Please Select an Institute'));
+    hashHistory.replace('/institute');
   }
-
   yield put(userActions.userLoginResponse(response.data));
-  hashHistory.replace('/announcements');
 }
 
 function *userAuthentication() {
