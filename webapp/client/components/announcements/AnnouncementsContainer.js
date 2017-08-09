@@ -131,7 +131,6 @@ class AnnouncementsContainer extends Component {
       return this.props.announcements.items.data.map((announcement, i) =>
         <Announcement
           key={i}
-          terimakabhosda="betichod"
           onEditClick={() => this.onAnnouncementEditClick(announcement)}
           parentProps={this.props}
           announcement={announcement}
