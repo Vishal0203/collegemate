@@ -156,6 +156,21 @@ function *unsubscribeAnnouncement(params) {
   }
 }
 
+function *fetchDefaultAnnouncement(params) {
+  const response = yield call(HttpHelper, params.url, 'GET', null, params.url_params);
+  yield put(announcementActions.fetchDefaultAnnouncementResponse(response.data));  
+}
+
+function *applyForJob(params) {
+  const response = yield call(HttpHelper, params.url,'POST',null,null);
+  if(response.status === 200) {
+    yield put(toggleSnackbar('Job Applied Successfully!'));
+  }
+  else {
+    yield put(toggleErrorDialog());
+  }
+}
+
 /*
  Watchers
  */
@@ -196,6 +211,15 @@ function *watchAnnouncementChannelUnsubscribe() {
   yield *takeEvery(userActions.UNSUBSCRIBE_ANNOUNCEMNET_REQUEST, unsubscribeAnnouncement)
 }
 
+function *watchDefaultAnnouncementFetch() {
+  yield *takeEvery(announcementActions.FETCH_DEFAULT_ANNOUNCEMENT_REQUEST, fetchDefaultAnnouncement);
+}
+
+function *watchJobApply() {
+  yield *takeLatest(announcementActions.APPLY_JOB, applyForJob);
+}
+
+
 export default function *announcementSaga() {
   yield [
     fork(watchCreateAnnouncement),
@@ -206,6 +230,8 @@ export default function *announcementSaga() {
     fork(watchEventsFetch),
     fork(watchAnnouncementChannelSubscribe),
     fork(watchAnnouncementChannelUnsubscribe),
-    fork(watchSingleAnnouncementFetch)
+    fork(watchSingleAnnouncementFetch),
+    fork(watchDefaultAnnouncementFetch),
+    fork(watchJobApply)
   ]
 }

@@ -18,6 +18,8 @@ import rootSaga from './sagas/index';
 import {syncHistoryWithStore} from 'react-router-redux';
 import './styles/style.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 injectTapEventPlugin();
 

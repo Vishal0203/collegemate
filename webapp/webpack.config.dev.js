@@ -53,7 +53,15 @@ module.exports = {
           digest: 'hex',
           name: '[hash].[ext]'
         }
-      }
+      },
+      // for slider
+      {
+        test: /\.(ttf|eot|woff|woff2)$/,
+        loader: 'file-loader',
+        options: {
+          name: 'fonts/[name].[ext]',
+        },
+      },
     ]
   }
 };

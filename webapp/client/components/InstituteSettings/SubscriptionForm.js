@@ -318,12 +318,13 @@ class SubscriptionForm extends Component {
     let allCategories = this.props.parentProps.auth_user.selectedInstitute.categories.filter(
       (category) => {
         return category.category_guid.toLowerCase().indexOf(
-            this.state.searchText.toLowerCase()) !== -1;
+            this.state.searchText.toLowerCase()) !== -1 && !category.is_default;
       }
     );
-    const {subscriptions, notifying_categories} = this.props.parentProps.auth_user.selectedInstitute;
+    let {subscriptions, notifying_categories} = this.props.parentProps.auth_user.selectedInstitute;
     let category_list = [];
 
+    subscriptions = subscriptions.filter((category) => !category.is_default);
 
     allCategories.map((category, index) => {
       let subscribed_as = 'Not Subscribed';

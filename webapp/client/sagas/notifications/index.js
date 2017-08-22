@@ -48,7 +48,8 @@ function *newNotification(params) {
   //For new approval Notifications
   if (browser_location === '/institute_settings' &&
     params.notification.type === APPROVAL_NOTIFICATION &&
-    params.notification.data.institute_guid === selectedInstitute.inst_profile_guid) {
+    (params.notification.data.institute_guid === null ||
+    params.notification.data.institute_guid === selectedInstitute.inst_profile_guid)) {
     let approvalUser = params.notification.data.user;
     let role = approvalUser.institutes[0].pivot.role;
     approvalUser.pivot = approvalUser.institutes[0].pivot;

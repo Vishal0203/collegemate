@@ -26,7 +26,8 @@ const initialState = {
     monthEventsEndDate: null
   },
   singleAnnouncement: null,
-  singleAnnouncementLoader: false
+  singleAnnouncementLoader: false,
+  defaultAnnouncements: []
 };
 
 function updateEvents(state, notification) {
@@ -223,8 +224,15 @@ export default function announcementReducer(state = initialState, action) {
     case actions.RELOAD_ANNOUNCEMENTS: {
       return {
         ...initialState,
+        defaultAnnouncements: state.defaultAnnouncements,
         categories: state.categories,
         filters: state.filters
+      }
+    }
+    case actions.FETCH_DEFAULT_ANNOUNCEMENT_RESPONSE: {
+      return {
+        ...state,
+        defaultAnnouncements: action.response.data
       }
     }
     case OPEN_CATEGORY_ANNOUNCEMENTS: {
@@ -290,6 +298,7 @@ export default function announcementReducer(state = initialState, action) {
       if (action.payload.pathname !== '/') {
         return {
           ...initialState,
+          defaultAnnouncements: state.defaultAnnouncements,
           categories: state.categories,
           filters: state.filters
         }

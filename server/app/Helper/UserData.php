@@ -2,6 +2,8 @@
 
 namespace App\Helper;
 
+use App\Category;
+
 class UserData
 {
     private static function getLoadableRelations($user)
@@ -32,6 +34,30 @@ class UserData
         ];
     }
 
+    private static function getDefaultCategories($user)
+    {
+        if (!$user['defaultInstitute']) {
+            return;
+        }
+        $defaultCategories = Category::where('is_default', true)
+            ->where(function ($allDefault) use ($user) {
+                $allDefault->where('institute_id', $user->defaultInstitute['id'])
+                    ->orWhere('institute_id', null);
+            })->get();
+
+        $notifyingDefaultCategories = Category::where('is_default', true)
+            ->where('institute_id', null)
+            ->whereHas('notifiers', function ($notifiers) use ($user) {
+                $notifiers->where('user_id', $user['id']);
+            })->get();
+
+        $user['defaultInstitute']['default_categories'] = $defaultCategories;
+
+        $temp = $user['defaultInstitute']['notifyingCategories'];
+        unset($user['defaultInstitute']['notifyingCategories']);
+        $user['defaultInstitute']['notifying_categories'] = $temp->merge($notifyingDefaultCategories);
+    }
+
     public static function buildUserReturnable($user, $institutes_only = false)
     {
         $loadable_relations = UserData::getLoadableRelations(\Auth::user());
@@ -40,6 +66,9 @@ class UserData
         }
 
         $user->load($loadable_relations);
+
+        UserData::getDefaultCategories($user);
+
         if (!$institutes_only) {
             foreach ($user['unreadNotifications'] as $notification) {
                 unset(

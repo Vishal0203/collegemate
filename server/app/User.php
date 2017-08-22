@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Support\Facades\DB;
 
 class User extends Model implements
     AuthenticatableContract,
@@ -50,8 +51,12 @@ class User extends Model implements
 
     public function subscriptions()
     {
+        $defaultCategories = Category::where('is_default', true)
+            //defaulting pivot columns for enabling union
+            ->select('*', DB::raw('0 as pivot_user_id'), DB::raw('0 as pivot_category_id'));
         return
-            $this->belongsToMany('App\Category', 'subscriptions_user', 'user_id', 'category_id');
+            $this->belongsToMany('App\Category', 'subscriptions_user', 'user_id', 'category_id')
+                ->union($defaultCategories);
     }
 
     public function userProfile()
@@ -77,6 +82,11 @@ class User extends Model implements
     public function feedbacks()
     {
         return $this->hasMany('App\Feedback');
+    }
+
+    public function appliedJobs()
+    {
+        return $this->belongstoMany('App\NotificationData', 'users_jobs', 'user_id', 'notification_id');
     }
 
     public function toArray()
