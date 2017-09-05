@@ -73,15 +73,6 @@ class Navbar extends React.Component {
     this.props.actions.userLogout()
   };
 
-  renderAddStaffButton() {
-    const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
-    if (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff') {
-      return (
-        <MenuItem onClick={() => hashHistory.push('/institute_settings')} primaryText="Institute Settings"/>
-      );
-    }
-  }
-
   renderBrand() {
     const {auth_user} = this.props;
     let member_id, designation;
@@ -210,7 +201,7 @@ class Navbar extends React.Component {
                       targetOrigin={{horizontal: 'right', vertical: 'top'}}
                       open={this.state.userMenu}
                       onRequestChange={(open) => this.setState({userMenu: open})}>
-              {this.renderAddStaffButton()}
+              <MenuItem onClick={() => hashHistory.push('/institute_settings')} primaryText="Institute Settings"/>
               <MenuItem onClick={() => hashHistory.push('/settings')} primaryText="User Settings"/>
               <Divider />
               <MenuItem primaryText="Sign out" onClick={() => this.logoutUser()}/>

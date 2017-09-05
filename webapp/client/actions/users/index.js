@@ -32,10 +32,16 @@ export const REMOVE_NOTIFIER_REQUEST = 'REMOVE_NOTIFIER_REQUEST';
 export const REMOVE_NOTIFIER_RESPONSE = 'REMOVE_NOTIFIER_RESPONSE';
 export const STAFF_ADD_REQUEST = 'STAFF_ADD_REQUEST';
 export const STAFF_ADD_RESPONSE = 'STAFF_ADD_RESPONSE';
-
+export const USER_INST_STAFF_GET_REQUEST = 'USER_INST_STAFF_GET_REQUEST';
+export const USER_INST_STUDENT_GET_REQUEST = 'USER_INST_STUDENT_GET_REQUEST';
+export const USER_INST_STAFF_GET_RESPONSE = 'USER_INST_STAFF_GET_RESPONSE';
+export const USER_INST_STUDENT_GET_RESPONSE = 'USER_INST_STUDENT_GET_RESPONSE';
 export const CHANGE_SELECTED_INSTITUTE_REQUEST = 'CHANGE_SELECTED_INSTITUTE_REQUEST';
 export const SELECTED_INSTITUTE_CHANGED = 'SELECTED_INSTITUTE_CHANGED';
-
+export const DEL_USR_REQ = 'DEL_USR_REQ';
+export const UPDATE_USR_BY_STAFF = 'UPDATE_USR_BY_STAFF';
+export const DEL_USR_RES = 'DEL_USR_RES';
+export const UPDATE_USR_BY_STAFF_RES = 'UPDATE_USR_BY_STAFF_RES';
 export function userLogin() {
   return {
     type: USER_LOGIN_REQUEST
@@ -251,5 +257,60 @@ export function selectedInstituteChanged(response) {
   return {
     type: SELECTED_INSTITUTE_CHANGED,
     response
+  }
+}
+
+export function getInstStudentsRequest(data) {
+  return {
+    type: USER_INST_STUDENT_GET_REQUEST,
+    data
+  }
+}
+
+export function getInstStaffRequest(data) {
+  return {
+    type: USER_INST_STAFF_GET_REQUEST,
+    data
+  }
+}
+
+export function getInstStudentsResponse(response) {
+  return {
+    type: USER_INST_STUDENT_GET_RESPONSE,
+    response
+  }
+}
+
+export function getInstStaffResponse(response) {
+  return {
+    type: USER_INST_STAFF_GET_RESPONSE,
+    response
+  }
+}
+export function deleteUserRequest(user_guid) {
+  return {
+    type: DEL_USR_REQ,
+    user_guid
+  }
+}
+
+export function updateUserByStaff(data) {
+  return {
+    type: UPDATE_USR_BY_STAFF,
+    data
+  }
+}
+
+export function deleteUserResponse(data) {
+  return {
+    type: DEL_USR_RES,
+    data
+  }
+}
+
+export function updateUserByStaffRes(data) {
+  return {
+    type: UPDATE_USR_BY_STAFF_RES,
+    data
   }
 }

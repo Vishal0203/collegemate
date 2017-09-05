@@ -24,12 +24,7 @@ class ManageStaff extends Component {
   }
 
   componentWillMount() {
-    const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
-    if (role === 'inst_student') {
-      hashHistory.replace('/');
-    } else {
-      this.props.parentProps.actions.staffApprovalRequest();
-    }
+    this.props.parentProps.actions.staffApprovalRequest();
   }
 
   get styles() {
@@ -254,9 +249,9 @@ class ManageStaff extends Component {
               No file chosen
             </em>
             {this.state.showButton ? (
-              <i className="material-icons"
-                 style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
-                 onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
+                <i className="material-icons"
+                   style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
+                   onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
             <p style={{margin: '16px 0 0', fontSize: 12, color: grey500}}>
               Download sample <a href={sample_sheet}>spreadsheet</a> to import via excel
             </p>

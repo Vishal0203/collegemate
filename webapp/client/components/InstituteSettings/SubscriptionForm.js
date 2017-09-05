@@ -4,7 +4,7 @@ import {Row, Col} from 'react-flexbox-grid';
 import {FormsyText, FormsyCheckbox} from 'formsy-material-ui/lib';
 import ChipInput from 'material-ui-chip-input';
 import {grey500, grey600, red500} from 'material-ui/styles/colors'
-import CategoryNotifiersDialog from './CategoryNotifiersDialog';
+import CategoryNotifiersDialog from '../settings/CategoryNotifiersDialog';
 import {
   AutoComplete, FontIcon, MenuItem, IconMenu, IconButton, Chip,
   RaisedButton, FlatButton, Dialog, Subheader, Toggle, Table,

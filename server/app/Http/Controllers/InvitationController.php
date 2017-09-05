@@ -94,7 +94,7 @@ class InvitationController extends Controller
             $t = time();
             $user_data['pivot'] = [
                 'role' => $request['role'],
-                'invitation_status' => 'pending',
+                'invitation_status' => 'accepted',
                 'designation' => $request['designation'],
                 'member_id' => $request['member_id'],
                 'created_at' => date("Y-m-d H:i:s", $t),

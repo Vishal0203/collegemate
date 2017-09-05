@@ -14,7 +14,7 @@ import Events from './Events';
 import {grey500} from 'material-ui/styles/colors';
 import {Divider, Chip, Paper, FontIcon, IconButton, FlatButton, Dialog} from 'material-ui';
 
-import SubscriptionForm from '../settings/SubscriptionForm';
+import SubscriptionForm from '../InstituteSettings/SubscriptionForm';
 import {
   subscribeAnnouncementRequest,
   unsubscribeAnnouncementRequest,

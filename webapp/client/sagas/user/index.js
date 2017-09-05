@@ -180,6 +180,71 @@ function *changeInstiute(params) {
   }
 }
 
+function *getInstMembers(params) {
+  let selected_institute = yield select(selectors.selected_institute);
+  const institute_guid = selected_institute.inst_profile_guid;
+  const formData = {
+    sortBy: params.data.sortBy,
+    sortDir: params.data.sortDir,
+    pageNo: params.data.pageNo,
+    FilterCol: params.data.FilterCol,
+    FilterVal: params.data.FilterVal,
+    role: params.data.role
+  };
+
+  const role = params.data.role;
+
+  if (role === 'inst_student') {
+    let resp1 = '';
+    resp1 = yield call(HttpHelper, `institute/${institute_guid}/getInstUsers`, 'GET', null, formData);
+    if (resp1.status === 200) {
+      if (resp1.data.total === 0) {
+        yield put(userActions.getInstStudentsResponse(resp1.data));
+        yield put(toggleSnackbar('No Student Records Found'));
+      } else {
+        yield put(userActions.getInstStudentsResponse(resp1.data));
+      }
+    }
+  }
+  if (role === 'inst_staff') {
+    let resp2 = '';
+    resp2 = yield call(HttpHelper, `institute/${institute_guid}/getInstUsers`, 'GET', null, formData);
+    if (resp2.status === 200) {
+      if (resp2.data.total === 0) {
+        yield put(userActions.getInstStaffResponse(resp2.data));
+        yield put(toggleSnackbar('No Staff Records Found'));
+      } else {
+        yield put(userActions.getInstStaffResponse(resp2.data));
+      }
+    }
+  }
+}
+
+function *delInstUser(params) {
+  let selected_institute = yield select(selectors.selected_institute);
+  const institute_guid = selected_institute.inst_profile_guid;
+  let response = yield call(HttpHelper, `institute/${institute_guid}/deleteInstUser`, 'POST', params, null);
+  if (response.status === 200) {
+    yield put(userActions.deleteUserResponse(response.data));
+    yield put(toggleSnackbar('User Deleted'));
+  } else {
+    yield put(toggleSnackbar('Deletion unsuccessful'));
+  }
+}
+
+function *updateUserByStaff(params) {
+
+  let selected_institute = yield select(selectors.selected_institute);
+  const institute_guid = selected_institute.inst_profile_guid;
+  let response = yield call(HttpHelper, `institute/${institute_guid}/updateUserByStaff`, 'POST', params.data, null);
+  if (response.status === 200) {
+    yield put(userActions.updateUserByStaffRes(response.data));
+    yield put(toggleSnackbar('User Updated'));
+  } else {
+    yield put(toggleSnackbar('Update unsuccessful'));
+  }
+}
+
 /*
  Watchers
  */
@@ -221,6 +286,22 @@ function *watchInstituteChangeRequest() {
   yield *takeLatest(userActions.CHANGE_SELECTED_INSTITUTE_REQUEST, changeInstiute)
 }
 
+function *watchGetInstStudents() {
+  yield *takeLatest(userActions.USER_INST_STUDENT_GET_REQUEST, getInstMembers)
+}
+
+function *watchGetInstStaff() {
+  yield *takeLatest(userActions.USER_INST_STAFF_GET_REQUEST, getInstMembers)
+}
+
+function *watchDeleteUserFromInstitute() {
+  yield *takeLatest(userActions.DEL_USR_REQ, delInstUser)
+}
+
+function *watchUpdateUserByStaff() {
+  yield *takeLatest(userActions.UPDATE_USR_BY_STAFF, updateUserByStaff)
+}
+
 export default function *userSaga() {
   yield [
     fork(watchGoogleAuth),
@@ -231,6 +312,10 @@ export default function *userSaga() {
     fork(watchDeleteAnnouncementCategory),
     fork(watchFeedbackSubmit),
     fork(watchInviteStaffMember),
-    fork(watchInstituteChangeRequest)
+    fork(watchInstituteChangeRequest),
+    fork(watchGetInstStudents),
+    fork(watchGetInstStaff),
+    fork(watchDeleteUserFromInstitute),
+    fork(watchUpdateUserByStaff)
   ]
 }

@@ -59,6 +59,18 @@ class Institute extends Model
             ->withPivot('role', 'invitation_status', 'member_id');
     }
 
+    public function getInstStudents($field_name, $field_value, $sort_field, $sort_dir, $role)
+    {
+        return $this->belongsToMany('App\User', 'users_institutes')
+            ->with('userProfile')
+            ->wherePivot('role', $role)
+            ->whereNotNull('member_id')
+            ->whereNotNull('email')
+            ->where($field_name, 'like', '%' . $field_value . '%')
+            ->withPivot('role', 'invitation_status', 'member_id', 'designation')
+            ->orderBy($sort_field, $sort_dir);
+    }
+
     public function dynamicTables()
     {
         return $this->hasMany('App\DynamicTables');

@@ -63,7 +63,9 @@ Route::group(['prefix' => 'api/v1_0'], function () {
             'MemberController',
             ['only' => ['index', 'store', 'destroy']]
         );
-
+        Route::get('getInstUsers', 'MemberController@getMembersOfInstitute');
+        Route::post('deleteInstUser', 'MemberController@deleteInstUser');
+        Route::post('updateUserByStaff', 'MemberController@updateUserByStaff');
         Route::post('category/assign_notifier', 'CategoryController@assignNotifier');
         Route::delete('category/remove_notifier', 'CategoryController@removeNotifier');
         Route::get('category/notifiers', 'CategoryController@getNotifiers');

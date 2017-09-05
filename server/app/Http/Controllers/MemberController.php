@@ -12,7 +12,10 @@ use Faker;
 use App\User;
 use App\UserProfile;
 use App\Institute;
+use App\UserInstitute;
 use Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MemberController extends Controller
 {
@@ -96,9 +99,9 @@ class MemberController extends Controller
             'user_profile_guid' => $internals->uuid,
             'user_id' => $user['id']
         ]);
-        
+
         $user_data = InvitationController::addUserInstitute($institute, $user, $data);
-            
+
         return response()->json(compact('user_data'), 201);
     }
 
@@ -136,5 +139,76 @@ class MemberController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'member_id' => 'required|unique:users_institutes,member_id'
         ], $messages);
+    }
+
+
+    public function getMembersOfInstitute(Request $request, $institute_guid)
+    {
+        log::info($request['role']);
+        $institute = Institute::where('inst_profile_guid', $institute_guid)->first();
+        $records = ($request['pageNo'] -1)*10;
+        $sortBy = $request['sortBy'];
+        $sortDir = $request['sortDir'];
+        $recs = $institute
+            ->getInstStudents($request['FilterCol'], $request['FilterVal'], $sortBy, $sortDir, $request['role']);
+        $total = $recs -> count();
+        log::info('total '.$total.' '.$request['role']);
+        $user = $recs ->offset($records)
+            ->take(10)
+            ->get();
+        $pageNo = $request['pageNo'];
+        if ($total > ($records + 10)) {
+            $moreInd = 'Y';
+        } else {
+            $moreInd= 'N';
+        }
+        return response()->json(compact('total', 'moreInd', 'pageNo', 'sortBy', 'sortDir', 'user'), 200);
+    }
+
+
+
+    public function deleteInstUser(Request $request, $institute_guid)
+    {
+        $user = User::where('user_guid', $request['user_guid'])
+            ->with(['institutes' => function ($query) use ($institute_guid) {
+                $query->where('inst_profile_guid', $institute_guid);
+            }])->get()->first();
+        $role = $user['institutes'][0]['pivot']['role'];
+
+        if ($user['institutes'][0]['pivot']['invitation_status'] === 'accepted') {
+            $user->institutes()->detach($user['institutes'][0]);
+            return response()->json(['success' => 'member removed successfully',
+                'user_guid'=> $request['user_guid'],'role'=> $role], 200);
+        } else {
+            return response()->json(['error' => 'invalid delete request'], 400);
+        }
+    }
+
+    public function updateUserByStaff(Request $request, $institute_guid)
+    {
+        $user = User::where('user_guid', $request['user_guid'])
+            ->with(['institutes' => function ($inst) use ($institute_guid) {
+                $inst->where('inst_profile_guid', $institute_guid)
+                    ->first();
+            }])->first();
+        $user ->update([
+            'first_name' => $request['first_name'],
+            'last_name' => $request['last_name']
+        ]);
+        try {
+            $userinstitute = $user['institutes'][0]['pivot'];
+            $userinstitute->update([
+                'member_id' => $request['memberId'],
+                'designation' => $request['designation']
+            ]);
+        } catch (QueryException $e) {
+            return response()->json([
+                'error' => 'The hall ticket number or employee ID is already registered in this Institute.'
+            ], 403);
+        }
+        $institute = Institute::where('inst_profile_guid', $institute_guid)->first();
+        $recs = $institute->getInstStudents('email', $user['email'], 'email', 'ASC', $request['role']);
+        return response()->json(['success' => 'member update successfully', 'user'=>$recs->first(),
+            'role'=>$request['role']], 200);
     }
 }
