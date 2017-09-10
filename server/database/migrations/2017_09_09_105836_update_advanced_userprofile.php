@@ -34,7 +34,15 @@ class UpdateAdvancedUserprofile extends Migration
     public function down()
     {
         Schema::table('users_institutes', function (Blueprint $table) {
-            $table->dropColumn('designation');
+            $table->dropColumn('specialization');
+            $table->dropColumn('cgpa');
+            $table->dropColumn('graduated_year');
+        });
+
+        Schema::table('user_profile', function (Blueprint $table) {
+            $table->dropColumn('github_link');
+            $table->dropColumn('linkedin_link');
+            $table->dropColumn('stackoverflow_link');
         });
     }
 }
