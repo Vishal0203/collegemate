@@ -11,7 +11,8 @@ class UserInstitute extends Model
 
     protected $table = 'users_institutes';
 
-    protected $fillable = ['user_id', 'institute_id', 'member_id', 'role', 'designation', 'invitation_status'];
+    protected $fillable = ['user_id', 'institute_id', 'member_id', 'role',
+        'invitation_status', 'specialization', 'cgpa', 'graduated_year'];
 
     protected $hidden = ['user_id', 'institute_id'];
 

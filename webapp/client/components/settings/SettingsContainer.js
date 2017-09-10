@@ -84,8 +84,8 @@ class SettingsContainer extends Component {
   render() {
     // initial values of the form
     const username = `${this.props.auth_user.user.first_name} ${this.props.auth_user.user.last_name}`;
-    const {member_id, designation} = this.props.auth_user.selectedInstitute.user_institute_info[0];
-    const {dob, about_me, gender} = this.props.auth_user.user.user_profile;
+    const {member_id, specialization, graduated_year, cgpa} = this.props.auth_user.selectedInstitute.user_institute_info[0];
+    const {dob, about_me, gender, github_link, linkedin_link, stackoverflow_link} = this.props.auth_user.user.user_profile;
 
     const renderDate = () => {
       if (dob) {
@@ -124,6 +124,32 @@ class SettingsContainer extends Component {
       }
     };
 
+    //
+    function* validYearsFrom(start) {
+        let index = 0;
+        let end = new Date().getFullYear() + 4;
+        while (end > start++) {
+            yield start;
+        }
+    }
+
+    const renderGradYearDropdown = () => {
+      return (
+        <FormsySelect
+            floatingLabelText="Graduated Year"
+            floatingLabelStyle={this.styles.floatingLabelStyle}
+            style={this.styles.formField}
+            fullWidth={true}
+            value={graduated_year}
+            name="graduated_year"
+        >
+          {[...validYearsFrom(1964)].map( year =>
+              <MenuItem value={year} primaryText={year} />
+          )}
+        </FormsySelect>
+      )
+    };
+
     return (
       <div className="main-content">
         <Header title="Settings that help us know you and your choices better."/>
@@ -131,48 +157,36 @@ class SettingsContainer extends Component {
           <Grid>
             <div className="wrap">
               <Card style={{padding: 16}}>
-                <Row>
-                  <Col xs={4} style={{marginTop: 80}}>
-                    <Row center="xs">
-                      <Avatar src={this.props.auth_user.user.user_profile.user_avatar} size={180}/>
-                    </Row>
-                    <Row center="xs" style={{marginTop: 10}}>
-                      <div style={{color: grey600, fontWeight: 500, fontSize: 14}}>{username}</div>
-                    </Row>
-                    <Row center="xs" style={{marginTop: 4}}>
-                      <div
-                        style={{color: grey600, fontWeight: 300, fontSize: 12}}>{this.props.auth_user.user.email}</div>
-                    </Row>
-                  </Col>
-                  <Col xs={8}>
-                    <Formsy.Form
-                      onValid={this.enableButton.bind(this)}
-                      onInvalid={this.disableButton.bind(this)}
-                      onValidSubmit={(data) => this.handleUserProfileSave(data)}
-                    >
+                <Formsy.Form
+                    onValid={this.enableButton.bind(this)}
+                    onInvalid={this.disableButton.bind(this)}
+                    onValidSubmit={(data) => this.handleUserProfileSave(data)}
+                >
+                  <Row>
+                    <Col xs={4} style={{marginTop: 40, marginBottom: 40}}>
+                      <Row center="xs">
+                        <Avatar src={this.props.auth_user.user.user_profile.user_avatar} size={180}/>
+                      </Row>
+                      <Row center="xs" style={{marginTop: 10}}>
+                        <div style={{color: grey600, fontWeight: 500, fontSize: 14}}>{username}</div>
+                      </Row>
+                      <Row center="xs" style={{marginTop: 4}}>
+                        <div
+                          style={{color: grey600, fontWeight: 300, fontSize: 12}}>{this.props.auth_user.user.email}</div>
+                      </Row>
+                    </Col>
+                    <Col xs={8}>
                       <CardTitle style={{padding: 0}} title="Your Profile"/>
                       <div style={{paddingTop: 5}}>
                         <FormsyText
                           inputStyle={{boxShadow: 'none'}}
                           style={this.styles.formField}
                           name="memberId"
-                          floatingLabelText="Hallticket Number (Students / Alumni) or Employee ID (Staff)"
+                          floatingLabelText="Hallticket Number"
                           floatingLabelStyle={this.styles.floatingLabelStyle}
                           fullWidth={true}
                           defaultValue={member_id}
                           disabled={member_id !== null}
-                          required
-                          autoComplete="off"
-                        />
-                        <FormsyText
-                          inputStyle={{boxShadow: 'none'}}
-                          style={this.styles.formField}
-                          name="designation"
-                          floatingLabelText="Designation"
-                          floatingLabelStyle={this.styles.floatingLabelStyle}
-                          hintText="ex: CSE Student, CSE Staff etc"
-                          fullWidth={true}
-                          defaultValue={designation}
                           required
                           autoComplete="off"
                         />
@@ -208,17 +222,84 @@ class SettingsContainer extends Component {
                           required
                         />
                       </div>
-                      <RaisedButton
-                        label="Save"
-                        type="submit"
-                        disabled={!this.state.canSubmit}
-                        buttonStyle={{height: '30px', lineHeight: '30px'}}
-                        labelStyle={{fontSize: 11}}
-                        style={{marginTop: 12}}
-                        primary={true}/>
-                    </Formsy.Form>
-                  </Col>
-                </Row>
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: 25}}>
+                    <Col xs={12}>
+                      <CardTitle style={{padding: 0}} title="Advanced"/>
+                      <div style={{paddingTop: 5}}>
+                        <Row>
+                          <Col xs={4}>
+                            <FormsyText
+                                defaultValue={specialization}
+                                floatingLabelText="Specialization"
+                                floatingLabelStyle={this.styles.floatingLabelStyle}
+                                hintText="ex: CSE, ECE, etc."
+                                name="specialization"
+                                autoComplete="off"
+                                fullWidth={true}
+                            />
+                          </Col>
+                          <Col xs={4}>
+                            <FormsyText
+                                defaultValue={cgpa}
+                                floatingLabelText="CGPA/Percentage"
+                                floatingLabelStyle={this.styles.floatingLabelStyle}
+                                hintText="ex: 8.2 or 78"
+                                name="cgpa"
+                                autoComplete="off"
+                                fullWidth={true}
+                            />
+                          </Col>
+                          <Col xs={4}>
+                            {renderGradYearDropdown()}
+                          </Col>
+                        </Row>
+                        <p>Links</p>
+                        <Row>
+                          <Col xs={4}>
+                            <FormsyText
+                                defaultValue={github_link}
+                                floatingLabelText="Github"
+                                floatingLabelStyle={this.styles.floatingLabelStyle}
+                                name="github_link"
+                                autoComplete="off"
+                                fullWidth={true}
+                            />
+                          </Col>
+                          <Col xs={4}>
+                            <FormsyText
+                                defaultValue={linkedin_link}
+                                floatingLabelText="LinkedIn"
+                                floatingLabelStyle={this.styles.floatingLabelStyle}
+                                name="linkedin_link"
+                                autoComplete="off"
+                                fullWidth={true}
+                            />
+                          </Col>
+                          <Col xs={4}>
+                            <FormsyText
+                                defaultValue={stackoverflow_link}
+                                floatingLabelText="Stack Overflow"
+                                floatingLabelStyle={this.styles.floatingLabelStyle}
+                                name="stackoverflow_link"
+                                autoComplete="off"
+                                fullWidth={true}
+                            />
+                          </Col>
+                        </Row>
+                      </div>
+                    </Col>
+                  </Row>
+                  <RaisedButton
+                      label="Save"
+                      type="submit"
+                      disabled={!this.state.canSubmit}
+                      buttonStyle={{height: '30px', lineHeight: '30px'}}
+                      labelStyle={{fontSize: 11}}
+                      style={{marginTop: 12}}
+                      primary={true}/>
+                </Formsy.Form>
               </Card>
 
               {this.renderSubscriptionForm()}

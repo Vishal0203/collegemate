@@ -8,7 +8,8 @@ class UserProfile extends Model
 {
     protected $table = 'user_profile';
 
-    protected $fillable = ['dob', 'gender', 'about_me', 'user_avatar', 'user_id', 'user_profile_guid'];
+    protected $fillable = ['dob', 'gender', 'about_me', 'user_avatar', 'user_id',
+        'user_profile_guid', 'github_link', 'linkedin_link', 'stackoverflow_link'];
 
     protected $hidden = ['id', 'created_at', 'user_id'];
 
