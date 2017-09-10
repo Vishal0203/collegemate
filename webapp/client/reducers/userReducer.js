@@ -5,6 +5,7 @@ import * as categoryActions from '../actions/categories/index';
 
 const initialState = {
   user: {},
+  projects: [],
   approvalAlert: false,
   selectedInstitute: {
     pending_staffs: [],
@@ -416,7 +417,7 @@ export default function userReducer(state = initialState, action) {
             get_inst_students: {
               ...state.selectedInstitute.get_inst_students,
               user: [
-                ...state.selectedInstitute.get_inst_students.user.filter((user)=>  user.user_guid !== action.data.user_guid)
+                ...state.selectedInstitute.get_inst_students.user.filter((user) => user.user_guid !== action.data.user_guid)
               ]
             }
           }
@@ -429,11 +430,13 @@ export default function userReducer(state = initialState, action) {
             get_inst_staff: {
               ...state.selectedInstitute.get_inst_staff,
               user: [
-                ...state.selectedInstitute.get_inst_staff.user.filter((user)=>  user.user_guid !== action.data.user_guid)
+                ...state.selectedInstitute.get_inst_staff.user.filter((user) => user.user_guid !== action.data.user_guid)
               ]
             }
           }
         }
+      } else {
+        return state
       }
     }
     case actions.UPDATE_USR_BY_STAFF_RES: {
@@ -447,7 +450,7 @@ export default function userReducer(state = initialState, action) {
               ...state.selectedInstitute.get_inst_students,
               user: [
                 ...state.selectedInstitute.get_inst_students.user.filter((user) =>
-                user.user_guid !== action.data.user.user_guid),
+                  user.user_guid !== action.data.user.user_guid),
                 action.data.user
               ]
             }
@@ -462,12 +465,29 @@ export default function userReducer(state = initialState, action) {
               ...state.selectedInstitute.get_inst_staff,
               user: [
                 ...state.selectedInstitute.get_inst_staff.user.filter((user) =>
-                user.user_guid !== action.data.user.user_guid),
+                  user.user_guid !== action.data.user.user_guid),
                 action.data.user
               ]
             }
           }
         }
+      } else {
+        return state
+      }
+    }
+    case actions.GET_USER_PROJECTS_RESPONSE: {
+      return {
+        ...state,
+        projects: action.data.projects
+      }
+    }
+    case actions.ADD_USER_PROJECTS_RESPONSE: {
+      return {
+        ...state,
+        projects: [
+          action.project,
+          ...state.projects,
+        ]
       }
     }
     default: {

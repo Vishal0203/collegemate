@@ -42,6 +42,13 @@ export const DEL_USR_REQ = 'DEL_USR_REQ';
 export const UPDATE_USR_BY_STAFF = 'UPDATE_USR_BY_STAFF';
 export const DEL_USR_RES = 'DEL_USR_RES';
 export const UPDATE_USR_BY_STAFF_RES = 'UPDATE_USR_BY_STAFF_RES';
+
+export const GET_USER_PROJECTS_REQUEST = 'GET_USER_PROJECTS_REQUEST';
+export const GET_USER_PROJECTS_RESPONSE = 'GET_USER_PROJECTS_RESPONSE';
+
+export const ADD_USER_PROJECTS_REQUEST = 'ADD_USER_PROJECTS_REQUEST';
+export const ADD_USER_PROJECTS_RESPONSE = 'ADD_USER_PROJECTS_RESPONSE';
+
 export function userLogin() {
   return {
     type: USER_LOGIN_REQUEST
@@ -314,3 +321,35 @@ export function updateUserByStaffRes(data) {
     data
   }
 }
+
+/*
+Projects actions
+*/
+
+export function getUserProjects() {
+  return {
+    type: GET_USER_PROJECTS_REQUEST
+  }
+}
+
+export function getUserProjectsResponse(data) {
+  return {
+    type: GET_USER_PROJECTS_RESPONSE,
+    data
+  }
+}
+
+export function addUserProject(project) {
+  return {
+    type: ADD_USER_PROJECTS_REQUEST,
+    project
+  }
+}
+
+export function updateUserProjects(project) {
+  return {
+    type: ADD_USER_PROJECTS_RESPONSE,
+    project
+  }
+}
+
