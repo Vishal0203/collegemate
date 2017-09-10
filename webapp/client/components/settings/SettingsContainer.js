@@ -125,12 +125,12 @@ class SettingsContainer extends Component {
     };
 
     //
-    function* validYearsFrom(start) {
-        let index = 0;
-        let end = new Date().getFullYear() + 4;
-        while (end > start++) {
-            yield start;
-        }
+    function *validYearsFrom(start) {
+      let index = 0;
+      let end = new Date().getFullYear() + 4;
+      while (end > start++) {
+        yield start;
+      }
     }
 
     const renderGradYearDropdown = () => {
@@ -143,7 +143,7 @@ class SettingsContainer extends Component {
             value={graduated_year}
             name="graduated_year"
         >
-          {[...validYearsFrom(1964)].map( year =>
+          {[...validYearsFrom(1964)].map((year) =>
               <MenuItem value={year} primaryText={year} />
           )}
         </FormsySelect>
