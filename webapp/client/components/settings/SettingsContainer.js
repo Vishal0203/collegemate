@@ -4,7 +4,6 @@ import {grey600} from 'material-ui/styles/colors';
 import moment from 'moment/moment';
 import Formsy from 'formsy-react';
 import Header from '../Header';
-import SubscriptionForm from './SubscriptionForm'
 import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
 import {Card, CardTitle, Paper, RaisedButton, MenuItem, Avatar} from 'material-ui';
 
@@ -58,28 +57,6 @@ class SettingsContainer extends Component {
     this.props.actions.updateUserProfileRequest(profileData)
   }
 
-  renderSubscriptionForm() {
-    const {invitation_status} = this.props.auth_user.selectedInstitute.user_institute_info[0];
-    if (invitation_status === 'accepted') {
-      return (
-        <Card style={{padding: 16, marginBottom: 40, marginTop: 20}}>
-          <CardTitle title="Announcement Settings"/>
-          <SubscriptionForm parentProps={this.props} showOptions={true}/>
-        </Card>
-      )
-    }
-
-    if (this.props.auth_user.approvalAlert) {
-      return (
-        <Paper zDepth={0} style={this.styles.alert}>
-          <div style={{marginTop: 30}}>
-            <p>&#9432; Your account needs approval from your insitute. <br/><br/>
-              You will be notified via email, when your account is approved.</p>
-          </div>
-        </Paper>
-      )
-    }
-  }
 
   render() {
     // initial values of the form
@@ -220,8 +197,6 @@ class SettingsContainer extends Component {
                   </Col>
                 </Row>
               </Card>
-
-              {this.renderSubscriptionForm()}
             </div>
           </Grid>
         </div>
@@ -230,4 +205,4 @@ class SettingsContainer extends Component {
   }
 }
 
-export default SettingsContainer;
+export default SettingsContainer

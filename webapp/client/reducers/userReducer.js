@@ -8,7 +8,25 @@ const initialState = {
   approvalAlert: false,
   selectedInstitute: {
     pending_staffs: [],
-    pending_students: []
+    pending_students: [],
+    get_inst_students: {
+      loading: true,
+      sortBy: 'first_name',
+      sortDir: 'ASC',
+      total: 0,
+      moreInd: 'N',
+      pageNo: 1,
+      user: [],
+    },
+    get_inst_staff: {
+      loading: true,
+      sortBy: 'first_name',
+      sortDir: 'ASC',
+      total: 0,
+      moreInd: 'N',
+      pageNo: 1,
+      user: [],
+    }
   },
   categoryNotifiers: {
     loading: false,
@@ -361,6 +379,94 @@ export default function userReducer(state = initialState, action) {
             action.newUser,
             ...state.selectedInstitute.pending_staffs.filter((user) => user.user_guid !== action.newUser.user_guid)
           ]
+        }
+      }
+    }
+    case actions.USER_INST_STUDENT_GET_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          get_inst_students: {
+            ...action.response,
+            loading: false
+          }
+        }
+      }
+    }
+    case actions.USER_INST_STAFF_GET_RESPONSE: {
+      return {
+        ...state,
+        selectedInstitute: {
+          ...state.selectedInstitute,
+          get_inst_staff: {
+            ...action.response,
+            loading: false
+          }
+        }
+      }
+    }
+    case actions.DEL_USR_RES: {
+      const role = action.data.role;
+      if (role === 'inst_student') {
+        return {
+          ...state,
+          selectedInstitute: {
+            ...state.selectedInstitute,
+            get_inst_students: {
+              ...state.selectedInstitute.get_inst_students,
+              user: [
+                ...state.selectedInstitute.get_inst_students.user.filter((user)=>  user.user_guid !== action.data.user_guid)
+              ]
+            }
+          }
+        }
+      } else if (role === 'inst_staff') {
+        return {
+          ...state,
+          selectedInstitute: {
+            ...state.selectedInstitute,
+            get_inst_staff: {
+              ...state.selectedInstitute.get_inst_staff,
+              user: [
+                ...state.selectedInstitute.get_inst_staff.user.filter((user)=>  user.user_guid !== action.data.user_guid)
+              ]
+            }
+          }
+        }
+      }
+    }
+    case actions.UPDATE_USR_BY_STAFF_RES: {
+      const role = action.data.role;
+      if (role === 'inst_student') {
+        return {
+          ...state,
+          selectedInstitute: {
+            ...state.selectedInstitute,
+            get_inst_students: {
+              ...state.selectedInstitute.get_inst_students,
+              user: [
+                ...state.selectedInstitute.get_inst_students.user.filter((user) =>
+                user.user_guid !== action.data.user.user_guid),
+                action.data.user
+              ]
+            }
+          }
+        }
+      } else if (role === 'inst_staff') {
+        return {
+          ...state,
+          selectedInstitute: {
+            ...state.selectedInstitute,
+            get_inst_staff: {
+              ...state.selectedInstitute.get_inst_staff,
+              user: [
+                ...state.selectedInstitute.get_inst_staff.user.filter((user) =>
+                user.user_guid !== action.data.user.user_guid),
+                action.data.user
+              ]
+            }
+          }
         }
       }
     }

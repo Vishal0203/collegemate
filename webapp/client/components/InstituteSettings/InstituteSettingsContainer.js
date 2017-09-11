@@ -8,15 +8,19 @@ import {
 }  from '../../actions/users/index';
 import {studentApprovalRequest, staffApprovalRequest} from '../../actions/institutes/index';
 import {studentApprovalAction, staffApprovalAction} from '../../actions/institutes/index';
+import * as userActions from '../../actions/users/index';
 import ManageStudents from './ManageStudents';
 import ManageStaff from './ManageStaff';
-import {Step, Stepper, StepButton, StepContent} from 'material-ui';
+import ManageUsers from './ManageUsers';
+import SubscriptionForm from './SubscriptionForm'
+import {Card, CardTitle, Step, Stepper, StepButton, StepContent,Paper, Tabs, Tab} from 'material-ui';
 
 class InstituteSettingsContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stepIndex: 0
+      stepIndex: 0,
+      value: 'a'
     }
   }
 
@@ -27,6 +31,11 @@ class InstituteSettingsContainer extends Component {
         fontFamily: 'Roboto, sans-serif',
         fontSize: 14,
         lineHeight: '20px'
+      },
+      wrap: {
+        boxSizing: 'border-box',
+        maxWidth: '55%',
+        margin: '0 auto',
       },
       footerImage: {
         width: '100%',
@@ -44,13 +53,51 @@ class InstituteSettingsContainer extends Component {
   renderContent() {
     switch (this.state.stepIndex) {
       case 0:
-        return <ManageStaff parentProps={this.props}/>;
+        return (
+          <Card style={{padding: 16, marginBottom: 40, marginTop: 20}}>
+            <CardTitle title="Announcement Settings"/>
+            <SubscriptionForm parentProps={this.props} showOptions={true}/>
+          </Card>
+        );
       case 1:
+        return <ManageStaff parentProps={this.props}/>;
+      case 2:
         return <ManageStudents parentProps={this.props}/>;
+      case 3:
+        return this.renderUserManagementTable();
     }
   }
 
+  renderUserManagementTable() {
+    const role = this.props.auth_user.selectedInstitute.user_institute_info[0].role;
+    return (
+      <Card>
+        <Paper zDepth={0} style={{backgroundColor: 'transparent'}}>
+          <Tabs
+            value={this.state.value}
+            onChange={() => this.handleChange()}
+            className="transparent-tabs"
+          >
+            <Tab label="Manage Students" value="a" className="dark-text-tab">
+              <ManageUsers parentProps={this.props} role='inst_student' showOptions={true}/>
+            </Tab>
+            {
+              (role === 'inst_superuser' || role === 'inst_admin') ?
+              <Tab label="Manage Staff" value="b"  className="dark-text-tab">
+                <ManageUsers parentProps={this.props} role='inst_staff' showOptions={true}/>
+              </Tab> : ''
+            }
+          </Tabs>
+        </Paper>
+      </Card>);
+  }
+
+  handleChange(value) {
+    this.setState({value})
+  }
+
   render() {
+    const role = this.props.auth_user.selectedInstitute.user_institute_info[0].role;
     return (
       <div className="main-content">
         <div style={{marginTop: 70}}>
@@ -65,24 +112,47 @@ class InstituteSettingsContainer extends Component {
                   >
                     <Step>
                       <StepButton onTouchTap={() => this.handleStepperSelect(0)} iconContainerStyle={{display: 'none'}}>
-                        Manage Institute Staff
+                        Subscription Settings
                       </StepButton>
                       <StepContent>
                         <p style={this.styles.stepperContent}>
-                          Invite staff to your institute. Do it individually or make a bulk invite.
+                          Choose categories to subscribe or unsubscribe.
                         </p>
                       </StepContent>
                     </Step>
-                    <Step>
-                      <StepButton onTouchTap={() => this.handleStepperSelect(1)} iconContainerStyle={{display: 'none'}}>
-                        Manage Institute Students
-                      </StepButton>
-                      <StepContent>
-                        <p style={this.styles.stepperContent}>
-                          Verify registered students belong to your Institute or not.
-                        </p>
-                      </StepContent>
-                    </Step>
+                    { (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff')?
+                      <Step>
+                        <StepButton onTouchTap={() => this.handleStepperSelect(1)} iconContainerStyle={{display: 'none'}}>
+                          Manage Institute Staff
+                        </StepButton>
+                        <StepContent>
+                          <p style={this.styles.stepperContent}>
+                            Invite staff to your institute. Do it individually or make a bulk invite.
+                          </p>
+                        </StepContent>
+                      </Step>: <Step/>}
+                    { (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff')?
+                      <Step>
+                        <StepButton onTouchTap={() => this.handleStepperSelect(2)} iconContainerStyle={{display: 'none'}}>
+                          Manage Institute Students
+                        </StepButton>
+                        <StepContent>
+                          <p style={this.styles.stepperContent}>
+                            Verify registered students belong to your Institute or not.
+                          </p>
+                        </StepContent>
+                      </Step>:<Step/>}
+                    { (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff')?
+                      <Step>
+                        <StepButton onTouchTap={() => this.handleStepperSelect(3)} iconContainerStyle={{display: 'none'}}>
+                          Manage Users
+                        </StepButton>
+                        <StepContent>
+                          <p style={this.styles.stepperContent}>
+                            Update or remove users of your institute.
+                          </p>
+                        </StepContent>
+                      </Step>:<Step/>}
                   </Stepper>
                 </Col>
                 <Col xs={9}>
@@ -102,6 +172,7 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators({
       ...snackbarActions,
+      ...userActions,
       submitStaffAdditionRequest,
       studentApprovalRequest,
       studentApprovalAction,

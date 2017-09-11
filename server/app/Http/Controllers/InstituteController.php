@@ -225,7 +225,7 @@ class InstituteController extends Controller
                 'user_id' => $user['id'],
                 'institute_id' => $institute_id,
                 'role' => 'inst_student',
-                'invitation_status' => 'pending',
+                'invitation_status' => 'accepted',
             ]);
         }
 
