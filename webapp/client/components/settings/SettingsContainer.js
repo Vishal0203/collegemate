@@ -168,12 +168,12 @@ class SettingsContainer extends Component {
     const renderGradYearDropdown = () => {
       return (
         <FormsySelect
-            floatingLabelText="Graduated Year"
-            floatingLabelStyle={this.styles.floatingLabelStyle}
-            style={this.styles.formField}
-            fullWidth={true}
-            value={graduated_year}
-            name="graduated_year"
+          floatingLabelText="Graduated Year"
+          floatingLabelStyle={this.styles.floatingLabelStyle}
+          style={this.styles.formField}
+          fullWidth={true}
+          value={graduated_year}
+          name="graduated_year"
         >
           {[...validYearsFrom(1964)].map((year) =>
               <MenuItem value={year} primaryText={year} />
@@ -190,9 +190,9 @@ class SettingsContainer extends Component {
             <div className="wrap">
               <Card style={{padding: 16}}>
                 <Formsy.Form
-                    onValid={this.enableButton.bind(this)}
-                    onInvalid={this.disableButton.bind(this)}
-                    onValidSubmit={(data) => this.handleUserProfileSave(data)}
+                  onValid={this.enableButton.bind(this)}
+                  onInvalid={this.disableButton.bind(this)}
+                  onValidSubmit={(data) => this.handleUserProfileSave(data)}
                 >
                   <Row>
                     <Col xs={4} style={{marginTop: 40, marginBottom: 40}}>
@@ -263,26 +263,26 @@ class SettingsContainer extends Component {
                         <Row>
                           <Col xs={12}>
                             <FormsyText
-                                defaultValue={specialization}
-                                floatingLabelText="Specialization"
-                                floatingLabelStyle={this.styles.floatingLabelStyle}
-                                hintText="ex: CSE, ECE, etc."
-                                name="specialization"
-                                autoComplete="off"
-                                fullWidth={true}
+                              defaultValue={specialization}
+                              floatingLabelText="Specialization"
+                              floatingLabelStyle={this.styles.floatingLabelStyle}
+                              hintText="ex: CSE, ECE, etc."
+                              name="specialization"
+                              autoComplete="off"
+                              fullWidth={true}
                             />
                           </Col>
                         </Row>
                         <Row>
                           <Col xs={6}>
                             <FormsyText
-                                defaultValue={cgpa}
-                                floatingLabelText="CGPA/Percentage"
-                                floatingLabelStyle={this.styles.floatingLabelStyle}
-                                hintText="ex: 8.2 or 78"
-                                name="cgpa"
-                                autoComplete="off"
-                                fullWidth={true}
+                              defaultValue={cgpa}
+                              floatingLabelText="CGPA/Percentage"
+                              floatingLabelStyle={this.styles.floatingLabelStyle}
+                              hintText="ex: 8.2 or 78"
+                              name="cgpa"
+                              autoComplete="off"
+                              fullWidth={true}
                             />
                           </Col>
                           <Col xs={6}>
@@ -293,32 +293,32 @@ class SettingsContainer extends Component {
                         <Row>
                           <Col xs={4}>
                             <FormsyText
-                                defaultValue={github_link}
-                                floatingLabelText="Github"
-                                floatingLabelStyle={this.styles.floatingLabelStyle}
-                                name="github_link"
-                                autoComplete="off"
-                                fullWidth={true}
+                              defaultValue={github_link}
+                              floatingLabelText="Github"
+                              floatingLabelStyle={this.styles.floatingLabelStyle}
+                              name="github_link"
+                              autoComplete="off"
+                              fullWidth={true}
                             />
                           </Col>
                           <Col xs={4}>
                             <FormsyText
-                                defaultValue={linkedin_link}
-                                floatingLabelText="LinkedIn"
-                                floatingLabelStyle={this.styles.floatingLabelStyle}
-                                name="linkedin_link"
-                                autoComplete="off"
-                                fullWidth={true}
+                              defaultValue={linkedin_link}
+                              floatingLabelText="LinkedIn"
+                              floatingLabelStyle={this.styles.floatingLabelStyle}
+                              name="linkedin_link"
+                              autoComplete="off"
+                              fullWidth={true}
                             />
                           </Col>
                           <Col xs={4}>
                             <FormsyText
-                                defaultValue={stackoverflow_link}
-                                floatingLabelText="Stack Overflow"
-                                floatingLabelStyle={this.styles.floatingLabelStyle}
-                                name="stackoverflow_link"
-                                autoComplete="off"
-                                fullWidth={true}
+                              defaultValue={stackoverflow_link}
+                              floatingLabelText="Stack Overflow"
+                              floatingLabelStyle={this.styles.floatingLabelStyle}
+                              name="stackoverflow_link"
+                              autoComplete="off"
+                              fullWidth={true}
                             />
                           </Col>
                         </Row>
@@ -326,13 +326,13 @@ class SettingsContainer extends Component {
                     </Col>
                   </Row>
                   <RaisedButton
-                      label="Save"
-                      type="submit"
-                      disabled={!this.state.canSubmit}
-                      buttonStyle={{height: '30px', lineHeight: '30px'}}
-                      labelStyle={{fontSize: 11}}
-                      style={{marginTop: 12}}
-                      primary={true}/>
+                    label="Save"
+                    type="submit"
+                    disabled={!this.state.canSubmit}
+                    buttonStyle={{height: '30px', lineHeight: '30px'}}
+                    labelStyle={{fontSize: 11}}
+                    style={{marginTop: 12}}
+                    primary={true}/>
                 </Formsy.Form>
               </Card>
 
