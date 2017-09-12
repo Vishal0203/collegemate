@@ -79,6 +79,11 @@ class User extends Model implements
         return $this->hasMany('App\Feedback');
     }
 
+    public function projects()
+    {
+        return $this->hasMany('App\UserProject');
+    }
+
     public function toArray()
     {
         $attributes = $this->attributesToArray();

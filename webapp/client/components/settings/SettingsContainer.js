@@ -5,8 +5,9 @@ import moment from 'moment/moment';
 import Formsy from 'formsy-react';
 import Header from '../Header';
 import SubscriptionForm from './SubscriptionForm'
+import AddProjectDialog from './AddProjectDialog'
 import {FormsySelect, FormsyText, FormsyDate} from 'formsy-material-ui/lib';
-import {Card, CardTitle, Paper, RaisedButton, MenuItem, Avatar} from 'material-ui';
+import {Card, CardTitle, Paper, RaisedButton, MenuItem, Avatar, Subheader, Divider} from 'material-ui';
 
 class SettingsContainer extends Component {
   constructor(props) {
@@ -79,6 +80,37 @@ class SettingsContainer extends Component {
         </Paper>
       )
     }
+  }
+
+  renderProjectsSection() {
+    const {projects} = {};
+
+    return (
+        <Card style={{padding: 16, marginBottom: 20, marginTop: 20}}>
+          <CardTitle title="Projects"/>
+          <Subheader># Projects</Subheader>
+          <div style={{padding: 16}}>
+            <Row>
+              <Col xs={12}>
+                <h4>College Mate</h4>
+                <p>An application for everyone.</p>
+                <Divider/>
+                <h4>College Mate</h4>
+                <p>An application for everyone.</p>
+              <AddProjectDialog/>
+              </Col>
+            </Row>
+
+          </div>
+          {/*{projects.map((project) => {*/}
+            {/*<Row>*/}
+              {/*<Col xs={4}><h5>{project.title}</h5></Col>*/}
+              {/*<Col xs={8}><p>{project.description}</p></Col>*/}
+            {/*</Row>*/}
+          {/*})}*/}
+
+        </Card>
+    )
   }
 
   render() {
@@ -229,7 +261,7 @@ class SettingsContainer extends Component {
                       <CardTitle style={{padding: 0}} title="Advanced"/>
                       <div style={{paddingTop: 5}}>
                         <Row>
-                          <Col xs={4}>
+                          <Col xs={12}>
                             <FormsyText
                                 defaultValue={specialization}
                                 floatingLabelText="Specialization"
@@ -240,7 +272,9 @@ class SettingsContainer extends Component {
                                 fullWidth={true}
                             />
                           </Col>
-                          <Col xs={4}>
+                        </Row>
+                        <Row>
+                          <Col xs={6}>
                             <FormsyText
                                 defaultValue={cgpa}
                                 floatingLabelText="CGPA/Percentage"
@@ -251,7 +285,7 @@ class SettingsContainer extends Component {
                                 fullWidth={true}
                             />
                           </Col>
-                          <Col xs={4}>
+                          <Col xs={6}>
                             {renderGradYearDropdown()}
                           </Col>
                         </Row>
@@ -301,6 +335,8 @@ class SettingsContainer extends Component {
                       primary={true}/>
                 </Formsy.Form>
               </Card>
+
+              {this.renderProjectsSection()}
 
               {this.renderSubscriptionForm()}
             </div>
