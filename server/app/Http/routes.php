@@ -93,6 +93,7 @@ Route::group(['prefix' => 'api/v1_0'], function () {
         Route::get('get_next_events', 'NotificationController@getNextEvents');
         Route::get('get_events_in_range', 'NotificationController@getEventsInRange');
         Route::get('category_notifications', 'NotificationController@categoryNotifications');
+        Route::post('notification/{notification_guid}/apply', 'NotificationController@apply');
 
         Route::post('notification/{notification_guid}', 'NotificationController@update');
         Route::resource(

@@ -12,8 +12,8 @@ import letterAvatarColors from '../../styles/theme/letterAvatarColors';
 import Branding from '../Branding';
 import Events from './Events';
 import {grey500} from 'material-ui/styles/colors';
-import {Divider, Chip, Paper, FontIcon, IconButton, FlatButton, Dialog} from 'material-ui';
-
+import {Divider, Chip, Paper, FontIcon, IconButton, Card, CardHeader, FlatButton, Dialog} from 'material-ui';
+import Slider from 'react-slick';
 import SubscriptionForm from '../InstituteSettings/SubscriptionForm';
 import {
   subscribeAnnouncementRequest,
@@ -23,6 +23,8 @@ import {
 import {toggleSnackbar} from '../../actions/commons/index'
 import {hashHistory} from 'react-router';
 import AnnouncementForm from './AnnouncementForm';
+import JobAnnouncement from './JobAnnouncement';
+import SlickNavButton from './SlickNavButton';
 
 class AnnouncementsContainer extends Component {
   constructor(props) {
@@ -35,7 +37,8 @@ class AnnouncementsContainer extends Component {
         label: ''
       },
       editableAnnouncement: null,
-      showCategorySettings: false
+      showCategorySettings: false,
+      sliderChanged: false
     };
   }
 
@@ -47,6 +50,7 @@ class AnnouncementsContainer extends Component {
       this.props.actions.toggleSnackbar('Your account is pending approval from your institute.')
     }
     this.fetchEvents();
+    this.fetchDefaultAnnouncements();
   }
 
   get styles() {
@@ -68,6 +72,14 @@ class AnnouncementsContainer extends Component {
         fontFamily: 'Roboto, sans-serif',
         fontSize: 'smaller',
         color: '#9E9E9E'
+      },
+      jobHeader: {
+        color: '#000',
+        display: 'block',
+        fontWeight: '500',
+        fontFamily: 'Roboto, sans-serif',
+        fontSize: '15px',
+        marginTop: '25px'
       }
     }
   }
@@ -80,6 +92,15 @@ class AnnouncementsContainer extends Component {
     let url = `institute/${institute_guid}/get_next_events`;
 
     this.props.actions.fetchEventsRequest(url, {category_guid});
+  }
+
+  fetchDefaultAnnouncements() {
+    const category_guid = this.props.auth_user.selectedInstitute.default_categories.map(function (category) {
+      return category.category_guid
+    }).join(',');
+    const institute_guid = this.props.auth_user.selectedInstitute.inst_profile_guid;
+    let url = `institute/${institute_guid}/category_notifications`;
+    this.props.actions.fetchDefaultAnnouncementRequest(url, {category_guid, count: 5});
   }
 
   toggleAnnouncementSettings(visibility) {
@@ -146,6 +167,49 @@ class AnnouncementsContainer extends Component {
         </Paper>
       ]
     }
+  }
+
+  renderDefaultAnnouncements() {
+    const settings = {
+      dots: false,
+      infinite: true,
+      speed: 1600,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: false,
+      autoplaySpeed: 6000,
+      arrows: true,
+      nextArrow: <SlickNavButton onTouchTap={() => this.setState({sliderChanged: true})} />,
+      prevArrow: <SlickNavButton onTouchTap={() => this.setState({sliderChanged: true})}/>,
+      useCSS: true,
+      adaptiveHeight: true,
+      afterChange: () => this.setState({sliderChanged: false})
+    };
+    const defaultAnnouncements = this.props.announcements.defaultAnnouncements.map( announcement =>
+      <div key={announcement.notification_guid}>
+        <JobAnnouncement
+          onEditClick={() => this.onAnnouncementEditClick(announcement)}
+          parentProps={this.props}
+          announcement={announcement}
+          sliderChanged={this.state.sliderChanged}
+        />
+      </div>
+    );
+    if (this.props.announcements.defaultAnnouncements.length) {      
+      return (
+        <div>
+          <span style={{color: '#000', display: 'block', fontWeight: '500', fontFamily: 'Roboto, sans-serif', fontSize: '15px', marginTop: '25px'}}>
+            Announcements you might be interested in
+          </span>
+          <Divider style={{marginTop: 2, marginBottom: 2}}/>
+          <Slider {...settings}>
+            {defaultAnnouncements}
+          </Slider>
+        </div>
+        //</Card>
+      );
+    }
+    return null;
   }
 
   renderHeader() {
@@ -240,6 +304,9 @@ class AnnouncementsContainer extends Component {
             <div className="wrap">
               <Row>
                 <Col xs={8}>
+                  <div>
+                  {this.renderDefaultAnnouncements()}
+                  </div>
                   <InfiniteScroll hasMore={this.props.announcements.hasMore}
                                   loadingMore={this.props.announcements.loadingMore}
                                   loadMore={() => this.loadMore()} loader={loader}>

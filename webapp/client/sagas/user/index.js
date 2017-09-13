@@ -10,13 +10,16 @@ import * as selectors from '../../reducers/selectors';
 import {hashHistory} from 'react-router';
 
 function *loadUserData(response) {
-  const subscribed_categories = response.data.user.default_institute.subscriptions;
+  let subscribed_categories = response.data.user.default_institute.subscriptions;
   yield put(announcementActions.setAnnouncementCategories(subscribed_categories));
+
+  subscribed_categories = subscribed_categories.concat(response.data.user.default_institute.default_categories);
   // subscribe to categories
   for (let i in subscribed_categories) {
     const channelName = `category_${subscribed_categories[i].category_guid}:announcement-updates`;
     yield put(userActions.subscribeChannel(channelName, announcementActions.announcementUpdates));
   }
+
   // subscribe to posts
   const institute_guid = response.data.user.default_institute.inst_profile_guid;
   yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));

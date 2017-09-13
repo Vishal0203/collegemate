@@ -32,6 +32,10 @@ class SubscriptionsController extends Controller
         $category =
             Category::where('category_guid', $category_guid)->get()->first();
 
+        if ($category->is_default) {
+            return response()->json(['error' => 'Default category cannot be subscribed to.'], 400);
+        }
+
         $subscriptions = SubscriptionsUser::create([
             'category_id' => $category->id,
             'user_id' => \Auth::user()['id']

@@ -24,6 +24,11 @@ export const FETCH_SINGLE_ANNOUNCEMENT_RESPONSE = 'FETCH_SINGLE_ANNOUNCEMENT_RES
 
 export const DELETE_ANNOUNCEMENT_REQUEST = 'DELETE_ANNOUNCEMENT_REQUEST';
 
+export const FETCH_DEFAULT_ANNOUNCEMENT_REQUEST = 'FETCH_DEFAULT_ANNOUNCEMENT_REQUEST';
+export const FETCH_DEFAULT_ANNOUNCEMENT_RESPONSE = 'FETCH_DEFAULT_ANNOUNCEMENT_RESPONSE';
+
+export const APPLY_JOB= 'APPLY_JOB';
+
 export function announcementFormToggle() {
   return {
     type: CREATE_ANNOUNCEMENT_TOGGLE
@@ -154,5 +159,27 @@ export function deleteAnnouncementRequest(url) {
   return {
     type: DELETE_ANNOUNCEMENT_REQUEST,
     url
+  }
+}
+
+export function applyForJob(url) {
+  return {
+    type: APPLY_JOB,
+    url
+  }
+}
+
+export function fetchDefaultAnnouncementRequest(url, url_params) {
+  return {
+    type: FETCH_DEFAULT_ANNOUNCEMENT_REQUEST,
+    url,
+    url_params
+  }
+}
+
+export function fetchDefaultAnnouncementResponse(response) {
+  return {
+    type: FETCH_DEFAULT_ANNOUNCEMENT_RESPONSE,
+    response
   }
 }

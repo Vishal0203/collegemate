@@ -285,3 +285,9 @@ body {
 .rbc-day-bg .rbc-today {
     background-color: #EEEEEE !important;
 }
+
+.slick-prev:before,
+.slick-next:before
+{
+    color: #00BCD4 !important;
+}

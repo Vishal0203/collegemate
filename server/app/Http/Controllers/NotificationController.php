@@ -11,6 +11,8 @@ use App\Institute;
 use App\NotificationData;
 use Input;
 use App\Category;
+use App\User;
+use App\UserJobs;
 use Faker;
 use Event;
 use App\Events\NewAnnouncement;
@@ -159,7 +161,15 @@ class NotificationController extends Controller
 
         Event::fire(new NewAnnouncement($notification, $institute_guid));
 
-        $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
+        if ($category['is_default']) {
+            $notificationAudience = $category['institute_id'] === null ?
+                User::get():
+                $category->institutes()->users()->get();
+            $institute_guid = $category['institute_id'] === null ? null: $institute_guid;
+        } else {
+            $notificationAudience = $category->subscribers()->where('id', '<>', \Auth::user()->id)->get();
+        }
+
         Notification::send($notificationAudience, new AnnouncementNotification(
             $category,
             $notification,
@@ -194,8 +204,9 @@ class NotificationController extends Controller
 
     public function categoryNotifications($institute_guid, Request $request)
     {
+        $count = $request->get('count', 10);
         $page = $request->get('page', 1);
-        $skip = ($page - 1) * 10 + $request->get('skip', 0);
+        $skip = ($page - 1) * $count + $request->get('skip', 0);
         $category_guid = $request['category_guid'];
         $category_ids = Category::whereIn('category_guid', explode(',', $category_guid))
             ->pluck('id');
@@ -211,12 +222,12 @@ class NotificationController extends Controller
             'editor',
             'notificationFiles',
             'category'
-        ])->orderBy('edited_at', 'DESC')->skip($skip)->take(10)->get();
+        ])->orderBy('edited_at', 'DESC')->skip($skip)->take($count)->get();
 
         $total = NotificationData::whereIn('category_id', $category_ids->toArray())->count();
         $nextPage = $page + 1;
         $query_params = array_merge(Input::except(['page', 'skip']), ['page' => $nextPage]);
-        $next_page_url = ($nextPage - 1) * 10 < $total ?
+        $next_page_url = ($nextPage - 1) * $count < $total ?
             $request->url() . "?" . http_build_query($query_params) : null;
 
         return response()->json(compact('total', 'next_page_url', 'data'), 200);
@@ -244,6 +255,20 @@ class NotificationController extends Controller
         $events = NotificationData::whereIn('category_id', $category_ids->toArray())
             ->where('event_date', '>=', $start)->where('event_date', '<=', $end)->orderBy('event_date', 'asc')->get();
         return response()->json(compact('events'), 200);
+    }
+
+    public function apply($institute_guid, $notification_guid, Request $request)
+    {
+        $user = \Auth::user();
+        $notification = NotificationData::where('notification_guid', $notification_guid)->first();
+        $user_job = UserJobs::where('user_id', $user['id'])
+        ->where('notification_id', $notification['id'])->get()->first();
+        if (is_null($user_job)) {
+            $user->appliedJobs()->attach($notification['id']);
+            return response()->json(['success' => 'Applied successfully'], 200);
+        } else {
+            return response()->json(['warning' => 'Already applied'], 200);
+        }
     }
 
     public function destroy($institute_guid, $notification_guid, Request $request)
