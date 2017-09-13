@@ -29,8 +29,13 @@ Route::group(['prefix' => 'api/v1_0'], function () {
     Route::put('read_notifications', 'UserProfileController@readNotifications');
     Route::put('read_all_notifications', 'UserProfileController@readAllNotifications');
     Route::get('change_institute', 'InstituteController@changeInstitute');
-
     Route::post('feedback', 'FeedbackController@create');
+
+    Route::resource(
+        'projects',
+        'UserProjectController',
+        ['except' => ['show', 'edit', 'create']]
+    );
 
     Route::resource(
         'institutes',

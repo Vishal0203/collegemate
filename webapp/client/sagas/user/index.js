@@ -21,10 +21,10 @@ function *loadUserData(response) {
   const institute_guid = response.data.user.default_institute.inst_profile_guid;
   yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
 
-  const {member_id, designation, invitation_status} = response.data.user.default_institute.user_institute_info[0];
-  if (!(member_id && designation)) {
+  const {member_id, invitation_status} = response.data.user.default_institute.user_institute_info[0];
+  if (!member_id) {
     hashHistory.replace('/settings');
-    yield put(toggleSnackbar('Please update your member id and designation.'));
+    yield put(toggleSnackbar('Please update your member id.'));
   }
   if (invitation_status === 'pending') {
     hashHistory.replace('/settings');
@@ -180,6 +180,11 @@ function *changeInstiute(params) {
   }
 }
 
+function *getUserProjects() {
+  const response = yield call(HttpHelper, 'projects', 'GET', null, null);
+  yield put(userActions.getUserProjectsResponse(response.data));
+}
+
 /*
  Watchers
  */
@@ -221,6 +226,10 @@ function *watchInstituteChangeRequest() {
   yield *takeLatest(userActions.CHANGE_SELECTED_INSTITUTE_REQUEST, changeInstiute)
 }
 
+function *watchUserProjectsRequest() {
+  yield *takeLatest(userActions.GET_USER_PROJECTS_REQUEST, getUserProjects)
+}
+
 export default function *userSaga() {
   yield [
     fork(watchGoogleAuth),
@@ -231,6 +240,7 @@ export default function *userSaga() {
     fork(watchDeleteAnnouncementCategory),
     fork(watchFeedbackSubmit),
     fork(watchInviteStaffMember),
-    fork(watchInstituteChangeRequest)
+    fork(watchInstituteChangeRequest),
+    fork(watchUserProjectsRequest),
   ]
 }

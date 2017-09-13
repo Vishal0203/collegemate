@@ -18,6 +18,10 @@ class SettingsContainer extends Component {
     };
   }
 
+  componentWillMount() {
+    this.props.actions.getUserProjects()
+  }
+
   get styles() {
     return {
       formField: {
@@ -83,24 +87,29 @@ class SettingsContainer extends Component {
   }
 
   renderProjectsSection() {
-    const {projects} = {};
+    const {projects} = this.props.auth_user;
 
     return (
         <Card style={{padding: 16, marginBottom: 20, marginTop: 20}}>
           <CardTitle title="Projects"/>
-          <Subheader># Projects</Subheader>
+          <Subheader>{projects.length} Projects</Subheader>
           <div style={{padding: 16}}>
             <Row>
               <Col xs={12}>
-                <h4>College Mate</h4>
-                <p>An application for everyone.</p>
-                <Divider/>
-                <h4>College Mate</h4>
-                <p>An application for everyone.</p>
-              <AddProjectDialog/>
+                {
+                  projects.map((project, i) => {
+                    return (
+                      <div>
+                        <h4>{project.title}</h4>
+                        <p>{project.description}</p>
+                        <Divider/>
+                      </div>
+                    )
+                  })
+                }
+                <AddProjectDialog/>
               </Col>
             </Row>
-
           </div>
           {/*{projects.map((project) => {*/}
             {/*<Row>*/}
@@ -175,8 +184,8 @@ class SettingsContainer extends Component {
           value={graduated_year}
           name="graduated_year"
         >
-          {[...validYearsFrom(1964)].map((year) =>
-              <MenuItem value={year} primaryText={year} />
+          {[...validYearsFrom(1964)].map((year, i) =>
+              <MenuItem key={i} value={year} primaryText={year} />
           )}
         </FormsySelect>
       )
@@ -337,7 +346,6 @@ class SettingsContainer extends Component {
               </Card>
 
               {this.renderProjectsSection()}
-
               {this.renderSubscriptionForm()}
             </div>
           </Grid>

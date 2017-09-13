@@ -20,9 +20,9 @@ class UpdateAdvancedUserprofile extends Migration
         });
 
         Schema::table('user_profile', function (Blueprint $table) {
-            $table->string('github_link', 128);
-            $table->string('linkedin_link', 128);
-            $table->string('stackoverflow_link', 128);
+            $table->string('github_link', 128)->after('dob');
+            $table->string('linkedin_link', 128)->after('dob');
+            $table->string('stackoverflow_link', 128)->after('dob');
         });
     }
 

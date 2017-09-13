@@ -110,9 +110,9 @@ class Navbar extends React.Component {
   renderTabs(tabIndex) {
     const {auth_user} = this.props;
     if (Object.keys(auth_user.selectedInstitute).length !== 0) {
-      const {member_id, designation, invitation_status} = auth_user.selectedInstitute.user_institute_info[0];
+      const {member_id, invitation_status} = auth_user.selectedInstitute.user_institute_info[0];
 
-      if (member_id && designation && invitation_status === 'accepted') {
+      if (member_id && invitation_status === 'accepted') {
         return (
           <ToolbarGroup className="tab-container">
             <Tabs className="tabs" inkBarStyle={{position: 'absolute', bottom: 0}} value={tabIndex}>

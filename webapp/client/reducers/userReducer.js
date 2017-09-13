@@ -5,6 +5,7 @@ import * as categoryActions from '../actions/categories/index';
 
 const initialState = {
   user: {},
+  projects: [],
   approvalAlert: false,
   selectedInstitute: {
     pending_staffs: [],
@@ -362,6 +363,12 @@ export default function userReducer(state = initialState, action) {
             ...state.selectedInstitute.pending_staffs.filter((user) => user.user_guid !== action.newUser.user_guid)
           ]
         }
+      }
+    }
+    case actions.GET_USER_PROJECTS_RESPONSE: {
+      return {
+        ...state,
+        projects: action.data.projects
       }
     }
     default: {
