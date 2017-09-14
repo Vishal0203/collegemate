@@ -24,10 +24,10 @@ function *loadUserData(response) {
   const institute_guid = response.data.user.default_institute.inst_profile_guid;
   yield put(userActions.subscribeChannel(`posts_${institute_guid}:new-post`, interactionsActions.createPostResponse));
 
-  const {member_id, designation, invitation_status} = response.data.user.default_institute.user_institute_info[0];
-  if (!(member_id && designation)) {
+  const {member_id, invitation_status} = response.data.user.default_institute.user_institute_info[0];
+  if (!member_id) {
     hashHistory.replace('/settings');
-    yield put(toggleSnackbar('Please update your member id and designation.'));
+    yield put(toggleSnackbar('Please update your member id.'));
   }
   if (invitation_status === 'pending') {
     hashHistory.replace('/settings');
@@ -236,7 +236,6 @@ function *delInstUser(params) {
 }
 
 function *updateUserByStaff(params) {
-
   let selected_institute = yield select(selectors.selected_institute);
   const institute_guid = selected_institute.inst_profile_guid;
   let response = yield call(HttpHelper, `institute/${institute_guid}/updateUserByStaff`, 'POST', params.data, null);
@@ -245,6 +244,29 @@ function *updateUserByStaff(params) {
     yield put(toggleSnackbar('User Updated'));
   } else {
     yield put(toggleSnackbar('Update unsuccessful'));
+  }
+}
+
+function *getUserProjects() {
+  const response = yield call(HttpHelper, 'projects', 'GET', null, null);
+  yield put(userActions.getUserProjectsResponse(response.data));
+}
+
+function *addUserProject(params) {
+  const formData = {...params.project};
+  const response = yield call(HttpHelper, 'projects', 'POST', formData, null);
+
+  switch (response.status) {
+    case 200:
+      yield put(userActions.updateUserProjects(response.data.project));
+      yield put(toggleSnackbar('Project has been added'));
+      break;
+    case 403:
+      yield put(toggleSnackbar(response.data.error));
+      break;
+    default:
+      yield put(toggleErrorDialog());
+      break;
   }
 }
 
@@ -302,7 +324,15 @@ function *watchDeleteUserFromInstitute() {
 }
 
 function *watchUpdateUserByStaff() {
-  yield *takeLatest(userActions.UPDATE_USR_BY_STAFF, updateUserByStaff)
+  yield* takeLatest(userActions.UPDATE_USR_BY_STAFF, updateUserByStaff)
+}
+
+function *watchUserProjectsRequest() {
+  yield *takeLatest(userActions.GET_USER_PROJECTS_REQUEST, getUserProjects)
+}
+
+function *watchAddUserProjectRquest() {
+  yield *takeLatest(userActions.ADD_USER_PROJECTS_REQUEST, addUserProject)
 }
 
 export default function *userSaga() {
@@ -319,6 +349,9 @@ export default function *userSaga() {
     fork(watchGetInstStudents),
     fork(watchGetInstStaff),
     fork(watchDeleteUserFromInstitute),
-    fork(watchUpdateUserByStaff)
+    fork(watchUpdateUserByStaff),
+    fork(watchUserProjectsRequest),
+    fork(watchUserProjectsRequest),
+    fork(watchAddUserProjectRquest)
   ]
 }

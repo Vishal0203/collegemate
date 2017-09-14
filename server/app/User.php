@@ -89,6 +89,11 @@ class User extends Model implements
         return $this->belongstoMany('App\NotificationData', 'users_jobs', 'user_id', 'notification_id');
     }
 
+    public function projects()
+    {
+        return $this->hasMany('App\UserProject');
+    }
+
     public function toArray()
     {
         $attributes = $this->attributesToArray();

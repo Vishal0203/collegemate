@@ -65,13 +65,18 @@ class UserProfileController extends Controller
         UserProfile::where('user_id', $user['id'])->update([
             'about_me' => $request['aboutMe'],
             'gender' => $request['gender'],
-            'dob' => $request['dob']
+            'dob' => $request['dob'],
+            'github_link' => $request['github_link'],
+            'linkedin_link' => $request['linkedin_link'],
+            'stackoverflow_link'=> $request['stackoverflow_link']
         ]);
 
         try {
             UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
                 'member_id' => $request['memberId'],
-                'designation' => $request['designation']
+                'specialization' => $request['specialization'],
+                'cgpa' => $request['cgpa'],
+                'graduated_year' => $request['graduated_year']
             ]);
         } catch (QueryException $e) {
             return response()->json([
