@@ -2,8 +2,13 @@
     background-color: #39435B !important;
 }
 
+.landing-nav {
+    background-color: rgba(33, 24, 36, 0.85) !important;
+}
+
 .fixed-top {
     position: fixed;
+    top: 0;
     width: 100%;
     z-index: 999;
 }

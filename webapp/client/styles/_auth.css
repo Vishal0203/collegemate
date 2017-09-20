@@ -1,0 +1,152 @@
+.auth-background {
+    position: relative;
+    width: 100%;
+    height: 90vh;
+    top: -68px;
+    background: #39435B url("images/students.jpg") no-repeat center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    z-index: -1;
+}
+
+.auth-background:after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: inherit;
+    z-index: -1;
+    bottom: 0;
+    transform-origin: right bottom;
+    transform: skewY(-2deg);
+    -webkit-backface-visibility: hidden;
+}
+
+.student-background {
+    background-color: #F2F2F2;
+    height: 80vh;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.student-content {
+    background-color: #09D7B1;
+    height: 80vh;
+}
+
+.testimonials-content {
+    background-color: #FF5252;
+    height: 80vh;
+}
+
+.company-background {
+    background-color: #FF9100;
+    height: 80vh;
+}
+
+.company-content {
+    background-color: #F2F2F2;
+    height: 80vh;
+}
+
+.skew-block {
+    top: -42px;
+    height: 80vh;
+    width: 100%;
+    position: relative;
+    transform: skewY(-2deg);
+    -webkit-backface-visibility: hidden;
+}
+
+.skew-row > div {
+    padding: 0;
+    position: relative;
+}
+
+.skew-block-text-container {
+    position: absolute;
+    background-color: transparent !important;
+    left: 0;
+    right: 0;
+    top: 50px;
+    transform: skewY(2deg);
+}
+
+.footer {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    background-color: #212121;
+    z-index: -1;
+    -webkit-backface-visibility: hidden;
+}
+
+.footer:after {
+    content: '';
+    width: 100%;
+    height: 106%;
+    position: absolute;
+    background: inherit;
+    z-index: -1;
+    top: -15px;
+    bottom: 0;
+    transform-origin: left top;
+    transform: skewY(-2deg);
+    -webkit-backface-visibility: hidden;
+}
+
+@media screen and (max-width: 1280px) {
+    .auth-background:after {
+        transform: skewY(-3deg);
+    }
+
+    .footer:after {
+        transform: skewY(-3deg);
+    }
+
+    .skew-block {
+        transform: skewY(-3deg);
+    }
+
+    .skew-block-text-container {
+        transform: skewY(3deg);
+    }
+}
+
+.overlay {
+    background: var(--overlay-color);
+    width: 100%;
+    height: 100%;
+}
+
+.list-primary {
+    color: #E57373;
+    text-transform: uppercase;
+}
+
+.slick-dots {
+    text-align: left !important;
+    margin-left: 70px !important;
+}
+
+.slick-dots li button:before {
+    color: white !important;
+}
+
+.hover-avatar {
+    transition: all .2s ease-in-out;
+    border: thick solid;
+    box-shadow: 1px 1px 5px #888888;
+}
+
+.hover-avatar:hover {
+    transform: scale(1.1)
+}
+
+.job-desc p:first-child {
+    margin-top: 4px;
+}

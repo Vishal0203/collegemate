@@ -13,8 +13,9 @@ import {
   readAllNotificationsRequest,
   openCategoryAnnouncements
 } from '../actions/notifications/index';
-
 import {ellipsis} from './extras/utils';
+import Announcement from 'material-ui/svg-icons/action/announcement';
+import QuestionAnswer from 'material-ui/svg-icons/action/question-answer';
 
 export const POST_COMMENT_NOTIFICATION = 'App\\Notifications\\PostCommentNotification';
 export const ANNOUNCEMENT_NOTIFICATION = 'App\\Notifications\\AnnouncementNotification';
@@ -301,14 +302,13 @@ class Notifications extends React.Component {
         <CardText style={this.styles.notification}>
           <Row>
             <Col xs={1}>
-              <i className="material-icons" style={{height: 50, lineHeight: '50px', color: grey600}}>
-                {
-                  (
-                    notifications[key].type === ANNOUNCEMENT_NOTIFICATION ||
-                    notifications[key].type === ANNOUNCEMENT_UPDATE_NOTIFICATION
-                  ) ? 'announcement' : 'question_answer'
-                }
-              </i>
+              {
+                (
+                  notifications[key].type === ANNOUNCEMENT_NOTIFICATION ||
+                  notifications[key].type === ANNOUNCEMENT_UPDATE_NOTIFICATION
+                ) ? <Announcement style={{height: 50, lineHeight: '50px', color: grey600}}/> :
+                  <QuestionAnswer style={{height: 50, lineHeight: '50px', color: grey600}}/>
+              }
             </Col>
             <Col xs={10} style={this.styles.notificationText}
                  onTouchTap={() => this.openNotification(notifications[key])}>

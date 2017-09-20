@@ -4,7 +4,8 @@ import * as userActions from '../../actions/users/index';
 import * as announcementActions from '../../actions/announcements/index';
 import * as interactionsActions from '../../actions/interactions/index';
 import * as notificationActions from '../../actions/notifications/index';
-import {toggleErrorDialog, toggleSnackbar, FEEDBACK_SUBMIT_REQUEST} from '../../actions/commons/index';
+import {toggleErrorDialog, toggleSnackbar, 
+  FEEDBACK_SUBMIT_REQUEST, TESTIMONIALS_SUBMIT_REQUEST} from '../../actions/commons/index';
 import {HttpHelper} from '../utils/apis';
 import * as selectors from '../../reducers/selectors';
 import {hashHistory} from 'react-router';
@@ -41,7 +42,7 @@ function *handleAuthResponse(response) {
   yield put(userActions.subscribeChannel(`private-users_${user_guid}:new-notification`, notificationActions.newNotification));
   if (response.data.user.default_institute) {
     yield call(loadUserData, response);
-    hashHistory.replace('/announcements');
+    hashHistory.replace(yield select(selectors.browser_location));
   }
   else {
     yield put(toggleSnackbar('Please Select an Institute'));
@@ -90,7 +91,7 @@ function *logoutUser() {
     const GoogleAuth = window.gapi.auth2.getAuthInstance();
     GoogleAuth.signOut();
     yield put(userActions.userLogoutResponse());
-    hashHistory.push('/login');
+    hashHistory.push('/welcome');
   }
   else {
     yield put(toggleErrorDialog());
@@ -146,6 +147,13 @@ function *handleFeedbackSubmit(params) {
   formData.append('feedback_attachment', params.data.feedback_attachment[0]);
 
   const response = yield call(HttpHelper, 'feedback', 'POST', formData, null);
+  if (response.status === 200) {
+    yield put(toggleSnackbar(response.data.success));
+  }
+}
+
+function *handleTestimonialsSubmit(params) {
+  const response = yield call(HttpHelper, 'testimonials', 'POST', params.data, null);
   if (response.status === 200) {
     yield put(toggleSnackbar(response.data.success));
   }
@@ -302,6 +310,9 @@ function *watchFeedbackSubmit() {
   yield *takeLatest(FEEDBACK_SUBMIT_REQUEST, handleFeedbackSubmit)
 }
 
+function *watchTestimonialsSubmit() {
+  yield *takeLatest(TESTIMONIALS_SUBMIT_REQUEST, handleTestimonialsSubmit)
+}
 
 function *watchInviteStaffMember() {
   yield *takeLatest(userActions.STAFF_ADD_REQUEST, inviteStaffMember)
@@ -344,6 +355,7 @@ export default function *userSaga() {
     fork(watchCreateAnnouncementCategory),
     fork(watchDeleteAnnouncementCategory),
     fork(watchFeedbackSubmit),
+    fork(watchTestimonialsSubmit),
     fork(watchInviteStaffMember),
     fork(watchInstituteChangeRequest),
     fork(watchGetInstStudents),

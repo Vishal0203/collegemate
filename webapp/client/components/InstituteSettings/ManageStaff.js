@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {Col} from 'react-flexbox-grid';
 import {FormsyText} from 'formsy-material-ui/lib';
-import {hashHistory} from 'react-router';
 import {grey500, grey600} from 'material-ui/styles/colors';
 import {
   Card, CardTitle, CardText, CardActions, IconButton, ListItem,
   Avatar, FontIcon, FlatButton, Dialog, Table, TableBody, TableRow,
   TableRowColumn, RaisedButton
 } from 'material-ui';
+import Clear from 'material-ui/svg-icons/content/clear';
 
 class ManageStaff extends Component {
   constructor(props) {
@@ -249,9 +249,8 @@ class ManageStaff extends Component {
               No file chosen
             </em>
             {this.state.showButton ? (
-                <i className="material-icons"
-                   style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
-                   onTouchTap={() => this.clearAttachement()}>clear</i>) : ''}
+              <Clear style={{fontSize: 16, verticalAlign: 'middle', color: grey500, cursor: 'pointer'}}
+                     onTouchTap={() => this.clearAttachement()} />) : ''}
             <p style={{margin: '16px 0 0', fontSize: 12, color: grey500}}>
               Download sample <a href={sample_sheet}>spreadsheet</a> to import via excel
             </p>

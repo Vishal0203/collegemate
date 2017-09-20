@@ -7,6 +7,7 @@ import userSaga from './user/index';
 import notificationSaga from './notifications/index';
 import categoriesSaga from './categories/index';
 import eventsSaga from './events/index';
+import landingSaga from './landing/index';
 
 export default function *rootSaga() {
   yield [
@@ -18,5 +19,6 @@ export default function *rootSaga() {
     fork(notificationSaga),
     fork(categoriesSaga),
     fork(eventsSaga),
+    fork(landingSaga),
   ]
 }

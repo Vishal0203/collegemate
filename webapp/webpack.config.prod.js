@@ -55,6 +55,10 @@ module.exports = {
           digest: 'hex',
           name: '[hash].[ext]'
         }
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
       }
     ]
   }

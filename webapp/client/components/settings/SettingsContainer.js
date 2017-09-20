@@ -148,8 +148,7 @@ class SettingsContainer extends Component {
     };
 
     //
-    function* validYearsFrom(start) {
-      let index = 0;
+    function *validYearsFrom(start) {
       let end = new Date().getFullYear() + 4;
       while (end > start++) {
         yield start;
@@ -176,7 +175,7 @@ class SettingsContainer extends Component {
     return (
       <div className="main-content">
         <Header title="Settings that help us know you and your choices better."/>
-        <div style={{marginTop: '20px'}}>
+        <div style={{marginTop: '20px', marginBottom: '20px'}}>
           <Grid>
             <div className="wrap">
               <Card style={{padding: 16}}>

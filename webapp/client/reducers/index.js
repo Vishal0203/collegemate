@@ -6,6 +6,7 @@ import errorDialog from './errorDialogReducer';
 import interactions from './interactionReducer';
 import institutes from './instituteReducer';
 import category from './categoryReducer';
+import landing from './landingReducer';
 import {routerReducer} from 'react-router-redux';
 
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   category,
   snackbar,
   errorDialog,
+  landing,
   routing: routerReducer
 });
 

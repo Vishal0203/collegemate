@@ -4,6 +4,7 @@ import {getDateDiff, markdownToHtml} from '../extras/utils';
 import {grey500, grey600} from 'material-ui/styles/colors';
 import Tooltip from 'material-ui/internal/Tooltip';
 import {Avatar, Dialog, Card, CardHeader, CardText, FlatButton} from 'material-ui';
+import Attachment from 'material-ui/svg-icons/file/attachment'
 
 export class AnnouncementContent extends React.Component {
   constructor(props) {
@@ -117,7 +118,7 @@ export class AnnouncementContent extends React.Component {
                           this.setState({attachmentTooltip: {show: false, label: ''}})
                         }}
                         secondary={true} className="attachment-btn" label="Download Attachments"
-                        icon={<i className="material-icons">attachment</i>}/>
+                        icon={<Attachment />}/>
           </CardText>
           <Tooltip show={this.state.attachmentTooltip.show}
                    label={this.state.attachmentTooltip.label}

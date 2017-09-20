@@ -2,9 +2,10 @@ import Paper from 'material-ui/Paper';
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {feedbackSubmit} from '../actions/commons/index';
-import {grey500} from 'material-ui/styles/colors';
+import {feedbackSubmit} from '../../actions/commons/index';
+import {grey500, grey600} from 'material-ui/styles/colors';
 import {Dialog, FlatButton, TextField, SelectField, MenuItem} from 'material-ui';
+import {hashHistory} from 'react-router';
 
 class Branding extends Component {
   constructor(props) {
@@ -36,6 +37,10 @@ class Branding extends Component {
 
   handleClose = () => {
     this.setState({open: false});
+  };
+
+  changeLocation = () => {
+    hashHistory.push('/testimonial');
   };
 
   onFileSelect = (e) => {
@@ -79,7 +84,7 @@ class Branding extends Component {
     ];
     return (
       <Paper zDepth={0} className="paper-style" style={{textAlign: 'left', marginTop: 20}}>
-        <div style={{fontSize: 12, color: grey500, marginLeft: 2}}>
+        <div style={{fontSize: 12, color: grey600, marginLeft: 2}}>
           <a style={{color: grey500}} href="https://www.facebook.com/thetodevs/" target="_blank">
             Like Us
           </a>
@@ -88,6 +93,12 @@ class Branding extends Component {
              onTouchTap={this.handleOpen}>
             Feedback
           </p>
+          <span>  &middot;  </span>
+          <p style={{color: grey500, cursor: 'pointer', textDecoration: 'underline', display: 'inline-block'}}
+             onTouchTap={this.changeLocation}>
+            Write us a testimonial
+          </p>
+          <span>  &hearts;</span>
           <Dialog
             title="Send a Feedback"
             actions={actions}

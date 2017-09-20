@@ -19,14 +19,12 @@ class AnnouncementDialog extends React.Component {
     this.props.actions.fetchSingleAnnouncementRequest(url)
   }
 
-  getAvatarColor(category) {
+  getAvatarColor() {
     const index = Math.floor(Math.random() * letterAvatarColors.length);
     return letterAvatarColors[index];
   }
 
   render() {
-    const {announcement, avatarColor} = this.props;
-
     const actions = [
       <FlatButton
         label="Close"

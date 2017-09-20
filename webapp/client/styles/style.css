@@ -1,28 +1,23 @@
-@import "_navbar.css";
-@import "_header.css";
+@import "_auth.css";
 @import "_animations.css";
-@import "_interactions.css";
 @import "_announcement.css";
 @import "_institute.css";
+@import "_interactions.css";
+@import "_navbar.css";
+@import "_header.css";
+
+:root {
+    --overlay-color: rgba(0, 0, 0, 0.7);
+}
+
+html,
+body {
+    overflow: auto;
+}
 
 body {
     margin: 0;
     background: #fafafa;
-}
-
-.auth-background {
-    position: absolute;
-    min-height:100%;
-    width: 100%;
-    height: auto;
-    top: 0;
-    left: 0;
-    background: #39435B url("images/bluehats.jpg") no-repeat center;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    z-index: -1;
 }
 
 .footer-image {
@@ -230,7 +225,7 @@ body {
 
 .event-content li {
     padding: 2px 0;
-    list-style-position:inside;
+    list-style-position: inside;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
