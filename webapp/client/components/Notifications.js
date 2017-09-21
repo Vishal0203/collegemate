@@ -5,6 +5,7 @@ import {bindActionCreators} from 'redux';
 import moment from 'moment/moment';
 import {Badge, Popover, Menu, CardText, Divider, IconButton, FontIcon} from 'material-ui';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
+import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
 import DoneIcon from 'material-ui/svg-icons/action/done';
 import {grey600, grey400} from 'material-ui/styles/colors';
 import {Row, Col} from 'react-flexbox-grid'
@@ -347,13 +348,11 @@ class Notifications extends React.Component {
         >
           <IconButton onTouchTap={(event) => this.openNotificationMenu(event)}>
             <NotificationsIcon viewBox="0 0 28 28" color={notificationIconColor}/>
-            <FontIcon className={
+            {
               this.state.notificationsMenuOpen ?
-                'material-icons arrow-up visible' :
-                'material-icons arrow-up hidden'
-            }>
-              arrow_drop_up
-            </FontIcon>
+                <ArrowDropUp className='arrow-up visible'/> :
+                <ArrowDropUp className='arrow-up hidden'/>
+            }
           </IconButton>
         </Badge>
         <Popover
