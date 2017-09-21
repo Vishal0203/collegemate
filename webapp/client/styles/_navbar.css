@@ -37,8 +37,9 @@
 }
 
 .arrow-up {
-    top: -6px;
-    right: 3px;
+    top: -4px;
+    right: 2px;
+    position: relative;
     font-size: 28px !important;
     color: #FFFFFF !important;
 }

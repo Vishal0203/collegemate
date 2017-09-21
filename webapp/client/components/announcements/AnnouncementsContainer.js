@@ -189,12 +189,14 @@ class AnnouncementsContainer extends Component {
 
     const defaultAnnouncements = this.props.announcements.defaultAnnouncements.map((announcement) =>
       <div key={announcement.notification_guid}>
-        <JobAnnouncement
-          onEditClick={() => this.onAnnouncementEditClick(announcement)}
-          parentProps={this.props}
-          announcement={announcement}
-          sliderChanged={this.state.sliderChanged}
-        />
+        <div style={{padding: 5}}>
+          <JobAnnouncement
+            onEditClick={() => this.onAnnouncementEditClick(announcement)}
+            parentProps={this.props}
+            announcement={announcement}
+            sliderChanged={this.state.sliderChanged}
+          />
+        </div>
       </div>
     );
 
