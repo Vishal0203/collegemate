@@ -173,7 +173,7 @@ class AnnouncementsContainer extends Component {
   renderDefaultAnnouncements() {
     const settings = {
       dots: false,
-      infinite: true,
+      infinite: false,
       speed: 1600,
       slidesToShow: 1,
       slidesToScroll: 1,

@@ -55,8 +55,9 @@
     "redux": "^3.6.0",
     "redux-infinite-scroll": "^1.0.9",
     "redux-saga": "^0.14.6",
-    "slick-carousel": "^1.7.1",
+    "remove-markdown": "^0.2.2",
     "scrollmagic": "^2.0.5",
+    "slick-carousel": "^1.7.1",
     "socket.io-client": "^1.7.2"
   },
   "devDependencies": {
