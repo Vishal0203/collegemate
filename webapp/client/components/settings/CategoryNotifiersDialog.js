@@ -5,10 +5,11 @@ import {FormsyText} from 'formsy-material-ui/lib';
 import ChipInput from 'material-ui-chip-input';
 import Loader from 'halogenium/ScaleLoader';
 import {
-  FontIcon, Dialog, IconButton, Chip, RaisedButton, Avatar,
+  Dialog, IconButton, Chip, RaisedButton, Avatar,
   Subheader, FlatButton, Table, TableBody, TableHeader,
   TableHeaderColumn, TableRow, TableRowColumn
 } from 'material-ui';
+import Clear from 'material-ui/svg-icons/content/clear'
 
 class CategoryNotifiersDialog extends Component {
   constructor(props) {
@@ -162,7 +163,7 @@ class CategoryNotifiersDialog extends Component {
           {notifier.editable_by_user ?
             (<TableRowColumn style={{width: 20}}>
               <IconButton onTouchTap={() => this.toggleDeletionConfirmationDialog(notifier)}>
-                <FontIcon className="material-icons" color={grey500}>clear</FontIcon>
+                <Clear color={grey500}/>
               </IconButton>
             </TableRowColumn>) :
             editableNotifiers.length > 0 ? <TableRowColumn style={{width: 20}}/> : null
