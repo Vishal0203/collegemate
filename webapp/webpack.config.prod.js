@@ -29,6 +29,17 @@ module.exports = {
       comments: false
     })
   ],
+  resolve: {
+    alias: {
+      "TweenLite": path.resolve('node_modules', 'gsap/src/uncompressed/TweenLite.js'),
+      "TweenMax": path.resolve('node_modules', 'gsap/src/uncompressed/TweenMax.js'),
+      "TimelineLite": path.resolve('node_modules', 'gsap/src/uncompressed/TimelineLite.js'),
+      "TimelineMax": path.resolve('node_modules', 'gsap/src/uncompressed/TimelineMax.js'),
+      "ScrollMagic": path.resolve('node_modules', 'scrollmagic/scrollmagic/uncompressed/ScrollMagic.js'),
+      "animation.gsap": path.resolve('node_modules', 'scrollmagic/scrollmagic/uncompressed/plugins/animation.gsap.js'),
+      "debug.addIndicators": path.resolve('node_modules', 'scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators.js')
+    }
+  },
   module: {
     rules: [
       // js
@@ -55,6 +66,14 @@ module.exports = {
           digest: 'hex',
           name: '[hash].[ext]'
         }
+      },
+      // for slider
+      {
+        test: /\.(ttf|eot|woff|woff2)$/,
+        loader: 'file-loader',
+        options: {
+          name: 'fonts/[name].[ext]',
+        },
       },
       {
         test: /\.json$/,
