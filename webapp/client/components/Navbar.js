@@ -7,8 +7,9 @@ import {bindActionCreators} from 'redux';
 import {humanizeRoles} from './extras/utils';
 import {grey500} from 'material-ui/styles/colors';
 import Notifications from './Notifications';
+import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
 import {
-  CardText, Divider, FontIcon, MenuItem, Menu, Popover,
+  CardText, Divider, MenuItem, Menu, Popover,
   IconMenu, Toolbar, ToolbarGroup, ToolbarTitle, IconButton,
   Tabs, Tab, Paper, Avatar
 } from 'material-ui';
@@ -150,13 +151,11 @@ class Navbar extends React.Component {
             <p style={this.styles.username}>{username} </p>
             <p style={this.styles.instituteName} onClick={this.onInstituteTouch}>{instituteName}</p>
             <p style={{position: 'absolute', top: 46, right: 46, margin: 0}}>
-              <FontIcon className={
+              {
                 this.state.institutePopover ?
-                  'material-icons arrow-up visible' :
-                  'material-icons arrow-up hidden'
-              }>
-                arrow_drop_up
-              </FontIcon>
+                  <ArrowDropUp className='arrow-up visible'/> :
+                  <ArrowDropUp className='arrow-up hidden'/>
+              }
             </p>
 
             <Popover

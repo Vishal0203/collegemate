@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ellipsis, markdownToHtml} from '../extras/utils';
 import {Divider} from 'material-ui';
+import removeMd from 'remove-markdown';
 
 class Jobs extends Component {
   constructor(props) {
@@ -19,10 +20,11 @@ class Jobs extends Component {
     const {jobs} = this.props.landing;
     return jobs.map((job) => {
       return (
-        <div key={job.notification_guid} style={{marginTop: 20}}>
+        <div key={job.notification_guid} style={{margin: '10px 0'}}>
           <span style={{color:'#ECEFF1', fontWeight: 500}}>{job.notification_head}</span>
-          <div className='job-desc' style={{color:'#ECEFF1', fontWeight: 300}}
-               dangerouslySetInnerHTML={this.createMarkup(markdownToHtml(ellipsis(job.notification_body, 200)))}/>
+          <div className='job-desc' style={{color:'#ECEFF1', fontWeight: 300}}>
+              {ellipsis(removeMd(job.notification_body), 200)}
+          </div>
           <Divider style={{margin: '10px 0'}}/>
         </div>
       )
