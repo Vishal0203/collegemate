@@ -1,4 +1,5 @@
 import React from 'react';
+import {hashHistory} from 'react-router';
 import moment from 'moment/moment';
 import {getDateDiff, markdownToHtml} from '../extras/utils';
 import {grey500, grey600} from 'material-ui/styles/colors';
@@ -19,6 +20,7 @@ export class JobContent extends React.Component {
         label: ''
       },
       showDeleteConfirmation: false,
+      showUpdateDialogue: false,
       expanded: false
     }
   }
@@ -112,11 +114,45 @@ export class JobContent extends React.Component {
   }
 
   applyForJob(notification_guid) {
-    const institute_guid = this.props.parentProps.auth_user.selectedInstitute.inst_profile_guid;
-    const url = `institute/${institute_guid}/notification/${notification_guid}/apply`;
-    this.props.parentProps.actions.applyForJob(url);
+    const user_institute_info = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0];
+    const {specialization, cgpa, graduated_year} = user_institute_info;
+    if (specialization == null || cgpa == 0 || graduated_year == 0) {
+      this.setState({showUpdateDialogue: true});
+    }
+    else {
+      const institute_guid = this.props.parentProps.auth_user.selectedInstitute.inst_profile_guid;
+      const url = `institute/${institute_guid}/notification/${notification_guid}/apply`;
+      this.props.parentProps.actions.applyForJob(url);
+    }
   }
 
+  renderUpdateProfileDialog() {
+    const actions = [
+      <FlatButton
+        label="Update profile"
+        primary={true}
+        keyboardFocused={true}
+        onClick={() => hashHistory.push('/settings')}
+      />,
+      <FlatButton
+        label="Cancel"
+        secondary={true}
+        onTouchTap={() => this.setState({showUpdateDialogue: false})}
+      />
+    ];
+    return (
+      <Dialog
+        title="Incomplete profile"
+        actions={actions}
+        modal={false}
+        open={this.state.showUpdateDialogue}
+        onRequestClose={() => this.setState({showUpdateDialogue: false})}
+      >
+        Your profile is incomplete. Please complete your profile and re-apply!.
+      </Dialog>
+    );
+  }
+  
   showAttachments(announcement) {
     if (announcement.notification_files.length > 0) {
       const institute_guid = this.parentProps.auth_user.selectedInstitute.inst_profile_guid;
@@ -195,9 +231,10 @@ export class JobContent extends React.Component {
     }
     let finalpostActions = (
         <span>
-          {postActions}
           <RaisedButton label= 'Apply Now' labelColor= '#00BCD4'
                         onClick={() => this.applyForJob(this.props.announcement.notification_guid)}/>
+          {this.renderUpdateProfileDialog()}
+          {postActions}          
         </span>);
     return finalpostActions;
   }
