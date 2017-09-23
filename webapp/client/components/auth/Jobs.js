@@ -23,9 +23,9 @@ class Jobs extends Component {
         <div key={job.notification_guid} style={{margin: '10px 0'}}>
           <span style={{color:'#ECEFF1', fontWeight: 500}}>{job.notification_head}</span>
           <div className='job-desc' style={{color:'#ECEFF1', fontWeight: 300}}>
-              {ellipsis(removeMd(job.notification_body), 200)}
+              {ellipsis(removeMd(job.notification_body), 150)}
           </div>
-          <Divider style={{margin: '10px 0'}}/>
+          <Divider style={{marginTop: 10, marginBottom: 10}}/>
         </div>
       )
     })
