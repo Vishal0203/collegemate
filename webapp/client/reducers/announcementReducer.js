@@ -247,6 +247,7 @@ export default function announcementReducer(state = initialState, action) {
       return {
         ...initialState,
         categories: state.categories,
+        defaultAnnouncements: state.defaultAnnouncements,
         filters: newFilters
       }
     }
