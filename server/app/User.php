@@ -86,7 +86,8 @@ class User extends Model implements
 
     public function appliedJobs()
     {
-        return $this->belongstoMany('App\NotificationData', 'users_jobs', 'user_id', 'notification_id');
+        return $this->belongstoMany('App\NotificationData', 'users_jobs', 'user_id', 'notification_id')
+            ->withTimestamps();
     }
 
     public function projects()
