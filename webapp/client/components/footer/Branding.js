@@ -85,7 +85,7 @@ class Branding extends Component {
     return (
       <Paper zDepth={0} className="paper-style" style={{textAlign: 'left', marginTop: 20}}>
         <div style={{fontSize: 12, color: grey600, marginLeft: 2}}>
-          <a style={{color: grey500}} href="https://www.facebook.com/thetodevs/" target="_blank">
+          <a style={{color: grey500}} href="https://www.facebook.com/cmtodevs/" target="_blank">
             Like Us
           </a>
           <span>  &middot;  </span>
