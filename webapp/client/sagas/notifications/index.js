@@ -38,7 +38,13 @@ function *openCategoryAnnouncements(params) {
   });
 
   if (!newFilters.length) {
-    yield put(toggleSnackbar('The requested category has been deleted.'))
+    const selectedInstitute = yield select(selectors.selected_institute);
+    const defaultCategory = selectedInstitute.default_categories.filter((category) => {
+      return category.category_guid === params.announcementGuid.category_guid
+    });
+    if (!defaultCategory.length) {
+      yield put(toggleSnackbar('The requested category has been deleted.'))
+    }
   }
 }
 

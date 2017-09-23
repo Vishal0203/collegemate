@@ -1,28 +1,35 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {FormsyText,FormsySelect} from 'formsy-material-ui/lib';
+import {FormsyText, FormsySelect} from 'formsy-material-ui/lib';
 import {grey500, grey600, red500} from 'material-ui/styles/colors'
-import {Table,  TableBody, TableHeader, TableHeaderColumn,
-  TableRow, TableRowColumn,TableFooter, MenuItem,IconMenu,Avatar,
-  Card, CardTitle,RaisedButton,IconButton,FontIcon,Dialog,FlatButton
+import {
+  Table, TableBody, TableHeader, TableHeaderColumn,
+  TableRow, TableRowColumn, TableFooter, MenuItem, IconMenu, Avatar,
+  Card, CardTitle, RaisedButton, IconButton, FontIcon, Dialog, FlatButton
 } from 'material-ui';
 import Formsy from 'formsy-react';
 import {Row, Col} from 'react-flexbox-grid';
 import * as userActions from '../../actions/users/index';
-import * as snackbarActions  from '../../actions/commons/index';
+import * as snackbarActions from '../../actions/commons/index';
 import Loader from 'halogenium/ScaleLoader';
+import MoreHoriz from 'material-ui/svg-icons/navigation/more-horiz';
+import Create from 'material-ui/svg-icons/content/create';
+import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
+import KeyboardArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
+import KeyboardArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 
 class ManageUsers extends Component {
   constructor(props) {
     super(props);
-    this.state ={
+    this.state = {
       open: false,
       idx: -1,
       canSubmit: false,
       openDailouge: false
     };
   }
+
   componentWillMount() {
     const data = {
       sortBy: 'first_name',
@@ -70,12 +77,15 @@ class ManageUsers extends Component {
   handleDelDialogClose() {
     this.setState({openDailouge: false});
   }
+
   editUser(idx) {
-    this.setState({open: true,idx});
+    this.setState({open: true, idx});
   }
+
   deleteUserDailouge(idx) {
-    this.setState({openDailouge: true,idx});
+    this.setState({openDailouge: true, idx});
   }
+
   deleteUser() {
     const idx = this.state.idx;
     const role = this.props.role;
@@ -88,6 +98,7 @@ class ManageUsers extends Component {
     }
     this.handleDelDialogClose();
   }
+
   enableButton() {
     this.setState({
       canSubmit: true
@@ -99,6 +110,7 @@ class ManageUsers extends Component {
       canSubmit: false
     })
   }
+
   handleUserProfileSave(data) {
     this.setState({open: false});
     const idx = this.state.idx;
@@ -122,6 +134,7 @@ class ManageUsers extends Component {
     }
     this.handleDialogClose();
   }
+
   renderProfile() {
     const idx = this.state.idx;
     const role = this.props.role;
@@ -146,7 +159,7 @@ class ManageUsers extends Component {
       designation = this.props.get_inst_staff.user[idx].pivot.designation;
       avatar = this.props.get_inst_staff.user[idx].user_profile.user_avatar;
     }
-    return(
+    return (
       <div>
         <Formsy.Form
           onValid={this.enableButton.bind(this)}
@@ -234,7 +247,7 @@ class ManageUsers extends Component {
 
   filterSearch(cellDataKey, val) {
     let filterBy = val.toLowerCase();
-    const role =this.props.role;
+    const role = this.props.role;
     const data = {
       sortBy: 'first_name',
       sortDir: 'ASC',
@@ -299,32 +312,32 @@ class ManageUsers extends Component {
       sortBy = this.props.get_inst_staff.sortBy;
       pageNo = this.props.get_inst_staff.pageNo;
     }
-    return(
-      <Table fixedHeader={true} selectable={false} >
+    return (
+      <Table fixedHeader={true} selectable={false}>
         <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
           <TableRow>
-            <TableHeaderColumn  key="member_id"  >
-              <a onClick={()=>this._sortRowsBy('member_id')}> Id</a>
+            <TableHeaderColumn key="member_id">
+              <a onClick={() => this._sortRowsBy('member_id')}> Id</a>
               {(sortBy === 'member_id' ?
                 (sortDir === 'DESC' ? ' ↓' : ' ↑') : '')}
             </TableHeaderColumn>
-            <TableHeaderColumn  key="first_name">
-              <a onClick={()=>this._sortRowsBy('first_name')}> First Name</a>
+            <TableHeaderColumn key="first_name">
+              <a onClick={() => this._sortRowsBy('first_name')}> First Name</a>
               {(sortBy === 'first_name' ?
                 (sortDir === 'DESC' ? ' ↓' : ' ↑') : '')}
             </TableHeaderColumn>
-            <TableHeaderColumn  key="last_name">
-              <a onClick={()=>this._sortRowsBy('last_name')}> Last Name</a>
+            <TableHeaderColumn key="last_name">
+              <a onClick={() => this._sortRowsBy('last_name')}> Last Name</a>
               {(sortBy === 'last_name' ?
                 (sortDir === 'DESC' ? ' ↓' : ' ↑') : '')}
             </TableHeaderColumn>
-            <TableHeaderColumn   key="email">
-              <a onClick={()=>this._sortRowsBy('email')}> E-Mail</a>
+            <TableHeaderColumn key="email">
+              <a onClick={() => this._sortRowsBy('email')}> E-Mail</a>
               {(sortBy === 'email' ?
                 (sortDir === 'DESC' ? ' ↓' : ' ↑') : '')}
             </TableHeaderColumn>
-            <TableHeaderColumn   key="designation">
-              <a onClick={()=>this._sortRowsBy('designation')}>Designation</a>
+            <TableHeaderColumn key="designation">
+              <a onClick={() => this._sortRowsBy('designation')}>Designation</a>
               {(sortBy === 'designation' ?
                 (sortDir === 'DESC' ? ' ↓' : ' ↑') : '')}
             </TableHeaderColumn>
@@ -333,7 +346,7 @@ class ManageUsers extends Component {
             </TableHeaderColumn>
           </TableRow>
         </TableHeader>
-        <TableBody displayRowCheckbox={false} >
+        <TableBody displayRowCheckbox={false}>
           {this.renderRows()}
         </TableBody>
         {this.renderFooter()}
@@ -351,11 +364,10 @@ class ManageUsers extends Component {
       pageNo = this.props.get_inst_staff.pageNo;
       moreInd = this.props.get_inst_staff.moreInd;
     }
-    if (dir === 'right' && moreInd === 'Y')
-    {
-      pageNo = (parseInt(pageNo) +1);
+    if (dir === 'right' && moreInd === 'Y') {
+      pageNo = (parseInt(pageNo) + 1);
     } else if (dir === 'left' && (pageNo > 1)) {
-      pageNo = (pageNo -1);
+      pageNo = (pageNo - 1);
     }
     const data = {
       sortBy: 'first_name',
@@ -387,28 +399,24 @@ class ManageUsers extends Component {
       total = this.props.get_inst_staff.total;
       moreInd = this.props.get_inst_staff.moreInd;
     }
-    return(
+    return (
       <TableFooter adjustForCheckbox={false}>
         <TableRow>
           <TableRowColumn style={{textAlign: 'right'}}>
-            {pageNo <= 1 ? '':<IconButton>
-                <FontIcon className="material-icons" onClick={() => this.changePage('left')}>
-                  keyboard_arrow_left
-                </FontIcon>
-              </IconButton>}
-            <label  ref="PageNo">
-              <span style={{ fontSize: 22}}>
+            {pageNo <= 1 ? '' : <IconButton>
+              <KeyboardArrowLeft onClick={() => this.changePage('left')}/>
+            </IconButton>}
+            <label ref="PageNo">
+              <span style={{fontSize: 22}}>
                 {total > 0 ? pageNo : 0}
               </span>
-              <span style={{ fontSize: 18}}>
-              /{(total/10)> parseInt(total/10)?(parseInt(total/10)+1): parseInt(total/10)}
+              <span style={{fontSize: 18}}>
+              /{(total / 10) > parseInt(total / 10) ? (parseInt(total / 10) + 1) : parseInt(total / 10)}
               </span>
             </label>
             {moreInd == 'Y' ? <IconButton>
-                <FontIcon className="material-icons" onClick={() => this.changePage('right')}>
-                  keyboard_arrow_right
-                </FontIcon>
-              </IconButton>: ''}
+              <KeyboardArrowLeft onClick={() => this.changePage('right')}/>
+            </IconButton> : ''}
           </TableRowColumn>
         </TableRow>
       </TableFooter>)
@@ -425,17 +433,17 @@ class ManageUsers extends Component {
     }
     return rows.map((user, i) => {
       return (
-        <TableRow  key={i}>
-          <TableRowColumn >
+        <TableRow key={i}>
+          <TableRowColumn>
             {user.pivot.member_id}
           </TableRowColumn>
-          <TableRowColumn >
+          <TableRowColumn>
             {user.first_name}
           </TableRowColumn>
           <TableRowColumn>
             {user.last_name}
           </TableRowColumn>
-          <TableRowColumn >
+          <TableRowColumn>
             {user.email}
           </TableRowColumn>
           <TableRowColumn>
@@ -445,7 +453,7 @@ class ManageUsers extends Component {
             <IconMenu
               iconButtonElement={
                 <IconButton>
-                  <FontIcon className="material-icons" color={grey500}>more_horiz</FontIcon>
+                  <MoreHoriz color={grey500}/>
                 </IconButton>
               }
               anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -457,12 +465,7 @@ class ManageUsers extends Component {
                 primaryText="Edit User"
                 onTouchTap={() => this.editUser(i)}
                 leftIcon={
-                  <FontIcon
-                    className="material-icons"
-                    style={{fontSize: 22}}
-                    color={grey500}>
-                    create
-                  </FontIcon>
+                  <Create color={grey500} style={{fontSize: 22}}/>
                 }
               />
               <MenuItem
@@ -470,12 +473,7 @@ class ManageUsers extends Component {
                 primaryText="Remove User"
                 onTouchTap={() => this.deleteUserDailouge(i)}
                 leftIcon={
-                  <FontIcon
-                    className="material-icons"
-                    style={{fontSize: 22}}
-                    color={grey500}>
-                    delete_forever
-                  </FontIcon>
+                  <DeleteForever color={grey500} style={{fontSize: 22}}/>
                 }
               />
             </IconMenu>
@@ -484,6 +482,7 @@ class ManageUsers extends Component {
       )
     });
   }
+
   onReset() {
     const role = this.props.role;
     const data = {
@@ -502,9 +501,11 @@ class ManageUsers extends Component {
     // this.renderRows();
     this.refs.field_val.resetValue();
   }
+
   handleSearch(data) {
-    this.filterSearch(data.Field,data.field_value);
+    this.filterSearch(data.Field, data.field_value);
   }
+
   render() {
     const role = this.props.role;
     const actions = [
@@ -523,10 +524,12 @@ class ManageUsers extends Component {
                 ref="field_val"
                 floatingLabelStyle={this.styles.floatingLabelStyle}
                 inputStyle={{boxShadow: 'none'}}
-                style={{marginTop: -24,
+                style={{
+                  marginTop: -24,
                   fontSize: 14,
                   fontWeight: 300,
-                  width: '100%'}}
+                  width: '100%'
+                }}
                 required
                 autoComplete="off"
               />
@@ -535,9 +538,11 @@ class ManageUsers extends Component {
               <FormsySelect
                 floatingLabelText="Field"
                 floatingLabelStyle={this.styles.floatingLabelStyle}
-                style={{marginTop: -24,fontSize: 14,
+                style={{
+                  marginTop: -24, fontSize: 14,
                   fontWeight: 300,
-                  width: '100%'}}
+                  width: '100%'
+                }}
                 fullWidth={false}
                 name="Field"
                 required
@@ -562,12 +567,12 @@ class ManageUsers extends Component {
                 buttonStyle={{height: '30px', lineHeight: '30px'}}
                 labelStyle={{fontSize: 11}}
                 style={{marginTop: 12, marginLeft: 5, minWidth: 110}}
-                onTouchTap={()=>this.onReset()}
+                onTouchTap={() => this.onReset()}
                 primary={true}/>
             </Col>
           </Row>
-        </Formsy.Form>{ (role === 'inst_student')?
-        ((!this.props.get_inst_students || this.props.get_inst_students.loading) ? this.getLoader('Loading Users') : this.tableDef()):
+        </Formsy.Form>{(role === 'inst_student') ?
+        ((!this.props.get_inst_students || this.props.get_inst_students.loading) ? this.getLoader('Loading Users') : this.tableDef()) :
         ((!this.props.get_inst_staff || this.props.get_inst_staff.loading) ? this.getLoader('Loading Users') : this.tableDef())}
         <Dialog
           titleStyle={{textTransform: 'capitalize'}}
@@ -576,7 +581,7 @@ class ManageUsers extends Component {
           autoScrollBodyContent={true}
           onRequestClose={() => this.handleDialogClose()}
         >
-          {this.state.open?this.renderProfile():''}
+          {this.state.open ? this.renderProfile() : ''}
         </Dialog>
         <Dialog
           title={'Remove User?'}
@@ -589,9 +594,9 @@ class ManageUsers extends Component {
           contentStyle={{maxWidth: 1000}}
           onRequestClose={() => this.handleDelDialogClose()}
         >
-          {this.state.openDailouge?<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Are you sure you want to remove&nbsp;
-              { (role === 'inst_student')? (this.props.get_inst_students.user[this.state.idx].first_name):
-                (this.props.get_inst_staff.user[this.state.idx].first_name)} from institute</h4>:''}
+          {this.state.openDailouge ? <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Are you sure you want to remove&nbsp;
+            {(role === 'inst_student') ? (this.props.get_inst_students.user[this.state.idx].first_name) :
+              (this.props.get_inst_staff.user[this.state.idx].first_name)} from institute</h4> : ''}
         </Dialog>
       </div>
     );
@@ -613,4 +618,5 @@ function mapStateToProps(state) {
     get_inst_staff: state.auth_user.selectedInstitute.get_inst_staff
   }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(ManageUsers);
