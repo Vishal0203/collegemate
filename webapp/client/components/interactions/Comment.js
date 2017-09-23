@@ -4,7 +4,8 @@ import {Row} from 'react-flexbox-grid'
 import {grey500, grey600} from 'material-ui/styles/colors';
 import ReplyForm from './ReplyForm';
 import {markdownToHtml, simplemde_config} from '../extras/utils';
-import {Divider, Dialog, FontIcon, FlatButton, CardText, IconButton} from 'material-ui';
+import {Divider, Dialog, FlatButton, CardText, IconButton} from 'material-ui';
+import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
 
 
 class Comment extends Component {
@@ -36,7 +37,8 @@ class Comment extends Component {
         margin: '-19px auto auto'
       },
       commentVotesIcon: {
-        fontSize: 45,
+        width: 45,
+        height: 45,
         margin: 'auto',
         padding: 0,
         color: grey500,
@@ -56,7 +58,7 @@ class Comment extends Component {
       },
       commentUpvotesIconButton: {
         padding: 0,
-        margin: 'auto',
+        margin: '2px auto',
         width: 52,
         height: 52
       },
@@ -150,7 +152,7 @@ class Comment extends Component {
           <IconButton disabled={disabled} style={this.styles.commentUpvotesIconButton}
                       onClick={() => this.toggleCommentUpvote(comment)}>
             <div>
-              <FontIcon className="material-icons" style={{...this.styles.commentVotesIcon, ...upvotedColor}}>arrow_drop_up</FontIcon>
+              <ArrowDropUp style={{...this.styles.commentVotesIcon, ...upvotedColor}}/>
             </div>
           </IconButton>
         </Row>

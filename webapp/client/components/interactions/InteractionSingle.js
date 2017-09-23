@@ -16,9 +16,10 @@ import ReplyForm from './ReplyForm';
 import {markdownToHtml} from '../extras/utils';
 import {grey500, grey600} from 'material-ui/styles/colors';
 import {
-  Avatar, Dialog, IconButton, FontIcon, FlatButton, Divider, Card,
+  Avatar, Dialog, IconButton, FlatButton, Divider, Card,
   CardHeader, CardText, Chip
 } from 'material-ui';
+import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
 
 class InteractionSingle extends Component {
   constructor(props) {
@@ -104,7 +105,8 @@ class InteractionSingle extends Component {
         marginTop: '-16px'
       },
       postVotesIcon: {
-        fontSize: 55,
+        width: 55,
+        height: 55,
         margin: 'auto',
         padding: 0,
         color: grey500
@@ -190,8 +192,7 @@ class InteractionSingle extends Component {
           <IconButton disabled={disabled} style={this.styles.postUpvotesIconButton}
                       onClick={() => this.togglePostUpvote(post)}>
             <div>
-              <FontIcon className="material-icons"
-                        style={{...this.styles.postVotesIcon, ...upvotedColor}}>arrow_drop_up</FontIcon>
+              <ArrowDropUp style={{...this.styles.postVotesIcon, ...upvotedColor}} />
             </div>
           </IconButton>
         </Row>
