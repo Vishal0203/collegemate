@@ -75,6 +75,7 @@ class UserProfileController extends Controller
             UserInstitute::where('user_id', $user['id'])->where('institute_id', $institute['id'])->update([
                 'member_id' => $request['memberId'],
                 'specialization' => $request['specialization'],
+                'designation' => $request['designation'],
                 'cgpa' => $request['cgpa'],
                 'graduated_year' => $request['graduated_year']
             ]);

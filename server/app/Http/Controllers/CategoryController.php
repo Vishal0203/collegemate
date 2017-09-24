@@ -22,8 +22,7 @@ class CategoryController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('inst_super', ['only' => ['destroy']]);
+        $this->middleware(['auth', 'belongs_to_institute']);
         $this->middleware('inst_admin', ['except' => ['store', 'destroy', 'getNotifiers', 'getSubscribers']]);
     }
 
@@ -123,17 +122,25 @@ class CategoryController extends Controller
      *
      * @param string $institute_guid
      * @param  string $category_guid
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy($institute_guid, $category_guid)
+    public function destroy($institute_guid, $category_guid, Request $request)
     {
-        $deletedCategory = Category::where('category_guid', $category_guid)->delete();
+        $user = Auth::user();
+        $category = Category::where('category_guid', $category_guid)->with('creator')->get()->first();
+        $role = $request->get('auth_user_role');
 
-        if (count($deletedCategory)) {
-            return response()->json(['message' => 'Category deleted']);
-        } else {
-            return response()->json(['message' => 'Something went wrong'], 400);
+        if (in_array($role, ['inst_superuser', 'inst_admin']) || $category->creator->user_guid == $user->user_guid) {
+            $deletedCategory = $category->delete();
+            if (count($deletedCategory)) {
+                return response()->json(['message' => 'Category deleted']);
+            } else {
+                return response()->json(['message' => 'Something went wrong'], 400);
+            }
         }
+
+        return response()->json(['message' => 'You can only delete the categories created by you']);
     }
 
     public function addNotifierToCategory(Category $category, User $user_data)

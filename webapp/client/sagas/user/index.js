@@ -28,7 +28,7 @@ function *loadUserData(response) {
   const {member_id, invitation_status} = response.data.user.default_institute.user_institute_info[0];
   if (!member_id) {
     hashHistory.replace('/settings');
-    yield put(toggleSnackbar('Please update your member id.'));
+    yield put(toggleSnackbar('Please update your profile to enjoy all features.'));
   }
   if (invitation_status === 'pending') {
     hashHistory.replace('/settings');
