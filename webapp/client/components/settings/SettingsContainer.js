@@ -107,7 +107,7 @@ class SettingsContainer extends Component {
   render() {
     // initial values of the form
     const username = `${this.props.auth_user.user.first_name} ${this.props.auth_user.user.last_name}`;
-    const {member_id, specialization, graduated_year, cgpa} = this.props.auth_user.selectedInstitute.user_institute_info[0];
+    const {member_id, designation, specialization, graduated_year, cgpa} = this.props.auth_user.selectedInstitute.user_institute_info[0];
     const {dob, about_me, gender, github_link, linkedin_link, stackoverflow_link} = this.props.auth_user.user.user_profile;
 
     const renderDate = () => {
@@ -148,7 +148,7 @@ class SettingsContainer extends Component {
     };
 
     //
-    function *validYearsFrom(start) {
+    function* validYearsFrom(start) {
       let end = new Date().getFullYear() + 4;
       while (end > start++) {
         yield start;
@@ -205,7 +205,7 @@ class SettingsContainer extends Component {
                       <CardTitle style={{padding: 0}} title="Your Profile"/>
                       <div style={{paddingTop: 5}}>
                         <FormsyText
-                          inputStyle={{boxShadow: 'none'}}
+                          inputStyle={{boxShadow: 'none', textTransform: 'uppercase'}}
                           style={this.styles.formField}
                           name="memberId"
                           floatingLabelText="Hallticket Number"
@@ -213,6 +213,18 @@ class SettingsContainer extends Component {
                           fullWidth={true}
                           defaultValue={member_id}
                           disabled={member_id !== null}
+                          required
+                          autoComplete="off"
+                        />
+                        <FormsyText
+                          inputStyle={{boxShadow: 'none'}}
+                          style={this.styles.formField}
+                          name="designation"
+                          floatingLabelText="Designation"
+                          floatingLabelStyle={this.styles.floatingLabelStyle}
+                          hintText="ex: CSE Student, CSE Staff etc"
+                          fullWidth={true}
+                          defaultValue={designation}
                           required
                           autoComplete="off"
                         />

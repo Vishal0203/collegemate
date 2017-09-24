@@ -26,7 +26,7 @@
 
 .student-background {
     background-color: #F2F2F2;
-    height: 80vh;
+    height: 90vh;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -35,27 +35,27 @@
 
 .student-content {
     background-color: #09D7B1;
-    height: 80vh;
+    height: 90vh;
 }
 
 .testimonials-content {
     background-color: #FF5252;
-    height: 80vh;
+    height: 90vh;
 }
 
 .company-background {
     background-color: #FF9100;
-    height: 80vh;
+    height: 90vh;
 }
 
 .company-content {
     background-color: #F2F2F2;
-    height: 80vh;
+    height: 90vh;
 }
 
 .skew-block {
     top: -42px;
-    height: 80vh;
+    height: 90vh;
     width: 100%;
     position: relative;
     transform: skewY(-2deg);

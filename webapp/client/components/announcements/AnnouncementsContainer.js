@@ -54,6 +54,17 @@ class AnnouncementsContainer extends Component {
     this.fetchDefaultAnnouncements();
   }
 
+  componentDidMount() {
+    if (Object.keys(this.props.auth_user.user).length !== 0) {
+      const categories = this.props.announcements.categories;
+
+      if (!categories.length) {
+        this.toggleAnnouncementSettings(true);
+        this.props.actions.toggleSnackbar('Please subscribe to categories you want to get notified about or create your own.')
+      }
+    }
+  }
+
   get styles() {
     return {
       chipLabel: {
@@ -161,7 +172,7 @@ class AnnouncementsContainer extends Component {
       )
     }
 
-    if (this.props.announcements.items.data.length === 0 && this.props.announcements.loadingMore === false) {
+    if (!this.props.announcements.loadingMore && this.props.announcements.items.data.length === 0) {
       return [
         <Paper className="paper-style" zDepth={0} key={0}>
           <p>There are no announcements to show.</p>
@@ -243,14 +254,12 @@ class AnnouncementsContainer extends Component {
   renderFilterChips() {
     if (Object.keys(this.props.auth_user.user).length !== 0) {
       const categories = this.props.announcements.categories;
-      if (Object.keys(this.props.auth_user.user).length !== 0) {
-        return categories.map((category, i) =>
-          <Chip key={i} className="chip" onTouchTap={() => this.handleFilterSelect(category)}
-                labelStyle={this.styles.chipLabel}>
-            {category.category_type}
-          </Chip>
-        );
-      }
+      return categories.map((category, i) =>
+        <Chip key={i} className="chip" onTouchTap={() => this.handleFilterSelect(category)}
+              labelStyle={this.styles.chipLabel}>
+          {category.category_type}
+        </Chip>
+      );
     }
   }
 

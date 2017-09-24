@@ -155,70 +155,67 @@ class SubscriptionForm extends Component {
   }
 
   renderCreateCategoryForm() {
-    const role = this.props.parentProps.auth_user.selectedInstitute.user_institute_info[0].role;
-    if (role === 'inst_superuser' || role === 'inst_admin' || role === 'inst_staff') {
-      return (
-        <div>
-          <Subheader>Create Announcement Category</Subheader>
-          <Formsy.Form
-            ref="category_form"
-            onValid={this.enableButton.bind(this)}
-            onInvalid={this.disableButton.bind(this)}
-            onValidSubmit={(data) => this.handleCategoryCreate(data)}
-          >
-            <Row style={{padding: '0 16px 10px'}}>
-              <Col xs={4}>
-                <FormsyText
-                  hintText="Category Name"
-                  name="category_type"
-                  inputStyle={{boxShadow: 'none'}}
-                  style={this.styles.formField}
-                  required
-                  autoComplete="off"
-                />
-              </Col>
-              <Col xs={8}>
-                <FormsyText
-                  hintText="Category Description"
-                  name="category_desc"
-                  inputStyle={{boxShadow: 'none'}}
-                  style={this.styles.formField}
-                  required
-                  autoComplete="off"
-                />
-              </Col>
-            </Row>
-            <CSSTransitionGroup
-              transitionName='fieldAnimation'
-              transitionEnterTimeout={600}
-              transitionLeaveTimeout={500}>
-              {this.renderUsersAdditionForm()}
-            </CSSTransitionGroup>
-            <Row style={{padding: '0 16px 16px'}}>
-              <Col xs={3}>
-                <RaisedButton
-                  type="submit"
-                  label="Create Category"
-                  fullWidth={true}
-                  disabled={!this.state.canSubmit}
-                  labelStyle={{fontSize: 12}}
-                  primary={true}/>
-              </Col>
-              <div style={{display: 'inline-block'}}>
-                <FormsyCheckbox
-                  style={{...this.styles.formField, marginTop: 8}}
-                  iconStyle={{width: 20, height: 20, marginRight: 10}}
-                  name="private"
-                  label="Make this a private category"
-                  labelStyle={{fontSize: 12, fontWeight: 400, width: '100%', bottom: '2px'}}
-                  onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
-                />
-              </div>
-            </Row>
-          </Formsy.Form>
-        </div>
-      )
-    }
+    return (
+      <div>
+        <Subheader>Create Announcement Category</Subheader>
+        <Formsy.Form
+          ref="category_form"
+          onValid={this.enableButton.bind(this)}
+          onInvalid={this.disableButton.bind(this)}
+          onValidSubmit={(data) => this.handleCategoryCreate(data)}
+        >
+          <Row style={{padding: '0 16px 10px'}}>
+            <Col xs={4}>
+              <FormsyText
+                hintText="Category Name"
+                name="category_type"
+                inputStyle={{boxShadow: 'none'}}
+                style={this.styles.formField}
+                required
+                autoComplete="off"
+              />
+            </Col>
+            <Col xs={8}>
+              <FormsyText
+                hintText="Category Description"
+                name="category_desc"
+                inputStyle={{boxShadow: 'none'}}
+                style={this.styles.formField}
+                required
+                autoComplete="off"
+              />
+            </Col>
+          </Row>
+          <CSSTransitionGroup
+            transitionName='fieldAnimation'
+            transitionEnterTimeout={600}
+            transitionLeaveTimeout={500}>
+            {this.renderUsersAdditionForm()}
+          </CSSTransitionGroup>
+          <Row style={{padding: '0 16px 16px'}}>
+            <Col xs={3}>
+              <RaisedButton
+                type="submit"
+                label="Create Category"
+                fullWidth={true}
+                disabled={!this.state.canSubmit}
+                labelStyle={{fontSize: 12}}
+                primary={true}/>
+            </Col>
+            <div style={{display: 'inline-block'}}>
+              <FormsyCheckbox
+                style={{...this.styles.formField, marginTop: 8}}
+                iconStyle={{width: 20, height: 20, marginRight: 10}}
+                name="private"
+                label="Make this a private category"
+                labelStyle={{fontSize: 12, fontWeight: 400, width: '100%', bottom: '2px'}}
+                onChange={(event, isInputChecked) => this.setState({private_category: isInputChecked})}
+              />
+            </div>
+          </Row>
+        </Formsy.Form>
+      </div>
+    )
   }
 
   toggleDeletionConfirmationDialog(deletionCategory) {
