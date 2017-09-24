@@ -291,6 +291,7 @@ export default function announcementReducer(state = initialState, action) {
     case userActions.SELECTED_INSTITUTE_CHANGED: {
       return {
         ...initialState,
+        defaultAnnouncements: state.defaultAnnouncements,
         categories: state.categories,
         filters: state.filters
       }

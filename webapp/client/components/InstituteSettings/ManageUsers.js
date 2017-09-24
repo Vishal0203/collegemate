@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {FormsyText, FormsySelect} from 'formsy-material-ui/lib';
-import {grey500, grey600, red500} from 'material-ui/styles/colors'
+import {grey500, grey600} from 'material-ui/styles/colors'
 import {
   Table, TableBody, TableHeader, TableHeaderColumn,
   TableRow, TableRowColumn, TableFooter, MenuItem, IconMenu, Avatar,
-  Card, CardTitle, RaisedButton, IconButton, FontIcon, Dialog, FlatButton
+  CardTitle, RaisedButton, IconButton, Dialog, FlatButton
 } from 'material-ui';
 import Formsy from 'formsy-react';
 import {Row, Col} from 'react-flexbox-grid';
@@ -415,7 +415,7 @@ class ManageUsers extends Component {
               </span>
             </label>
             {moreInd == 'Y' ? <IconButton>
-              <KeyboardArrowLeft onClick={() => this.changePage('right')}/>
+              <KeyboardArrowRight onClick={() => this.changePage('right')}/>
             </IconButton> : ''}
           </TableRowColumn>
         </TableRow>
