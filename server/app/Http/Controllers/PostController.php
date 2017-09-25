@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\CommentUpdates;
 use App\Events\NewPost;
 use App\Institute;
+use App\Notifications\NewPostNotification;
 use App\Notifications\PostUpvoteNotification;
 use App\Notifications\PostReplyNotification;
 use App\Reply;
@@ -102,6 +103,13 @@ class PostController extends Controller
         }
 
         Event::fire(new NewPost($post, $institute_guid));
+
+        $notificationAudience = $institute->users()->where('id', '<>', \Auth::user()->id)->get();
+        Notification::send($notificationAudience, new NewPostNotification(
+            $post,
+            $institute
+        ));
+
         return response()->json(['message' => 'Question was asked in your institute'], 200);
     }
 
