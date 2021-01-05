@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/Vishal0203/collegemate/webapp#readme",
   "dependencies": {
-    "axios": "^0.14.0",
+    "axios": "^0.21.1",
     "classnames": "^2.2.5",
     "dotenv": "^2.0.0",
     "draft-js": "^0.10.0",
