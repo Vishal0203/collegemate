@@ -30,7 +30,7 @@
     "flexboxgrid": "^6.3.1",
     "formsy-material-ui": "^0.6.0",
     "formsy-react": "^0.19.2",
-    "gsap": "^1.20.2",
+    "gsap": "^3.6.0",
     "halogenium": "^1.1.1",
     "marked": "^0.3.6",
     "material-ui": "^0.18.3",
