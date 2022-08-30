@@ -36,7 +36,7 @@
     "material-ui": "^0.18.3",
     "material-ui-chip-input": "^0.15.0",
     "moment": "^2.16.0",
-    "moment-timezone": "^0.5.9",
+    "moment-timezone": "^0.5.35",
     "prop-types": "^15.5.7",
     "react": "^15.5.4",
     "react-big-calendar": "^0.13.0",
